@@ -97,6 +97,7 @@
     <Compile Include="Class\Agent.cs" />
     <Compile Include="Class\Member.cs" />
     <Compile Include="Class\Result.cs" />
+    <Compile Include="Controllers\AgentController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
