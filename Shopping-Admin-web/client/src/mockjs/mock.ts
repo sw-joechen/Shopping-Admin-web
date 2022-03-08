@@ -3,7 +3,11 @@ import Mock from 'mockjs'
 function genResult() {
   const result = {
     code: 200,
-    msg: 'success'
+    msg: 'success',
+    data:{
+      account:"a33333",
+      role:""
+    }
   }
   return JSON.stringify(result)
 }

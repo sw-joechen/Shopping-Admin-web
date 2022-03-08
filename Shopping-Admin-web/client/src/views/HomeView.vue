@@ -1,9 +1,10 @@
+<template>
+  <div class="home">
+    <Layout />
+  </div>
+</template>
+
 <script setup lang="ts">
-import TheWelcome from '@/components/TheWelcome.vue'
+import Layout from "@/Layout/Layout.vue";
 </script>
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
-</template>

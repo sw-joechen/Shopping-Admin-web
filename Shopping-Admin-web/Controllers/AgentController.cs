@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Shopping_Admin_web.Class;
+using Shopping_Admin_web.PwdHasher;
 using Shopping_Admin_web.Validators;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,13 +22,12 @@ namespace Shopping_Admin_web.Controllers
         [Route("api/{controller}/registerAgent")]
         public string RegisterAgent([FromBody] Agent payload)
         {
-            Result result = new Result(200, "success");
+            Result result = new Result(100, "fail");
             if (payload == null)
             {
-                result.set(100, "params is required 帳號規則錯誤");
                 return JsonConvert.SerializeObject(result);
             }
-            // TODO: pwd要hash過才進庫
+
             // TODO: 以下的商業邏輯要拆分去哪裡?
             AccountValidator accountValidator = new AccountValidator(payload.account);
             PwdValidator pwdValidator = new PwdValidator(payload.pwd);
@@ -35,15 +36,34 @@ namespace Shopping_Admin_web.Controllers
             {
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
+                    // Hash password
+                    string hashedPwd = SecurePasswordHasher.Hash(payload.pwd);
+
                     // 開啟連線
                     conn.Open();
 
-                    DateTime dt = DateTime.Now;
+                    // 從庫撈資料出來檢查帳號是否重複創建
+                    SqlCommand cmd = new SqlCommand($"SELECT f_account, f_enabled, f_pwd, f_createdDate, f_updatedDate, f_role FROM t_agents WHERE f_account = '{payload.account}'", conn);
 
-                    // TODO: Date拉到庫給預設值
-                    SqlCommand cmd = new SqlCommand($"INSERT INTO t_agents(f_account, f_enabled, f_pwd, f_createdDate, f_updatedDate, f_role) VALUES('{payload.account}', 0, '{payload.pwd}', '{dt.GetDateTimeFormats('s')[0].ToString()}', '{dt.GetDateTimeFormats('s')[0].ToString()}', '');", conn);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            // 從庫撈到資料代表帳號重複
+                            result.set(100, "fail");
+                        }
+                        else
+                        {   
+                            // 創新帳號寫進庫
+                            reader.Close();
 
-                    cmd.ExecuteNonQuery();
+                            cmd = new SqlCommand($"INSERT INTO t_agents(f_account, f_pwd) VALUES('{payload.account}', '{hashedPwd}');", conn);
+
+                            cmd.ExecuteNonQuery();
+
+                            result.set(200, "success");
+                        }
+                    }
 
                     // 關閉連線
                     conn.Close();
@@ -65,17 +85,25 @@ namespace Shopping_Admin_web.Controllers
                 result.set(100, "params is required");
                 return JsonConvert.SerializeObject(result);
             }
+
             using (SqlConnection conn = new SqlConnection(connectString))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand($"SELECT * FROM t_agents WHERE f_account = '{payload.account}'", conn);
+                SqlCommand cmd = new SqlCommand($"SELECT f_account, f_enabled, f_pwd, f_createdDate, f_updatedDate, f_role FROM t_agents WHERE f_account = '{payload.account}'", conn);
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        if (reader["f_pwd"].ToString() == payload.pwd)
+                        // Verify
+                        bool verify = SecurePasswordHasher.Verify(payload.pwd, reader["f_pwd"].ToString());
+
+                        if (verify)
                         {
-                            result.set(200, "success");
+                            object obj = new {
+                                account = reader["f_account"],
+                                role = reader["f_role"],
+                            };
+                            result.set(200, "success", obj);
                         }
                         else
                         {
