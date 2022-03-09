@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\Agent.cs" />
+    <Compile Include="Class\AgentsList.cs" />
     <Compile Include="Class\Member.cs" />
     <Compile Include="Class\Result.cs" />
     <Compile Include="Controllers\AgentController.cs" />

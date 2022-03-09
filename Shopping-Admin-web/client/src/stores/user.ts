@@ -4,8 +4,6 @@ import { DateTime } from "luxon";
 
 export const useUserStore = defineStore({
     id: 'user',
-
-    // TODO: 從cookie做續登
     state: () => ({
         account: Cookies.get('admin_account') || "",
         role: Cookies.get('admin_role') || "",
@@ -21,7 +19,8 @@ export const useUserStore = defineStore({
             this.role = role
             this.isLoggedIn = true
 
-            const expiredDatetime = DateTime.now().plus({ minute: 1 }).toISO()
+            // TODO: 有效時間拉到server給
+            const expiredDatetime = DateTime.now().plus({ day: 7 }).toISO()
             Cookies.set('admin_account', account, { expires: new Date(expiredDatetime) })
         }
     }

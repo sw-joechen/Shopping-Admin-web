@@ -16,7 +16,9 @@ export default defineConfig({
         compiler: vueTemplateBabelCompiler
       }
     }),
-    scriptSetup(),
+    scriptSetup({
+      reactivityTransform: true
+    }),
     legacy({
       targets: ['ie >= 11'],
       additionalLegacyPolyfills: ['regenerator-runtime/runtime']
