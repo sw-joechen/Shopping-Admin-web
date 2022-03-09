@@ -10,23 +10,29 @@
       :isShowDialog="isShowDialog"
       title="新增後台帳號"
       @toggle="toggleHandler"
-      @submit="registerHandler"
+      @submit="onSubmitHandler"
     >
-      <input
-        v-model="dialogAccount"
-        type="text"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
-        placeholder="請輸入帳號"
-        required
-      />
+      <form>
+        <input
+          v-model="dialogAccount"
+          type="text"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
+          placeholder="請輸入帳號"
+          required
+          @keypress="changeHandler"
+        />
+        <p v-show="isInvalid" class="text-red-500 text-xs italic mb-3">帳號需以英文開頭,英數字皆可,介於6~20字元</p>
 
-      <input
-        v-model="dialogPwd"
-        type="password"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
-        placeholder="請輸入密碼"
-        required
-      />
+        <input
+          v-model="dialogPwd"
+          type="password"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
+          placeholder="請輸入密碼"
+          required
+          @keypress="changeHandler"
+        />
+        <p v-show="isInvalid" class="text-red-500 text-xs italic mb-3">密碼須包含大小寫字母及數字,超過6字元</p>
+      </form>
     </FormDialog>
 
     <!-- table -->
@@ -63,12 +69,8 @@ const options = ref([
   }
 ])
 
-const isShowDialog = ref(false)
 // const sourceAgentsList: Ref<IAgent[]> = ref([])
 
-// dialogForm
-let dialogAccount = $ref("")
-let dialogPwd = $ref("")
 
 // queryData
 const queryEnabled = ref(true)
@@ -95,6 +97,33 @@ const registerHandler = async () => {
     dialogPwd = ""
   }
 };
+
+// dialogForm
+const isShowDialog = ref(false)
+let dialogAccount = $ref("")
+let dialogPwd = $ref("")
+let isInvalid = $ref(false)
+
+const onSubmitHandler = () => {
+  let isValid = false
+  // 帳號規則: 英文開頭, 英數皆可 限6~20字元
+  const accountRegex = new RegExp("^[A-Za-z][A-Za-z0-9]{5,19}");
+
+  // 密碼規則: 6 位數以上，並且至少包含大寫字母、小寫字母、數字各一
+  const pwdRegex = new RegExp("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$");
+
+  isValid = accountRegex.test(dialogAccount) && pwdRegex.test(dialogPwd)
+
+  if (isValid) {
+    registerHandler()
+  } else {
+    isInvalid = true
+  }
+}
+
+const changeHandler = () => {
+  isInvalid = false
+}
 
 // 控制popup
 const onAddHandler = () => {

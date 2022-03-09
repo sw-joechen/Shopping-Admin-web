@@ -12,7 +12,7 @@ const props = defineProps({
   label: {
     required: true,
     type: String,
-  },
+  }
 });
 
 const emits = defineEmits(["submit"]);
