@@ -123,6 +123,38 @@ namespace Shopping_Admin_web.Controllers
             return output;
         }
 
+        // 更新後台帳號
+        [HttpPost]
+        [Route("api/{controller}/updateAgent")]
+        public string UpdateAgent([FromBody] AgentUpdate payload)
+        {
+            Result result = new Result(100, "fail");
+            if (payload == null)
+            {
+                result.set(100, "params is required");
+                return JsonConvert.SerializeObject(result);
+            }
+
+            using (SqlConnection conn = new SqlConnection(connectString))
+            using (SqlCommand cmd = new SqlCommand($"UPDATE t_agents f_enabled = {payload.enabled}, f_role = {payload.role}, f_updatedDate = GETDATE() WHERE f_account = '{payload.account}'", conn))
+            {
+                conn.Open();
+                using (SqlDataReader r = cmd.ExecuteReader())
+                {
+                    if (r.HasRows)
+                    {
+                        while (r.Read())
+                        {
+
+                        }
+                    }
+                }
+            }
+
+            string output = JsonConvert.SerializeObject(result);
+            return output;
+        }
+
         // 取得後台帳號清單
         [HttpPost]
         [Route("api/{controller}/getAgentsList")]

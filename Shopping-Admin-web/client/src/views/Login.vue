@@ -49,6 +49,9 @@ export default defineComponent({
     const user = useUserStore();
 
     const loginHandler = async () => {
+      if (!account.value.length || !pwd.value.length) {
+        return alert("帳號密碼不可空白")
+      }
       const res = await loginAgent({
         account: account.value,
         pwd: pwd.value,
@@ -61,6 +64,8 @@ export default defineComponent({
         });
 
         router.push({ name: "home" });
+      } else {
+        alert("帳號密碼有誤")
       }
     };
 

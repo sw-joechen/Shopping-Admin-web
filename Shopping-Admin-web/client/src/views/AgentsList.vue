@@ -6,6 +6,7 @@
       <OptionSelector class="px-2" :options="options" @onChange="onOptionSelectorChange" />
     </div>
 
+    <!-- 新增帳號dialog -->
     <FormDialog
       :isShowDialog="isShowDialog"
       title="新增後台帳號"
@@ -36,27 +37,20 @@
     </FormDialog>
 
     <!-- table -->
-    <!-- <div class="container">
-      <table class="table">
-        <thead></thead>
-        <tbody>
-          <tr v-for="(item, key) in sourceAgentsList" :key="key">
-            <td>{{ item. }}</td>
-            <td>{{ item.cash }}</td>
-            <td>{{ item.icash }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>-->
+    <div class="tableContainer pt-5">
+      <CustomTable :columns="columns" :data="agentsListComputed" v-if="isInitFinish" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getAgentsList, registerAgent } from "@/APIs/Agents";
-import { onMounted, reactive, ref, } from "@vue/composition-api";
+// @ts-ignore
+import { getAgentsList, IAgent, registerAgent } from "@/APIs/Agents";
+import { computed, onMounted, reactive, ref, } from "@vue/composition-api";
 import BtnSubmit from "@/components/BtnSubmit.vue";
 import OptionSelector from "@/components/OptionSelector.vue"
 import FormDialog from '@/components/Dialogs/FormDialog.vue'
+import CustomTable from '@/components/Table/Table.vue'
 
 const options = ref([
   {
@@ -68,22 +62,56 @@ const options = ref([
     value: false
   }
 ])
+const columns = $ref([
+  {
+    label: "帳號",
+    key: "account"
+  },
+  {
+    label: "狀態",
+    key: "enabled"
+  },
+  {
+    label: "創建時間",
+    key: "createdDate"
+  },
+  {
+    label: "更新時間",
+    key: "updatedDate"
+  },
+  {
+    label: "角色(權限)",
+    key: "role"
+  }
+])
 
-// const sourceAgentsList: Ref<IAgent[]> = ref([])
-
+let sourceAgentsList = $ref<IAgent[]>()
 
 // queryData
-const queryEnabled = ref(true)
+let queryEnabled = $ref(true)
+let isInitFinish = $ref(false)
+
+const agentsListComputed = computed(() => {
+  if (sourceAgentsList && sourceAgentsList.length) {
+    return sourceAgentsList.filter(item => {
+      return !!item.enabled === queryEnabled
+      return item
+    })
+  }
+  return []
+})
 
 onMounted(async () => {
+  isInitFinish = false
   const res = await getAgentsList();
-  // sourceAgentsList.value = res
+  sourceAgentsList = res.data
+  isInitFinish = true
 });
 
 const onOptionSelectorChange = (payload: {
   value: boolean
 }) => {
-  queryEnabled.value = payload.value
+  queryEnabled = payload.value
 }
 
 const registerHandler = async () => {
@@ -95,6 +123,12 @@ const registerHandler = async () => {
     toggleHandler(false)
     dialogAccount = ""
     dialogPwd = ""
+
+    // 新增成功後重取清單
+    isInitFinish = false
+    const res = await getAgentsList();
+    sourceAgentsList = res.data
+    isInitFinish = true
   }
 };
 
