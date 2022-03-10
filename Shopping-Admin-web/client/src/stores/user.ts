@@ -22,6 +22,12 @@ export const useUserStore = defineStore({
             // TODO: 有效時間拉到server給
             const expiredDatetime = DateTime.now().plus({ day: 7 }).toISO()
             Cookies.set('admin_account', account, { expires: new Date(expiredDatetime) })
+        },
+        clearUser() {
+            this.account = ""
+            this.role = ""
+            this.isLoggedIn = false
+            Cookies.remove('admin_account')
         }
     }
 })
