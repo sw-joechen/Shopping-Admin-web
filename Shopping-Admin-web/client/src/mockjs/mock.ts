@@ -5,10 +5,10 @@ const getAgentsList = () => {
     code: 200,
     msg: "success",
     data: [
-      { account: "a12345", enabled: 0, createdDate: "2022/3/7 下午 03:41:06", updatedDate: "2022/3/7 下午 03:41:06", role: "" },
-      { account: "a11111", enabled: 0, createdDate: "2022/3/7 下午 03:54:53", updatedDate: "2022/3/7 下午 03:54:53", role: "" },
-      { account: "a22222", enabled: 0, createdDate: "2022/3/7 下午 03:59:16", updatedDate: "2022/3/7 下午 03:59:16", role: "" },
-      { account: "a33333", enabled: 0, createdDate: "2022/3/7 下午 04:40:51", updatedDate: "2022/3/7 下午 04:40:51", role: "" }
+      { id: 0, account: "a12345", enabled: 0, createdDate: "2022/3/7 下午 03:41:06", updatedDate: "2022/3/7 下午 03:41:06", },
+      { id: 240, account: "a11111", enabled: 0, createdDate: "2022/3/7 下午 03:54:53", updatedDate: "2022/3/7 下午 03:54:53", },
+      { id: 26, account: "a22222", enabled: 0, createdDate: "2022/3/7 下午 03:59:16", updatedDate: "2022/3/7 下午 03:59:16", },
+      { id: 13, account: "a33333", enabled: 1, createdDate: "2022/3/7 下午 04:40:51", updatedDate: "2022/3/7 下午 04:40:51", }
     ]
   }
   return JSON.stringify(result)

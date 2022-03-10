@@ -51,7 +51,7 @@ namespace Shopping_Admin_web.Controllers
                         if (reader.Read())
                         {
                             // 從庫撈到資料代表帳號重複
-                            result.set(100, "fail");
+                            result.set(101, "duplicated account");
                         }
                         else
                         {   

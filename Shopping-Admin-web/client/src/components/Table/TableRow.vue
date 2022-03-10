@@ -12,17 +12,26 @@ const props = defineProps({
         type: Array as () => Array<any>
     }
 })
+</script>
 
-const enabledTransferer = (payload: {
-    key: string,
-    value: any
-}) => {
-    const { key, value } = payload
-    if (key === "enabled" && typeof value === "number") {
-        return value === 1 ? 'enalbed' : 'disabled'
+<!-- 特別用來處理i18n -->
+<script lang="ts">
+import { defineComponent, ref } from '@vue/composition-api'
+export default defineComponent({
+    methods: {
+        enabledTransferer(payload: {
+            key: string,
+            value: any
+        }) {
+            const { key, value } = payload
+            if (key === "enabled" && typeof value === "number") {
+                return value === 1 ? this.$t(`agentList.table.enabled`) : this.$t(`agentList.table.disabled`)
+            }
+            return value
+
+        }
     }
-    return value
-}
+})
 </script>
 
 <style lang="scss">

@@ -4,6 +4,7 @@
     <div class="inputGroup flex">
       <BtnSubmit label="增加" class="pr-2" @submit="onAddHandler" />
       <OptionSelector class="px-2" :options="options" @onChange="onOptionSelectorChange" />
+      <BtnSubmit label="搜尋" class="pr-2" @submit="onSearchHandler" />
     </div>
 
     <!-- 新增帳號dialog -->
@@ -14,31 +15,37 @@
       @submit="onSubmitHandler"
     >
       <form>
-        <input
-          v-model="dialogAccount"
-          type="text"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
-          placeholder="請輸入帳號"
-          required
-          @keypress="changeHandler"
-        />
-        <p v-show="isInvalid" class="text-red-500 text-xs italic mb-3">帳號需以英文開頭,英數字皆可,介於6~20字元</p>
+        <div class="inputGroup flex">
+          <label class="whitespace-nowrap pr-3 leading-[42px]">帳號</label>
+          <input
+            v-model="dialogAccount"
+            type="text"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
+            placeholder="請輸入帳號"
+            required
+            @keypress="changeHandler"
+          />
+        </div>
+        <p v-show="isInvalid" class="text-red-500 text-xs italic">帳號需以英文開頭,英數字皆可,介於6~20字元</p>
 
-        <input
-          v-model="dialogPwd"
-          type="password"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
-          placeholder="請輸入密碼"
-          required
-          @keypress="changeHandler"
-        />
-        <p v-show="isInvalid" class="text-red-500 text-xs italic mb-3">密碼須包含大小寫字母及數字,超過6字元</p>
+        <div class="inputGroup flex">
+          <label class="whitespace-nowrap pr-3 leading-[42px]">密碼</label>
+          <input
+            v-model="dialogPwd"
+            type="password"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
+            placeholder="請輸入密碼"
+            required
+            @keypress="changeHandler"
+          />
+        </div>
+        <p v-show="isInvalid" class="text-red-500 text-xs italic">密碼須包含大小寫字母及數字,超過6字元</p>
       </form>
     </FormDialog>
 
     <!-- table -->
     <div class="tableContainer pt-5">
-      <CustomTable :columns="columns" :data="agentsListComputed" v-if="isInitFinish" />
+      <CustomTable :data="agentsListComputed" v-if="isInitFinish" />
     </div>
   </div>
 </template>
@@ -54,6 +61,10 @@ import CustomTable from '@/components/Table/Table.vue'
 
 const options = ref([
   {
+    label: "請選擇",
+    value: null
+  },
+  {
     label: "啟用",
     value: true
   },
@@ -62,37 +73,18 @@ const options = ref([
     value: false
   }
 ])
-const columns = $ref([
-  {
-    label: "帳號",
-    key: "account"
-  },
-  {
-    label: "狀態",
-    key: "enabled"
-  },
-  {
-    label: "創建時間",
-    key: "createdDate"
-  },
-  {
-    label: "更新時間",
-    key: "updatedDate"
-  },
-  {
-    label: "角色(權限)",
-    key: "role"
-  }
-])
 
 let sourceAgentsList = $ref<IAgent[]>()
 
 // queryData
-let queryEnabled = $ref(true)
+let queryEnabled = $ref<boolean | null>(null)
 let isInitFinish = $ref(false)
 
 const agentsListComputed = computed(() => {
   if (sourceAgentsList && sourceAgentsList.length) {
+    if (queryEnabled === null) {
+      return sourceAgentsList
+    }
     return sourceAgentsList.filter(item => {
       return !!item.enabled === queryEnabled
       return item
@@ -107,6 +99,11 @@ onMounted(async () => {
   sourceAgentsList = res.data
   isInitFinish = true
 });
+
+const onSearchHandler = async () => {
+  const res = await getAgentsList();
+  sourceAgentsList = res.data
+}
 
 const onOptionSelectorChange = (payload: {
   value: boolean
@@ -129,6 +126,18 @@ const registerHandler = async () => {
     const res = await getAgentsList();
     sourceAgentsList = res.data
     isInitFinish = true
+    alert('新增成功')
+  } else {
+    switch (res.code) {
+      case 101: {
+        alert('帳號已被註冊過了')
+        break
+      }
+      default: {
+        alert('發生預期外的錯誤')
+        break
+      }
+    }
   }
 };
 
@@ -164,15 +173,21 @@ const onAddHandler = () => {
   isShowDialog.value = !isShowDialog.value
 }
 const toggleHandler = (payload: boolean) => {
+  initDialogForm()
   isShowDialog.value = payload
+}
+const initDialogForm = () => {
+  dialogAccount = ""
+  dialogPwd = ""
+  isInvalid = false
 }
 
 </script>
 
 <style lang="scss">
 .agentsList {
-  input {
-    @apply mb-2;
+  .inputGroup {
+    @apply p-3 pl-0;
   }
 }
 </style>

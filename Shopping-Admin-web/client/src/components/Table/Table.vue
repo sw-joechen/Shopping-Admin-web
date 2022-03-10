@@ -11,15 +11,8 @@
 import { computed, onMounted, nextTick } from "@vue/composition-api";
 import TableHeader from './TableHeader.vue'
 import TableRow from './TableRow.vue'
-interface IColumn {
-    label: string,
-    key: string
-}
+
 const props = defineProps({
-    columns: {
-        required: true,
-        type: Array as () => Array<IColumn>
-    },
     data: {
         required: true,
         type: Array as () => Array<any>
