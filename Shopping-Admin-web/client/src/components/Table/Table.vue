@@ -8,19 +8,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, nextTick } from "@vue/composition-api";
+import { computed } from "@vue/composition-api";
 import TableHeader from './TableHeader.vue'
 import TableRow from './TableRow.vue'
 
 const props = defineProps({
     data: {
         required: true,
-        type: Array as () => Array<any>
+        type: Array as () => Array<any>,
+        // default: () => []
     }
 });
 
 const tableHeaders = computed(() => {
-    if (props.data && props.data.length) {
+    if (props.data.length) {
         return Object.keys(props.data[0]).map((header, index) => {
             return {
                 index: index,
