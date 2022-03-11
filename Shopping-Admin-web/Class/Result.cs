@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Web;
+﻿using Newtonsoft.Json;
 
 namespace Shopping_Admin_web.Class
 {
     public class Result
     {
-        // TODO: private造成序列化出不來
         public int code;
         public string msg;
-        public object data;
+        public object data = null;
 
         public Result(int code, string msg)
         {
@@ -19,18 +14,14 @@ namespace Shopping_Admin_web.Class
             this.msg = msg;
         }
 
-        public void set(int code, string msg, [Optional] object data) {
+        public void Set(int code, string msg, object data = null) {
             this.code = code;
             this.msg = msg;
-            this.data = data ?? null;
+            this.data = data;
         }
-
-        //public bool shouldserializecode() {
-        //    return false;
-        //}
-
-        //public bool shouldserializemsg() { 
-        //return true;
-        //}
+        public string Stringify()
+        {
+            return JsonConvert.SerializeObject(this, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+        }
     }
 }

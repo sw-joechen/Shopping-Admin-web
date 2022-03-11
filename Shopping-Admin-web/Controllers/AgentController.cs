@@ -4,12 +4,9 @@ using Shopping_Admin_web.PwdHasher;
 using Shopping_Admin_web.Validators;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace Shopping_Admin_web.Controllers
@@ -18,64 +15,74 @@ namespace Shopping_Admin_web.Controllers
     {
         string connectString = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["ConnDB"].ConnectionString;
 
+        /// <summary>
         /// 註冊管理帳號
+        /// </summary>
         [HttpPost]
         [Route("api/{controller}/registerAgent")]
         public string RegisterAgent([FromBody] Agent payload)
         {
-            Result result = new Result(100, "fail");
+            Result result = new Result(100, "params required");
             if (payload == null)
             {
                 return JsonConvert.SerializeObject(result);
             }
 
-            // TODO: 以下的商業邏輯要拆分去哪裡?
             AccountValidator accountValidator = new AccountValidator(payload.account);
             PwdValidator pwdValidator = new PwdValidator(payload.pwd);
 
             if (accountValidator.IsAccountValid() && pwdValidator.IsPwdValid())
             {
-                using (SqlConnection conn = new SqlConnection(connectString))
-                {
-                    // Hash password
-                    string hashedPwd = SecurePasswordHasher.Hash(payload.pwd);
-
-                    // 開啟連線
-                    conn.Open();
-
-                    // 從庫撈資料出來檢查帳號是否重複創建
-                    SqlCommand cmd = new SqlCommand($"SELECT f_account, f_enabled, f_pwd, f_createdDate, f_updatedDate, f_role FROM t_agents WHERE f_account = '{payload.account}'", conn);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                try {
+                    using (SqlConnection conn = new SqlConnection(connectString))
                     {
-                        if (reader.Read())
+                        // Hash password
+                        string hashedPwd = SecurePasswordHasher.Hash(payload.pwd);
+
+                        int sqlResponse = 0;
+
+                        // 開啟連線
+                        conn.Open();
+
+                        using (SqlCommand cmd = new SqlCommand("register_t_agent", conn))
                         {
-                            // 從庫撈到資料代表帳號重複
-                            result.set(101, "duplicated account");
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@account", payload.account);
+                            cmd.Parameters.AddWithValue("@pwd", hashedPwd);
+                            SqlDataReader r = cmd.ExecuteReader();
+                            if (r.Read())
+                            {
+                                sqlResponse = (int)r["result"];
+                            }
+                            // 關閉連線
+                            conn.Close();
                         }
+
+                        if (sqlResponse == 200) {
+                            result.Set(200, "success", new { payload.account});
+                        } 
                         else
-                        {   
-                            // 創新帳號寫進庫
-                            reader.Close();
-
-                            cmd = new SqlCommand($"INSERT INTO t_agents(f_account, f_pwd) VALUES('{payload.account}', '{hashedPwd}');", conn);
-
-                            cmd.ExecuteNonQuery();
-
-                            result.set(200, "success");
+                        {
+                            result.Set(sqlResponse, "fail");
                         }
                     }
-
-                    // 關閉連線
-                    conn.Close();
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"ex: {ex}");
+                    result.Set(100, "網路錯誤");
+                }                
             }
-
-            string output = JsonConvert.SerializeObject(result);
-            return output;
+            else
+            {
+                result.Set(100, "account, pwd not valid");
+            }
+            return result.Stringify();
         }
 
-        // 登入後台帳號
+        /// <summary>
+        /// 登入後台帳號
+        /// </summary>
         [HttpPost]
         [Route("api/{controller}/loginAgent")]
         public string LoginAgent([FromBody] Agent payload)
@@ -83,47 +90,57 @@ namespace Shopping_Admin_web.Controllers
             Result result = new Result(100, "fail");
             if (payload == null)
             {
-                result.set(100, "params is required");
+                result.Set(100, "params is required");
                 return JsonConvert.SerializeObject(result);
             }
-
-            using (SqlConnection conn = new SqlConnection(connectString))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand($"SELECT f_account, f_enabled, f_pwd, f_createdDate, f_updatedDate, f_role FROM t_agents WHERE f_account = '{payload.account}'", conn);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+            try {
+                using (SqlConnection conn = new SqlConnection(connectString))
                 {
-                    if (reader.Read())
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("login_t_agents", conn))
                     {
-                        // Verify
-                        bool verify = SecurePasswordHasher.Verify(payload.pwd, reader["f_pwd"].ToString());
-
-                        if (verify)
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", payload.account);
+                        SqlDataReader r = cmd.ExecuteReader();
+                        if (r.Read())
                         {
-                            object obj = new {
-                                account = reader["f_account"],
-                                role = reader["f_role"],
-                            };
-                            result.set(200, "success", obj);
+                            // Verify
+                            bool verify = SecurePasswordHasher.Verify(payload.pwd, r["f_pwd"].ToString());
+
+                            if (verify)
+                            {
+                                object obj = new
+                                {
+                                    account = r["f_account"],
+                                    role = r["f_role"],
+                                };
+                                result.Set(200, "success", obj);
+                            }
+                            else
+                            {
+                                result.Set(100, "wrong password");
+                            }
                         }
                         else
                         {
-                            result.set(100, "wrong password");
+                            result.Set(100, "member not found");
                         }
+                        // 關閉連線
+                        conn.Close();
                     }
-                    else
-                    {
-                        result.set(100, "member not found");
-                    }
-                    conn.Close();
                 }
             }
+            catch (Exception ex) {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(100, "網路錯誤");
+            }
 
-            string output = JsonConvert.SerializeObject(result);
-            return output;
+            return result.Stringify();
         }
 
-        // 更新後台帳號
+        /// <summary>
+        /// 更新後台帳號
+        /// </summary>
         [HttpPost]
         [Route("api/{controller}/updateAgent")]
         public string UpdateAgent([FromBody] AgentUpdate payload)
@@ -131,31 +148,45 @@ namespace Shopping_Admin_web.Controllers
             Result result = new Result(100, "fail");
             if (payload == null)
             {
-                result.set(100, "params is required");
+                result.Set(100, "params is required");
                 return JsonConvert.SerializeObject(result);
             }
 
-            using (SqlConnection conn = new SqlConnection(connectString))
-            using (SqlCommand cmd = new SqlCommand($"UPDATE t_agents f_enabled = {payload.enabled}, f_role = {payload.role}, f_updatedDate = GETDATE() WHERE f_account = '{payload.account}'", conn))
-            {
-                conn.Open();
-                using (SqlDataReader r = cmd.ExecuteReader())
-                {
-                    if (r.HasRows)
+            try{            
+                using (SqlConnection conn = new SqlConnection(connectString)) {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
                     {
-                        while (r.Read())
-                        {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", payload.account);
+                        cmd.Parameters.AddWithValue("@enabled", payload.enabled);
+                        cmd.Parameters.AddWithValue("@role", payload.role);
+                        SqlDataReader r = cmd.ExecuteReader();
 
-                        }
+                        if (r.Read())
+                        {
+                            object obj = new
+                            {
+                                account = r["f_account"],
+                                role = r["f_role"],
+                                enabled = r["f_enabled"]
+                            };
+                            result.Set(200, "success", obj);
+                        }                    
                     }
                 }
             }
-
-            string output = JsonConvert.SerializeObject(result);
-            return output;
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(100, "網路錯誤");
+            }
+            return result.Stringify();
         }
 
-        // 取得後台帳號清單
+        /// <summary>
+        /// 取得後台帳號清單
+        /// </summary>
         [HttpPost]
         [Route("api/{controller}/getAgentsList")]
         public string GetAgentsList()
@@ -163,33 +194,43 @@ namespace Shopping_Admin_web.Controllers
             Result result = new Result(100, "fail");
             List<AgentsList> agentList = new List<AgentsList> { };
 
-            using (SqlConnection conn = new SqlConnection(connectString))
-            using (SqlCommand cmd = new SqlCommand($"SELECT f_account, f_enabled, f_pwd, f_createdDate, f_updatedDate, f_role FROM t_agents", conn))
+            try
             {
-                conn.Open();
-                using (SqlDataReader r = cmd.ExecuteReader())
-                {
-                    if (r.HasRows)
+                using (SqlConnection conn = new SqlConnection(connectString)) { 
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("get_agentList", conn))
                     {
-                        while (r.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        SqlDataReader r = cmd.ExecuteReader();
+
+                        if (r.HasRows)
                         {
-                            agentList.Add(new AgentsList
+                            while (r.Read())
                             {
-                                account = r["f_account"].ToString(),
-                                enabled = Convert.ToInt16(r["f_enabled"]),
-                                createdDate = r["f_createdDate"].ToString(),
-                                updatedDate = r["f_updatedDate"].ToString(),
-                                role = r["f_role"].ToString()
-                            });
-                            //Debug.WriteLine($"{r["f_account"]}, {r["f_enabled"]}, {r["f_pwd"]}, {r["f_createdDate"]}");
+                                agentList.Add(new AgentsList
+                                {
+                                    id = r["f_id"].ToString(),
+                                    account = r["f_account"].ToString(),
+                                    enabled = Convert.ToInt16(r["f_enabled"]),
+                                    createdDate = r["f_createdDate"].ToString(),
+                                    updatedDate = r["f_updatedDate"].ToString()
+                                    //role = r["f_role"].ToString()
+                                });
+                                Debug.WriteLine($"{r["f_id"]}, {r["f_account"]}, {r["f_enabled"]}, {r["f_createdDate"]}, {r["f_updatedDate"]}");
+                            }
+                            result.Set(200, "success", agentList);
                         }
-                        result.set(200, "success", agentList);
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(100, "網路錯誤");
+            }
 
-            string output = JsonConvert.SerializeObject(result);
-            return output;
+            return result.Stringify();
+
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Shopping_Admin_web.Controller
             Result result = new Result(200, "success");
             if (payload == null)
             {
-                result.set(100, "params is required");
+                result.Set(100, "params is required");
                 return JsonConvert.SerializeObject(result);
             }
             // TODO: pwd要hash過才進庫

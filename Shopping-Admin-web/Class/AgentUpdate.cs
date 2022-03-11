@@ -7,7 +7,7 @@ namespace Shopping_Admin_web.Class
 {
     public class AgentUpdate
     {
-        public int account { get; set; }
+        public string account { get; set; }
         public int enabled { get; set; }
         public string role { get; set; }
         public string pwd { get; set; }
