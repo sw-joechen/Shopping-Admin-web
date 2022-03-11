@@ -2,8 +2,11 @@
   <div class="login flex justify-center items-center w-screen h-screen bg-green2">
     <div class="w-full max-w-xs">
       <div class="bg-transparent">
+        <div class="title mb-4 flex justify-center">
+          <div class="txt text-white text-3xl font-bold">登入</div>
+        </div>
         <div class="mb-4">
-          <label class="block text-green2 text-sm font-bold mb-2" for="username">帳號</label>
+          <label class="block text-white text-sm font-bold mb-2" for="username">帳號</label>
           <input
             v-model="account"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
@@ -13,7 +16,7 @@
           />
         </div>
         <div class="mb-6">
-          <label class="block text-green2 text-sm font-bold mb-2" for="pwd">密碼</label>
+          <label class="block text-white text-sm font-bold mb-2" for="pwd">密碼</label>
           <input
             v-model="pwd"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
