@@ -2,8 +2,8 @@
   <div class="agentsList p-5">
     <!-- input query -->
     <div class="inputGroup flex">
-      <BtnSubmit label="增加" class="pr-2" @submit="onAddHandler" />
-      <OptionSelector class="px-2" :options="options" @onChange="onOptionSelectorChange" />
+      <BtnSubmit label="新增" class="pr-2" @submit="onAddHandler" />
+      <OptionSelector class="px-2" :options="options" @onChange="onEnabledOptionChangeHandler" />
       <BtnSubmit label="搜尋" class="pr-2" @submit="onSearchHandler" />
     </div>
 
@@ -45,7 +45,7 @@
 
     <!-- table -->
     <div class="tableContainer pt-5">
-      <CustomTable :data="agentsListComputed" v-if="isInitFinish" />
+      <CustomTable :data="agentsListComputed" />
     </div>
   </div>
 </template>
@@ -59,35 +59,46 @@ import OptionSelector from "@/components/OptionSelector.vue"
 import FormDialog from '@/components/Dialogs/FormDialog.vue'
 import CustomTable from '@/components/Table/Table.vue'
 
+enum EOptions {
+  all = 0,
+  enabled = 1,
+  disabled = 2
+}
 const options = ref([
   {
-    label: "請選擇",
-    value: null
+    label: "全部",
+    value: EOptions.all
   },
   {
     label: "啟用",
-    value: true
+    value: EOptions.enabled
   },
   {
     label: "禁用",
-    value: false
+    value: EOptions.disabled
   }
 ])
 
-let sourceAgentsList = $ref<IAgent[]>()
+let sourceAgentsList = $ref<IAgent[]>([])
 
 // queryData
-let queryEnabled = $ref<boolean | null>(null)
+let queryData = reactive<{ enabled: number }>({
+  enabled: 0
+})
+let queryEnabled = $ref<number>(0)
 let isInitFinish = $ref(false)
 
 const agentsListComputed = computed(() => {
   if (sourceAgentsList && sourceAgentsList.length) {
-    if (queryEnabled === null) {
+    if (queryData.enabled === EOptions.all) {
       return sourceAgentsList
     }
     return sourceAgentsList.filter(item => {
-      return !!item.enabled === queryEnabled
-      return item
+      if (queryData.enabled === EOptions.enabled) {
+        return item.enabled
+      } else if (queryData.enabled === EOptions.disabled) {
+        return item.enabled === 0
+      }
     })
   }
   return []
@@ -101,13 +112,15 @@ onMounted(async () => {
 });
 
 const onSearchHandler = async () => {
+  queryData.enabled = queryEnabled
+  console.log('queryData.enabled=>', queryData.enabled);
+
+  sourceAgentsList = []
   const res = await getAgentsList();
   sourceAgentsList = res.data
 }
 
-const onOptionSelectorChange = (payload: {
-  value: boolean
-}) => {
+const onEnabledOptionChangeHandler = (payload: { value: number }) => {
   queryEnabled = payload.value
 }
 
@@ -123,6 +136,7 @@ const registerHandler = async () => {
 
     // 新增成功後重取清單
     isInitFinish = false
+    // TODO: need to handle exception
     const res = await getAgentsList();
     sourceAgentsList = res.data
     isInitFinish = true
