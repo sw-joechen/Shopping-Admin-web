@@ -21,12 +21,12 @@ namespace Shopping_Admin_web
         void RegisterCustomRoutes(RouteCollection routes)
         {
             routes.MapPageRoute(
-                "login",
-                "login",
-                "~/login.aspx"
+                "index",
+                "*",
+                "~/Index.html"
             );
             RouteTable.Routes.MapHttpRoute(
-                name: "MemberApi",
+                name: "AgentApi",
                 routeTemplate: "api/{controller}/{action}"
             );
             //routes.MapPageRoute(
