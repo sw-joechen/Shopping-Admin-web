@@ -4,3 +4,4 @@
 /Shopping-Admin-web/client/dist
 /Shopping-Admin-web/bin/*
 /Shopping-Admin-web/obj/*
+*.suo
