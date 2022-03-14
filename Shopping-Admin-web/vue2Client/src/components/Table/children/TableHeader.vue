@@ -1,8 +1,8 @@
 <template>
   <tr class="tableHeader">
-    <div class="th" v-for="(el, index) in header" :key="index" :header="el">
-      <td>{{ $t(`agentList.table.${el.key}`) }}</td>
-    </div>
+    <th class="th" v-for="(el, index) in header" :key="index" :header="el">
+      {{ $t(`agentList.table.${el.key}`) }}
+    </th>
   </tr>
 </template>
 
