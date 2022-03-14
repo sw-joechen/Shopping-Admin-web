@@ -13,10 +13,10 @@
 
     <!-- 新增帳號dialog -->
     <FormDialog
-      v-if="isShowDialog"
-      :isShowDialog="isShowDialog"
+      v-if="isShowAddDialog"
+      :isShowDialog="isShowAddDialog"
       title="新增後台帳號"
-      @toggle="toggleHandler"
+      @toggle="toggleAddDialogHandler"
       @submit="onSubmitHandler"
     >
       <form>
@@ -54,8 +54,15 @@
 
     <!-- table -->
     <div class="tableContainer pt-5">
-      <TableView :datas="agentsListComputed" />
+      <TableView
+        :datas="agentsListComputed"
+        :headersPlaceholder="tableHeaderPlaceholder"
+        @edit="editHandler"
+      />
     </div>
+
+    <!-- 編輯帳號dialog -->
+    <!-- <FormDialog></FormDialog> -->
   </div>
 </template>
 
@@ -81,6 +88,14 @@ export default {
   },
   data: () => {
     return {
+      tableHeaderPlaceholder: [
+        "id",
+        "account",
+        "enabled",
+        "createdDate",
+        "updatedDate",
+        "operation",
+      ],
       options: [
         {
           label: "全部",
@@ -100,7 +115,7 @@ export default {
         enabled: 0,
       },
       queryEnabled: 0,
-      isShowDialog: false,
+      isShowAddDialog: false,
       dialogAccount: "",
       dialogPwd: "",
       isInvalid: false,
@@ -111,6 +126,9 @@ export default {
     this.sourceAgentsList = res.data;
   },
   methods: {
+    editHandler(payload) {
+      console.log("payload==>", payload);
+    },
     async onSearchHandler() {
       this.queryData.enabled = this.queryEnabled;
       console.log("queryData.enabled=>", this.queryData.enabled);
@@ -128,7 +146,7 @@ export default {
         pwd: this.dialogPwd,
       });
       if (res.code === 200) {
-        this.toggleHandler(false);
+        this.toggleAddDialogHandler(false);
         this.dialogAccount = "";
         this.dialogPwd = "";
 
@@ -173,13 +191,13 @@ export default {
       this.isInvalid = false;
     },
     onAddHandler() {
-      this.isShowDialog = !this.isShowDialog;
+      this.isShowAddDialog = !this.isShowAddDialog;
     },
-    toggleHandler(payload) {
-      this.initDialogForm();
-      this.isShowDialog = payload;
+    toggleAddDialogHandler(payload) {
+      this.initAddDialogForm();
+      this.isShowAddDialog = payload;
     },
-    initDialogForm() {
+    initAddDialogForm() {
       this.dialogAccount = "";
       this.dialogPwd = "";
       this.isInvalid = false;

@@ -2,7 +2,12 @@
   <div class="tableView w-full">
     <table class="w-full">
       <TableHeader :header="tableHeaders" v-if="tableHeaders" />
-      <TableRow v-for="(row, index) in tableRows" :key="index" :row="row" />
+      <TableRow
+        v-for="(row, index) in tableRows"
+        :key="index"
+        :row="row"
+        @edit="editHandler"
+      />
     </table>
   </div>
 </template>
@@ -10,7 +15,6 @@
 <script>
 import TableHeader from "./children/TableHeader.vue";
 import TableRow from "./children/TableRow.vue";
-import { DateTime } from "luxon";
 
 export default {
   name: "tableView",
@@ -24,36 +28,65 @@ export default {
       type: Array,
       // default: () => [],
     },
+    headersPlaceholder: {
+      required: true,
+      type: Array,
+    },
+    isOperational: {
+      required: false,
+      type: Boolean,
+      default: true,
+    },
+  },
+  methods: {
+    editHandler(payload) {
+      this.$emit("edit", payload);
+    },
   },
   computed: {
     tableHeaders() {
       if (this.datas.length) {
-        return Object.keys(this.datas[0]).map((header, index) => {
+        let lastIndex = 0;
+        const result = Object.keys(this.datas[0]).map((header, index) => {
+          lastIndex = index;
           return {
             index: index,
             key: header,
           };
         });
+
+        // 新增操作(編輯)標頭
+        if (this.isOperational) {
+          result.push({
+            index: lastIndex++,
+            key: "operation",
+          });
+        }
+        return result;
+      } else {
+        return this.headersPlaceholder.map((el, index) => {
+          return {
+            index: index,
+            key: el,
+          };
+        });
       }
-      return [];
     },
     tableRows() {
       return this.datas.map((obj) => {
-        return Object.keys(obj).map((key, idx2) => {
-          if (key === "createdDate" || key === "updatedDate") {
-            const date = new Date(Object.values(obj)[idx2]);
-            const dt = DateTime.fromJSDate(date);
-
-            return {
-              key: key,
-              value: dt.toFormat("yyyy/MM/dd HH:mm"),
-            };
-          }
+        const result = Object.keys(obj).map((key, idx2) => {
           return {
             key: key,
             value: Object.values(obj)[idx2],
           };
         });
+        if (this.isOperational) {
+          result.push({
+            key: "operation",
+            value: "",
+          });
+        }
+        return result;
       });
     },
   },

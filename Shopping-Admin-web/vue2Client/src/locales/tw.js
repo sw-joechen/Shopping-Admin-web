@@ -1,4 +1,7 @@
 export default {
+  common: {
+    edit: "編輯",
+  },
   agentList: {
     table: {
       id: "ID",
@@ -7,6 +10,7 @@ export default {
       disabled: "禁用",
       createdDate: "創建時間",
       updatedDate: "更新時間",
+      operation: "操作",
     },
   },
 };
