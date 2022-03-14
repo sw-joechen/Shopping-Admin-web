@@ -7,8 +7,10 @@
       :key="index"
       :to="el.to"
       class="h-14 leading-[56px] text-center text-green2 font-bold text-lg hover:text-white hover:bg-green1 transition-colors duration-300"
-      >{{ el.name }}</router-link
+      :class="{ 'bg-green1': isCurrentRouteActive(el.to.name) }"
     >
+      {{ el.name }}
+    </router-link>
   </div>
 </template>
 
@@ -23,6 +25,16 @@ export default {
         { name: "用戶帳號管理", to: { name: "membersList" } },
       ],
     };
+  },
+  methods: {
+    isCurrentRouteActive(route) {
+      if (route === "home" && this.$route.name === "welcome") {
+        return true;
+      } else if (route === this.$route.name) {
+        return true;
+      }
+      return false;
+    },
   },
 };
 </script>
