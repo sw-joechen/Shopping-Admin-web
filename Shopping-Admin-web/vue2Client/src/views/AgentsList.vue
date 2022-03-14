@@ -3,11 +3,11 @@
     <!-- input query -->
     <div class="inputGroup flex">
       <BtnSubmit label="新增" class="pr-2" @submit="onAddHandler" />
-      <!-- <OptionSelector
+      <OptionSelector
         class="px-2"
         :options="options"
         @onChange="onEnabledOptionChangeHandler"
-      /> -->
+      />
       <BtnSubmit label="搜尋" class="pr-2" @submit="onSearchHandler" />
     </div>
 
@@ -63,6 +63,7 @@ import BtnSubmit from "@/components/BtnPrimary.vue";
 import FormDialog from "@/components/Dialogs/DialogView.vue";
 import { getAgentsList, registerAgent } from "@/APIs/Agent";
 import TableView from "@/components/Table/TableView.vue";
+import OptionSelector from "@/components/OptionSelector.vue";
 const EOptions = {
   all: 0,
   enabled: 1,
@@ -75,6 +76,7 @@ export default {
     BtnSubmit,
     FormDialog,
     TableView,
+    OptionSelector,
   },
   data: () => {
     return {
