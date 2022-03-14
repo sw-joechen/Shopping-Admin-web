@@ -20,7 +20,7 @@ export default {
   data: () => {
     return {
       routes: [
-        { name: "首頁", to: { name: "home" } },
+        { name: "首頁", to: { name: "welcome" } },
         { name: "後台帳號管理", to: { name: "agentsList" } },
         { name: "用戶帳號管理", to: { name: "membersList" } },
       ],
@@ -28,9 +28,7 @@ export default {
   },
   methods: {
     isCurrentRouteActive(route) {
-      if (route === "home" && this.$route.name === "welcome") {
-        return true;
-      } else if (route === this.$route.name) {
+      if (route === this.$route.name) {
         return true;
       }
       return false;
