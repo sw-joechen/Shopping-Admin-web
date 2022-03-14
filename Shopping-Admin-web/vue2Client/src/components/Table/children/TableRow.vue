@@ -58,7 +58,7 @@ export default {
     dateFormatter(payload) {
       const date = new Date(payload.value);
       const dt = DateTime.fromJSDate(date);
-      return dt.toFormat("yyyy/MM/dd HH:mm");
+      return dt.toFormat("yyyy/MM/dd HH:mm:ss");
     },
   },
 };
