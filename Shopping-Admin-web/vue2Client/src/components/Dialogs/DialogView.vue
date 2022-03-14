@@ -3,7 +3,6 @@
     <!-- overlay -->
     <div
       class="overlay fixed top-0 left-0 w-full h-full bg-black1 pointer-events-auto"
-      v-if="isShowDialog"
       @click="toggleHandler"
     ></div>
 
@@ -13,7 +12,6 @@
     >
       <div
         class="dialog_card relative max-w-[560px] rounded-[4px] bg-white p-4 pointer-events-auto"
-        v-if="isShowDialog"
       >
         <div class="mb-5 text-2xl">{{ title }}</div>
         <div class="form">

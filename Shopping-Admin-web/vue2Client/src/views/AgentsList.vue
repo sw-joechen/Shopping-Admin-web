@@ -13,6 +13,7 @@
 
     <!-- 新增帳號dialog -->
     <FormDialog
+      v-if="isShowDialog"
       :isShowDialog="isShowDialog"
       title="新增後台帳號"
       @toggle="toggleHandler"
