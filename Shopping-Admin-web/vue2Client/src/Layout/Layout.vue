@@ -18,6 +18,7 @@
       </header>
       <div class="main">
         <ConfirmDialog
+          v-if="isShowLogOutDialog"
           :is-show-dialog="isShowLogOutDialog"
           title="確定要登出嗎"
           @toggle="toggleHandler"
