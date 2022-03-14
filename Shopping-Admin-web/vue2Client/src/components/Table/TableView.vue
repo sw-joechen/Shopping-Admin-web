@@ -10,6 +10,8 @@
 <script>
 import TableHeader from "./children/TableHeader.vue";
 import TableRow from "./children/TableRow.vue";
+import { DateTime } from "luxon";
+
 export default {
   name: "tableView",
   components: {
@@ -38,6 +40,15 @@ export default {
     tableRows() {
       return this.datas.map((obj) => {
         return Object.keys(obj).map((key, idx2) => {
+          if (key === "createdDate" || key === "updatedDate") {
+            const date = new Date(Object.values(obj)[idx2]);
+            const dt = DateTime.fromJSDate(date);
+
+            return {
+              key: key,
+              value: dt.toFormat("yyyy/MM/dd HH:mm"),
+            };
+          }
           return {
             key: key,
             value: Object.values(obj)[idx2],
