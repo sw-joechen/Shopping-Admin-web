@@ -161,54 +161,44 @@ namespace Shopping_Admin_web.Controllers
                 return result.Stringify();
             }
 
-            if (payload.account.Length == 0 || payload.pwd.Length==0 || payload.role.Length ==0)
+            if (payload.account.Length == 0 )
             {
-                result.Set(100, "字串不可為空字串");
+                result.Set(100, "帳號不可為空字串");
                 return result.Stringify();
             }
 
-            // 檢查密碼是否符合規則
-            PwdValidator pwdValidator = new PwdValidator(payload.pwd);
-            if (pwdValidator.IsPwdValid()) {
-                // Hash password
-                string hashedPwd = SecurePasswordHasher.Hash(payload.pwd);
-
-                // 檢查完參數再進到db
-                try
+            // 檢查完參數再進到db
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectString))
                 {
-                    using (SqlConnection conn = new SqlConnection(connectString))
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
                     {
-                        conn.Open();
-                        using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue("@account", payload.account);
-                            cmd.Parameters.AddWithValue("@enabled", payload.enabled);
-                            cmd.Parameters.AddWithValue("@role", payload.role);
-                            cmd.Parameters.AddWithValue("@pwd", hashedPwd);
-                            SqlDataReader r = cmd.ExecuteReader();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", payload.account);
+                        cmd.Parameters.AddWithValue("@enabled", payload.enabled);
+                        cmd.Parameters.AddWithValue("@role", payload.role);
+                        SqlDataReader r = cmd.ExecuteReader();
 
-                            if (r.Read())
+                        if (r.Read())
+                        {
+                            object obj = new
                             {
-                                object obj = new
-                                {
-                                    account = r["f_account"],
-                                    role = r["f_role"],
-                                    enabled = r["f_enabled"]
-                                };
-                                result.Set(200, "success", obj);
-                            }
+                                account = r["f_account"],
+                                role = r["f_role"],
+                                enabled = r["f_enabled"]
+                            };
+                            result.Set(200, "success", obj);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"ex: {ex}");
-                    result.Set(100, "網路錯誤");
-                }
             }
-
-            
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(100, "網路錯誤");
+            }          
             return result.Stringify();
         }
 
@@ -219,6 +209,7 @@ namespace Shopping_Admin_web.Controllers
         [Route("api/{controller}/getAgentsList")]
         public string GetAgentsList([FromBody] GetAgent payload)
         {
+            Debug.WriteLine(JsonConvert.SerializeObject(payload));
             Result result = new Result(100, "fail");
             // 搜尋指定agent
             if (payload != null && payload.account!= null && payload.account.Length !=0)
