@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Shopping_Admin_web.Class
+﻿namespace Shopping_Admin_web.Class
 {
     public class AgentsList
     {
@@ -12,6 +7,6 @@ namespace Shopping_Admin_web.Class
         public int enabled { get; set; }
         public string createdDate { get; set; }
         public string updatedDate { get; set; }
-        //public string role { get; set; }
+        public string role { get; set; }
     }
 }

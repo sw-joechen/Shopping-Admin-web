@@ -5,11 +5,8 @@ using System.Web;
 
 namespace Shopping_Admin_web.Class
 {
-    public class AgentUpdate
+    public class GetAgent
     {
         public string account { get; set; }
-        public bool enabled { get; set; }
-        public string role { get; set; }
-        public string pwd { get; set; }
     }
 }

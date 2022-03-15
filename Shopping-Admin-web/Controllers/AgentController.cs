@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Reflection;
 using System.Web.Http;
 
 namespace Shopping_Admin_web.Controllers
@@ -22,10 +23,17 @@ namespace Shopping_Admin_web.Controllers
         [Route("api/{controller}/registerAgent")]
         public string RegisterAgent([FromBody] Agent payload)
         {
+            Debug.WriteLine("payload=> ", payload.account);
             Result result = new Result(100, "params required");
             if (payload == null)
             {
-                return JsonConvert.SerializeObject(result);
+                return result.Stringify();
+            }
+
+            if (payload.account.Length == 0 && payload.pwd.Length == 0)
+            {
+                result.Set(100, "empty account or pwd");
+                return result.Stringify();
             }
 
             AccountValidator accountValidator = new AccountValidator(payload.account);
@@ -91,7 +99,7 @@ namespace Shopping_Admin_web.Controllers
             if (payload == null)
             {
                 result.Set(100, "params is required");
-                return JsonConvert.SerializeObject(result);
+                return result.Stringify();
             }
             try {
                 using (SqlConnection conn = new SqlConnection(connectString))
@@ -146,41 +154,61 @@ namespace Shopping_Admin_web.Controllers
         public string UpdateAgent([FromBody] AgentUpdate payload)
         {
             Result result = new Result(100, "fail");
+            //Debug.WriteLine("SerializeObject payload=> ", JsonConvert.SerializeObject(payload));
             if (payload == null)
             {
-                result.Set(100, "params is required");
-                return JsonConvert.SerializeObject(result);
+                result.Set(100, "params are required");
+                return result.Stringify();
             }
 
-            try{            
-                using (SqlConnection conn = new SqlConnection(connectString)) {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@account", payload.account);
-                        cmd.Parameters.AddWithValue("@enabled", payload.enabled);
-                        cmd.Parameters.AddWithValue("@role", payload.role);
-                        SqlDataReader r = cmd.ExecuteReader();
+            if (payload.account.Length == 0 || payload.pwd.Length==0 || payload.role.Length ==0)
+            {
+                result.Set(100, "字串不可為空字串");
+                return result.Stringify();
+            }
 
-                        if (r.Read())
+            // 檢查密碼是否符合規則
+            PwdValidator pwdValidator = new PwdValidator(payload.pwd);
+            if (pwdValidator.IsPwdValid()) {
+                // Hash password
+                string hashedPwd = SecurePasswordHasher.Hash(payload.pwd);
+
+                // 檢查完參數再進到db
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectString))
+                    {
+                        conn.Open();
+                        using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
                         {
-                            object obj = new
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@account", payload.account);
+                            cmd.Parameters.AddWithValue("@enabled", payload.enabled);
+                            cmd.Parameters.AddWithValue("@role", payload.role);
+                            cmd.Parameters.AddWithValue("@pwd", hashedPwd);
+                            SqlDataReader r = cmd.ExecuteReader();
+
+                            if (r.Read())
                             {
-                                account = r["f_account"],
-                                role = r["f_role"],
-                                enabled = r["f_enabled"]
-                            };
-                            result.Set(200, "success", obj);
-                        }                    
+                                object obj = new
+                                {
+                                    account = r["f_account"],
+                                    role = r["f_role"],
+                                    enabled = r["f_enabled"]
+                                };
+                                result.Set(200, "success", obj);
+                            }
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"ex: {ex}");
+                    result.Set(100, "網路錯誤");
+                }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ex: {ex}");
-                result.Set(100, "網路錯誤");
-            }
+
+            
             return result.Stringify();
         }
 
@@ -189,44 +217,88 @@ namespace Shopping_Admin_web.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/getAgentsList")]
-        public string GetAgentsList()
+        public string GetAgentsList([FromBody] GetAgent payload)
         {
             Result result = new Result(100, "fail");
-            List<AgentsList> agentList = new List<AgentsList> { };
-
-            try
+            // 搜尋指定agent
+            if (payload != null && payload.account!= null && payload.account.Length !=0)
             {
-                using (SqlConnection conn = new SqlConnection(connectString)) { 
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("get_agentList", conn))
+                List<SearchAgent> searchAgentList = new List<SearchAgent> { };
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectString))
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        SqlDataReader r = cmd.ExecuteReader();
-
-                        if (r.HasRows)
+                        conn.Open();
+                        using (SqlCommand cmd = new SqlCommand("search_agent", conn))
                         {
-                            while (r.Read())
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@account", payload.account);
+                            SqlDataReader r = cmd.ExecuteReader();
+
+                            if (r.HasRows)
                             {
-                                agentList.Add(new AgentsList
+                                while (r.Read())
                                 {
-                                    id = r["f_id"].ToString(),
-                                    account = r["f_account"].ToString(),
-                                    enabled = Convert.ToInt16(r["f_enabled"]),
-                                    createdDate = r["f_createdDate"].ToString(),
-                                    updatedDate = r["f_updatedDate"].ToString()
-                                    //role = r["f_role"].ToString()
-                                });
-                                Debug.WriteLine($"{r["f_id"]}, {r["f_account"]}, {r["f_enabled"]}, {r["f_createdDate"]}, {r["f_updatedDate"]}");
+                                    searchAgentList.Add(new SearchAgent
+                                    {
+                                        id = r["f_id"].ToString(),
+                                        account = r["f_account"].ToString(),
+                                        enabled = Convert.ToInt16(r["f_enabled"]),
+                                        createdDate = r["f_createdDate"].ToString(),
+                                        updatedDate = r["f_updatedDate"].ToString(),
+                                        role = r["f_role"].ToString(),
+                                        pwd = r["f_pwd"].ToString()
+                                    });
+                                }
+                                result.Set(200, "success", searchAgentList);
                             }
-                            result.Set(200, "success", agentList);
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"ex: {ex}");
+                    result.Set(100, "網路錯誤");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine($"ex: {ex}");
-                result.Set(100, "網路錯誤");
+                List<AgentsList> agentList = new List<AgentsList> { };
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectString))
+                    {
+                        conn.Open();
+                        using (SqlCommand cmd = new SqlCommand("get_agentList", conn))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            SqlDataReader r = cmd.ExecuteReader();
+
+                            if (r.HasRows)
+                            {
+                                while (r.Read())
+                                {
+                                    agentList.Add(new AgentsList
+                                    {
+                                        id = r["f_id"].ToString(),
+                                        account = r["f_account"].ToString(),
+                                        enabled = Convert.ToInt16(r["f_enabled"]),
+                                        createdDate = r["f_createdDate"].ToString(),
+                                        updatedDate = r["f_updatedDate"].ToString(),
+                                        role = r["f_role"].ToString()
+                                    });
+                                }
+                                result.Set(200, "success", agentList);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"ex: {ex}");
+                    result.Set(100, "網路錯誤");
+                }
+
             }
 
             return result.Stringify();
