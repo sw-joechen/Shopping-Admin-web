@@ -28,10 +28,25 @@ export const LoginAgent = (data) => {
     });
 };
 
-export const getAgentsList = () => {
+export const getAgentsList = (account) => {
   return request({
     method: "post",
     url: "/api/agent/getAgentsList",
+    data: account ? account : null,
+  })
+    .then((res) => {
+      return JSON.parse(res.data);
+    })
+    .catch((err) => {
+      console.log("err: ", err);
+    });
+};
+
+export const updateAgent = (data) => {
+  return request({
+    method: "post",
+    url: "/api/agent/updateAgent",
+    data,
   })
     .then((res) => {
       return JSON.parse(res.data);

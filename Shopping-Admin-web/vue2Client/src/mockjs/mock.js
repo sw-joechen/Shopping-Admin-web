@@ -1,10 +1,21 @@
 import Mock from "mockjs";
 
-const getAgentsList = () => {
-  const result = {
-    code: 200,
-    msg: "success",
-    data: [
+const getAgentsList = (payload) => {
+  let tempData = [];
+  if (payload.body) {
+    const params = JSON.parse(payload.body);
+    if (params.account) {
+      tempData.push({
+        id: 1,
+        account: params.account,
+        enabled: 1,
+        createdDate: "2022-03-07T15:41:06.280",
+        updatedDate: "2022-03-07T15:41:06.280",
+        pwd: "dwqopdkpoqw",
+      });
+    }
+  } else {
+    tempData = [
       {
         id: 1,
         account: "a12345",
@@ -40,7 +51,12 @@ const getAgentsList = () => {
         createdDate: "2022-03-07T15:59:16.037",
         updatedDate: "2022-03-07T15:59:16.037",
       },
-    ],
+    ];
+  }
+  const result = {
+    code: 200,
+    msg: "success",
+    data: tempData,
   };
   return JSON.stringify(result);
 };
@@ -65,11 +81,27 @@ const registerAgent = () => {
   return JSON.stringify(result);
 };
 
-if (process.env.NODE_ENV) {
+const updateAgent = (payload) => {
+  const params = JSON.parse(payload.body);
+  const result = {
+    code: 200,
+    msg: "success",
+    data: {
+      account: params.account,
+      role: params.role,
+      enabled: params.enabled,
+    },
+  };
+  return JSON.stringify(result);
+};
+
+if (process.env.NODE_ENV === "development") {
   // 拦截该url
   Mock.mock("/api/agent/getAgentsList", getAgentsList);
 
   Mock.mock("/api/agent/loginAgent", loginAgent);
 
   Mock.mock("/api/agent/registerAgent", registerAgent);
+
+  Mock.mock("/api/agent/updateAgent", updateAgent);
 }

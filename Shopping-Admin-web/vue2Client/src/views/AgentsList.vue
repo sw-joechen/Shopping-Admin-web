@@ -17,7 +17,7 @@
       :isShowDialog="isShowAddDialog"
       title="新增後台帳號"
       @toggle="toggleAddDialogHandler"
-      @submit="onSubmitHandler"
+      @submit="onSubmitAddDialogHandler"
     >
       <form>
         <div class="inputGroup flex">
@@ -25,7 +25,7 @@
           <input
             v-model="dialogAccount"
             type="text"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
+            class="input"
             placeholder="請輸入帳號"
             required
             @keypress="changeHandler"
@@ -40,7 +40,7 @@
           <input
             v-model="dialogPwd"
             type="password"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none"
+            class="input"
             placeholder="請輸入密碼"
             required
             @keypress="changeHandler"
@@ -62,16 +62,44 @@
     </div>
 
     <!-- 編輯帳號dialog -->
-    <!-- <FormDialog></FormDialog> -->
+    <FormDialog
+      v-if="isShowEditDialog"
+      :isShowDialog="isShowEditDialog"
+      title="編輯帳號"
+      @toggle="toggleEditDialogHandler"
+      @submit="onSubmitEditDialogHandler"
+    >
+      <div class="wrapper">
+        <div class="inputGroup flex">
+          <label class="whitespace-nowrap pr-3 leading-[42px]">帳號</label>
+          <input
+            type="text"
+            class="input"
+            readonly
+            :placeholder="oldAccountInfo.account"
+          />
+        </div>
+        <div class="inputGroup flex">
+          <label class="whitespace-nowrap pr-3 leading-[42px]">禁用</label>
+          <SwtichView
+            :toggle="dialogEditEnabled"
+            @toggle="onDialogEditToggle"
+          />
+          <label class="whitespace-nowrap pr-3 leading-[42px]">啟用</label>
+        </div>
+      </div>
+    </FormDialog>
   </div>
 </template>
 
 <script>
 import BtnSubmit from "@/components/BtnPrimary.vue";
 import FormDialog from "@/components/Dialogs/DialogView.vue";
-import { getAgentsList, registerAgent } from "@/APIs/Agent";
+import { getAgentsList, registerAgent, updateAgent } from "@/APIs/Agent";
 import TableView from "@/components/Table/TableView.vue";
 import OptionSelector from "@/components/OptionSelector.vue";
+import SwtichView from "@/components/SwtichView.vue";
+import { isAccountValid, isPwdValid } from "../Utils/validators";
 const EOptions = {
   all: 0,
   enabled: 1,
@@ -85,6 +113,7 @@ export default {
     FormDialog,
     TableView,
     OptionSelector,
+    SwtichView,
   },
   data: () => {
     return {
@@ -119,20 +148,69 @@ export default {
       dialogAccount: "",
       dialogPwd: "",
       isInvalid: false,
+      isShowEditDialog: false,
+
+      dialogEditPwd: "",
+      dialogEditEnabled: true,
+      oldAccountInfo: {
+        account: "",
+        enabled: null,
+        pwd: "",
+        role: "",
+      },
     };
   },
   async mounted() {
     const res = await getAgentsList();
-    this.sourceAgentsList = res.data;
+    if (res && res.data) this.sourceAgentsList = res.data;
   },
   methods: {
-    editHandler(payload) {
-      console.log("payload==>", payload);
+    clearEditDialog() {
+      this.oldAccountInfo = {};
+      this.dialogEditPwd = "";
+      this.dialogEditEnabled = true;
     },
+    toggleEditDialogHandler(payload) {
+      this.isShowEditDialog = payload;
+    },
+    async onSubmitEditDialogHandler() {
+      const res = await updateAgent({
+        account: this.oldAccountInfo.account,
+        enabled: this.dialogEditEnabled,
+        role: this.oldAccountInfo.role,
+      });
+      if (res.code === 200) {
+        const response = await getAgentsList();
+        this.sourceAgentsList = response.data;
+      }
+      this.toggleEditDialogHandler(!this.isShowEditDialog);
+      this.clearEditDialog();
+    },
+    onDialogEditToggle(value) {
+      this.dialogEditEnabled = value;
+    },
+    async editHandler(accountInfo) {
+      this.toggleEditDialogHandler(!this.isShowEditDialog);
+      accountInfo.forEach((item) => {
+        if (item.key === "account") {
+          this.oldAccountInfo.account = item.value;
+        }
+      });
+
+      // 取得欲編輯帳號的完整帳號資訊
+      const res = await getAgentsList({
+        account: this.oldAccountInfo.account,
+      });
+      if (res.code === 200) {
+        this.oldAccountInfo.pwd = res.data[0].pwd;
+        this.oldAccountInfo.enabled = res.data[0].enabled;
+        this.oldAccountInfo.role = res.data[0].role;
+        this.onDialogEditToggle(!!res.data[0].enabled);
+      }
+    },
+
     async onSearchHandler() {
       this.queryData.enabled = this.queryEnabled;
-      console.log("queryData.enabled=>", this.queryData.enabled);
-
       this.sourceAgentsList = [];
       const res = await getAgentsList();
       this.sourceAgentsList = res.data;
@@ -151,10 +229,13 @@ export default {
         this.dialogPwd = "";
 
         // 新增成功後重取清單
-        // TODO: need to handle exception
         const res = await getAgentsList();
-        this.sourceAgentsList = res.data;
-        alert("新增成功");
+        if (res.code === 200) {
+          this.sourceAgentsList = res.data;
+          alert("新增成功");
+        } else {
+          alert("網路錯誤");
+        }
       } else {
         switch (res.code) {
           case 101: {
@@ -168,18 +249,11 @@ export default {
         }
       }
     },
-    onSubmitHandler() {
+    onSubmitAddDialogHandler() {
       let isValid = false;
-      // 帳號規則: 英文開頭, 英數皆可 限6~20字元
-      const accountRegex = new RegExp("^[A-Za-z][A-Za-z0-9]{5,19}");
-
-      // 密碼規則: 6 位數以上，並且至少包含大寫字母、小寫字母、數字各一
-      const pwdRegex = new RegExp(
-        "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$"
-      );
 
       isValid =
-        accountRegex.test(this.dialogAccount) && pwdRegex.test(this.dialogPwd);
+        isAccountValid(this.dialogAccount) && isPwdValid(this.dialogPwd);
 
       if (isValid) {
         this.registerHandler();
@@ -227,6 +301,9 @@ export default {
 .agentsList {
   .inputGroup {
     @apply p-3 pl-0;
+    .input {
+      @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none;
+    }
   }
 }
 </style>
