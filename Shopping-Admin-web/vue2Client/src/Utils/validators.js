@@ -7,7 +7,7 @@ export const isAccountValid = (account) => {
 
 // 密碼規則: 6 位數以上，並且至少包含大寫字母、小寫字母、數字各一
 const pwdRegex = new RegExp(
-  "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$"
+  "^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,}$"
 );
 
 export const isPwdValid = (pwd) => {
