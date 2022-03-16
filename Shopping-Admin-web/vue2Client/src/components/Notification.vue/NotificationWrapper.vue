@@ -2,7 +2,7 @@
   <div
     class="notificationWrapper fixed pointer-events-none w-[600px] min-h-full right-[1em] top-[1em]"
   >
-    <transition-group name="list-complete" tag="div" class="flex flex-col">
+    <transition-group name="fade" tag="div" class="flex flex-col">
       <NotifyView
         v-for="el in list"
         :key="el.id"
@@ -64,15 +64,15 @@ export default {
 .notifyView {
   transition: all 0.3s;
 }
-.list-complete-enter
-/* .list-complete-leave-active for below version 2.1.8 */ {
+.fade-enter
+/* .fade-leave-active for below version 2.1.8 */ {
   transform: translateX(300px);
 }
-.list-complete-leave-to {
+.fade-leave-to {
   opacity: 0;
   transform: translateX(500px);
 }
-.list-complete-leave-active {
+.fade-leave-active {
   position: absolute;
 }
 </style>
