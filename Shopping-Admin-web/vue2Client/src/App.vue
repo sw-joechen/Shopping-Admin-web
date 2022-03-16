@@ -1,8 +1,20 @@
 <template>
   <div id="app">
     <router-view />
+
+    <NotificationWrapper />
   </div>
 </template>
+
+<script>
+import NotificationWrapper from "@/components/Notification.vue/NotificationWrapper.vue";
+
+export default {
+  components: {
+    NotificationWrapper,
+  },
+};
+</script>
 
 <style lang="scss">
 #app {
