@@ -100,6 +100,7 @@ import TableView from "@/components/Table/TableView.vue";
 import OptionSelector from "@/components/OptionSelector.vue";
 import SwtichView from "@/components/SwtichView.vue";
 import { isAccountValid, isPwdValid } from "../Utils/validators";
+import errorList from "../ErrorCodeList";
 const EOptions = {
   all: 0,
   enabled: 1,
@@ -162,7 +163,13 @@ export default {
   },
   async mounted() {
     const res = await getAgentsList();
-    if (res && res.data) this.sourceAgentsList = res.data;
+    if (res && res.code === 200) this.sourceAgentsList = res.data;
+    else {
+      this.$store.commit("eventBus/Push", {
+        type: "error",
+        content: errorList[res.code],
+      });
+    }
   },
   methods: {
     clearEditDialog() {
@@ -181,7 +188,19 @@ export default {
       });
       if (res.code === 200) {
         const response = await getAgentsList();
-        this.sourceAgentsList = response.data;
+        if (response.code === 200) {
+          this.sourceAgentsList = response.data;
+        } else {
+          this.$store.commit("eventBus/Push", {
+            type: "error",
+            content: errorList[res.code],
+          });
+        }
+      } else {
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: errorList[res.code],
+        });
       }
       this.toggleEditDialogHandler(!this.isShowEditDialog);
       this.clearEditDialog();
@@ -206,6 +225,11 @@ export default {
         this.oldAccountInfo.enabled = res.data[0].enabled;
         this.oldAccountInfo.role = res.data[0].role;
         this.onDialogEditToggle(!!res.data[0].enabled);
+      } else {
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: errorList[res.code],
+        });
       }
     },
 
@@ -213,7 +237,13 @@ export default {
       this.queryData.enabled = this.queryEnabled;
       this.sourceAgentsList = [];
       const res = await getAgentsList();
-      this.sourceAgentsList = res.data;
+      if (res.code === 200) this.sourceAgentsList = res.data;
+      else {
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: errorList[res.code],
+        });
+      }
     },
     onEnabledOptionChangeHandler(payload) {
       this.queryEnabled = payload.value;
@@ -232,21 +262,21 @@ export default {
         const res = await getAgentsList();
         if (res.code === 200) {
           this.sourceAgentsList = res.data;
-          alert("新增成功");
+          this.$store.commit("eventBus/Push", {
+            type: "success",
+            content: "新增成功",
+          });
         } else {
-          alert("網路錯誤");
+          this.$store.commit("eventBus/Push", {
+            type: "error",
+            content: errorList[res.code],
+          });
         }
       } else {
-        switch (res.code) {
-          case 101: {
-            alert("帳號已被註冊過了");
-            break;
-          }
-          default: {
-            alert("發生預期外的錯誤");
-            break;
-          }
-        }
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: errorList[res.code],
+        });
       }
     },
     onSubmitAddDialogHandler() {
