@@ -27,6 +27,8 @@
         <router-view />
       </div>
     </div>
+
+    <NotificationWrapper />
   </div>
 </template>
 
@@ -34,13 +36,14 @@
 import Menu from "@/components/MenuView.vue";
 import LogOutBtn from "@/components/BtnPrimary.vue";
 import ConfirmDialog from "@/components/Dialogs/DialogView.vue";
-
+import NotificationWrapper from "@/components/Notification.vue/NotificationWrapper.vue";
 export default {
-  name: "HomeView",
+  name: "LayoutView",
   components: {
     Menu,
     LogOutBtn,
     ConfirmDialog,
+    NotificationWrapper,
   },
   data: () => {
     return {
