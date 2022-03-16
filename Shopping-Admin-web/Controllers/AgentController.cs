@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Reflection;
 using System.Web.Http;
 
 namespace Shopping_Admin_web.Controllers
@@ -23,7 +22,6 @@ namespace Shopping_Admin_web.Controllers
         [Route("api/{controller}/registerAgent")]
         public string RegisterAgent([FromBody] Agent payload)
         {
-            Debug.WriteLine("payload=> ", payload.account);
             Result result = new Result(100, "params required");
             if (payload == null)
             {
@@ -32,7 +30,7 @@ namespace Shopping_Admin_web.Controllers
 
             if (payload.account.Length == 0 && payload.pwd.Length == 0)
             {
-                result.Set(100, "empty account or pwd");
+                result.Set(102, "empty account or pwd");
                 return result.Stringify();
             }
 
@@ -71,19 +69,19 @@ namespace Shopping_Admin_web.Controllers
                         } 
                         else
                         {
-                            result.Set(sqlResponse, "fail");
+                            result.Set(101, "網路錯誤");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"ex: {ex}");
-                    result.Set(100, "網路錯誤");
+                    result.Set(101, "網路錯誤");
                 }                
             }
             else
             {
-                result.Set(100, "account, pwd not valid");
+                result.Set(103, "account, pwd not valid");
             }
             return result.Stringify();
         }
@@ -126,12 +124,12 @@ namespace Shopping_Admin_web.Controllers
                             }
                             else
                             {
-                                result.Set(100, "wrong password");
+                                result.Set(104, "wrong password");
                             }
                         }
                         else
                         {
-                            result.Set(100, "member not found");
+                            result.Set(105, "member not found");
                         }
                         // 關閉連線
                         conn.Close();
@@ -140,7 +138,7 @@ namespace Shopping_Admin_web.Controllers
             }
             catch (Exception ex) {
                 Debug.WriteLine($"ex: {ex}");
-                result.Set(100, "網路錯誤");
+                result.Set(101, "網路錯誤");
             }
 
             return result.Stringify();
@@ -163,7 +161,7 @@ namespace Shopping_Admin_web.Controllers
 
             if (payload.account.Length == 0 )
             {
-                result.Set(100, "帳號不可為空字串");
+                result.Set(106, "帳號不可為空字串");
                 return result.Stringify();
             }
 
@@ -197,7 +195,7 @@ namespace Shopping_Admin_web.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine($"ex: {ex}");
-                result.Set(100, "網路錯誤");
+                result.Set(101, "網路錯誤");
             }          
             return result.Stringify();
         }
@@ -249,7 +247,7 @@ namespace Shopping_Admin_web.Controllers
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"ex: {ex}");
-                    result.Set(100, "網路錯誤");
+                    result.Set(101, "網路錯誤");
                 }
             }
             else
