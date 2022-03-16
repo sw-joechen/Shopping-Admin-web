@@ -43,6 +43,7 @@
 <script>
 import BtnLogin from "@/components/BtnPrimary.vue";
 import { LoginAgent } from "../APIs/Agent";
+import errorList from "../ErrorCodeList";
 export default {
   name: "loginView",
   components: {
@@ -57,7 +58,11 @@ export default {
   methods: {
     async LoginHandler() {
       if (!this.account.length || !this.pwd.length) {
-        return alert("帳號密碼不可空白");
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: errorList[102],
+        });
+        return;
       }
       const res = await LoginAgent({
         account: this.account,
@@ -72,7 +77,10 @@ export default {
 
         this.$router.push({ name: "home" });
       } else {
-        alert("帳號密碼有誤");
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: errorList[res.code],
+        });
       }
     },
   },
