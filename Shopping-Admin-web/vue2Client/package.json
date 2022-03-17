@@ -7,9 +7,9 @@
     "build": "vue-cli-service build && npm run after-build",
     "lint": "vue-cli-service lint",
     "dev": "npm run serve",
-    "after-build": "mv -f dist/* ../",
-    "rm-cssDir": "rm -ir ../css",
-    "rm-jsDir": "rm -ir ../js",
+    "after-build": "npm run rm-cssDir && npm run rm-jsDir && mv -f dist/* ../",
+    "rm-cssDir": "rm -r ../css",
+    "rm-jsDir": "rm -r ../js",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
   },
   "dependencies": {
