@@ -294,6 +294,7 @@ namespace Shopping_Admin_web.Controllers
         [Route("api/{controller}/updateAgent")]
         public string UpdateAgent([FromBody] AgentUpdate payload)
         {
+            var dict = new Dictionary<string, object>();
             Result result = new Result(100, "fail");
             //Debug.WriteLine("SerializeObject payload=> ", JsonConvert.SerializeObject(payload));
             if (payload == null)
@@ -308,7 +309,43 @@ namespace Shopping_Admin_web.Controllers
                 return result.Stringify();
             }
 
-            // 檢查完參數再進到db
+            // 檢查完參數再進庫撈使用者
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("search_agent", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", payload.account);
+                        SqlDataReader r = cmd.ExecuteReader();
+                        if (r.Read())
+                        {
+                            dict["id"] = r["f_id"];
+                            dict["account"] = r["f_account"];
+                            dict["pwd"] = r["f_pwd"];
+                            dict["enabled"] = r["f_enabled"];
+                            dict["createdDate"] = r["f_createdDate"];
+                            dict["updatedDate"] = r["f_updatedDate"];
+                            dict["role"] = r["f_role"];
+                            dict["count"] = r["f_count"];
+                        }
+                        else
+                        {
+                            result.Set(105, "member not found");
+                        }
+                        // 關閉連線
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(101, "網路錯誤");
+            }
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectString))
@@ -320,17 +357,18 @@ namespace Shopping_Admin_web.Controllers
                         cmd.Parameters.AddWithValue("@account", payload.account);
                         cmd.Parameters.AddWithValue("@enabled", payload.enabled);
                         cmd.Parameters.AddWithValue("@role", payload.role);
+                        cmd.Parameters.AddWithValue("@count", dict["count"]);
                         SqlDataReader r = cmd.ExecuteReader();
 
                         if (r.Read())
                         {
-                            object obj = new
-                            {
-                                account = r["f_account"],
-                                role = r["f_role"],
-                                enabled = r["f_enabled"]
-                            };
-                            result.Set(200, "success", obj);
+                            result.Set(200, "success", 
+                                new {
+                                    account = r["f_account"],
+                                    role = r["f_role"],
+                                    enabled = r["f_enabled"]
+                                }
+                            );
                         }
                     }
                 }

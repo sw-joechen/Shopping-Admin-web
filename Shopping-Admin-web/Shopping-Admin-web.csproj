@@ -98,11 +98,13 @@
     <Compile Include="Class\AgentsList.cs" />
     <Compile Include="Class\AgentUpdate.cs" />
     <Compile Include="Class\Member.cs" />
+    <Compile Include="Class\Product.cs" />
     <Compile Include="Class\Result.cs" />
     <Compile Include="Class\GetAgent.cs" />
     <Compile Include="Class\SearchAgent.cs" />
     <Compile Include="Controllers\AgentController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
