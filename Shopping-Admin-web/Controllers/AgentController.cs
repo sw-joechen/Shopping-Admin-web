@@ -136,9 +136,16 @@ namespace Shopping_Admin_web.Controllers
                 result.Set(101, "網路錯誤");
             }
 
+            // check status
+            if (Convert.ToInt16(dict["enabled"]) == 0)
+            {
+                result.Set(108, "the account is disabled");
+                return result.Stringify();
+            }
+
             // check >= 3
             if (Convert.ToInt16(dict["count"]) >= 3) {
-                result.Set(107, "error count meets the limit");
+                result.Set(107, "error count meets the limit", new { count = dict["count"] });
             }
             else
             {
@@ -166,7 +173,7 @@ namespace Shopping_Admin_web.Controllers
                                 if (r.Read())
                                 {
                                     // 回傳錯誤次數
-                                    result.Set(104, "wrong password", r["f_count"]);
+                                    result.Set(104, "wrong password", new { count = dict["count"] });
                                 }
                                 else
                                 {
@@ -187,6 +194,96 @@ namespace Shopping_Admin_web.Controllers
             Debug.WriteLine($"checkpointB=> {JsonConvert.SerializeObject(dict)}");
 
             
+            return result.Stringify();
+        }
+
+        /// <summary>
+        /// 解鎖後台帳號
+        /// </summary>
+        [HttpPost]
+        [Route("api/{controller}/unLockAgent")]
+        public string UnLockAgent([FromBody] GetAgent payload)
+        {
+            var dict = new Dictionary<string, object>();
+            Result result = new Result(100, "fail");
+            //Debug.WriteLine("SerializeObject payload=> ", JsonConvert.SerializeObject(payload));
+            if (payload == null)
+            {
+                result.Set(100, "params are required");
+                return result.Stringify();
+            }
+
+            if (payload.account.Length == 0)
+            {
+                result.Set(106, "帳號不可為空字串");
+                return result.Stringify();
+            }
+
+            // 檢查完參數再進庫撈使用者
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("search_agent", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", payload.account);
+                        SqlDataReader r = cmd.ExecuteReader();
+                        if (r.Read())
+                        {
+                            dict["id"] = r["f_id"];
+                            dict["account"] = r["f_account"];
+                            dict["pwd"] = r["f_pwd"];
+                            dict["enabled"] = r["f_enabled"];
+                            dict["createdDate"] = r["f_createdDate"];
+                            dict["updatedDate"] = r["f_updatedDate"];
+                            dict["role"] = r["f_role"];
+                            dict["count"] = r["f_count"];
+                        }
+                        else
+                        {
+                            result.Set(105, "member not found");
+                        }
+                        // 關閉連線
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(101, "網路錯誤");
+            }
+
+            // 更新f_count為0
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", dict["account"]);
+                        cmd.Parameters.AddWithValue("@enabled", dict["enabled"]);
+                        cmd.Parameters.AddWithValue("@role", dict["role"]);
+                        cmd.Parameters.AddWithValue("@count", 0);
+                        SqlDataReader r = cmd.ExecuteReader();
+
+                        if (r.Read())
+                        {
+                            dict["count"] = r["f_count"];
+                            result.Set(200, "success", new { count = dict["count"] });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(101, "網路錯誤");
+            }
             return result.Stringify();
         }
 
