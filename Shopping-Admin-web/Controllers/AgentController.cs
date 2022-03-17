@@ -94,38 +94,33 @@ namespace Shopping_Admin_web.Controllers
         public string LoginAgent([FromBody] Agent payload)
         {
             Result result = new Result(100, "fail");
+            var dict = new Dictionary<string, object>();
             if (payload == null)
             {
                 result.Set(100, "params is required");
                 return result.Stringify();
             }
+
+            // 進庫撈使用者
             try {
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("login_t_agents", conn))
+                    using (SqlCommand cmd = new SqlCommand("search_agent", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", payload.account);
                         SqlDataReader r = cmd.ExecuteReader();
                         if (r.Read())
                         {
-                            // Verify
-                            bool verify = SecurePasswordHasher.Verify(payload.pwd, r["f_pwd"].ToString());
-
-                            if (verify)
-                            {
-                                object obj = new
-                                {
-                                    account = r["f_account"],
-                                    role = r["f_role"],
-                                };
-                                result.Set(200, "success", obj);
-                            }
-                            else
-                            {
-                                result.Set(104, "wrong password");
-                            }
+                            dict["id"] = r["f_id"];
+                            dict["account"] = r["f_account"];
+                            dict["pwd"] = r["f_pwd"];
+                            dict["enabled"] = r["f_enabled"];
+                            dict["createdDate"] = r["f_createdDate"];
+                            dict["updatedDate"] = r["f_updatedDate"];
+                            dict["role"] = r["f_role"];
+                            dict["count"] = r["f_count"];
                         }
                         else
                         {
@@ -141,6 +136,57 @@ namespace Shopping_Admin_web.Controllers
                 result.Set(101, "網路錯誤");
             }
 
+            // check >= 3
+            if (Convert.ToInt16(dict["count"]) >= 3) {
+                result.Set(107, "error count meets the limit");
+            }
+            else
+            {
+                //check pwd
+                bool verify = SecurePasswordHasher.Verify(payload.pwd, dict["pwd"].ToString());
+                if (verify) {
+                    result.Set(200, "success", dict);
+                }
+                else
+                {
+                    // 密碼錯誤 count+1後寫進庫
+                    try
+                    {
+                        using (SqlConnection conn = new SqlConnection(connectString))
+                        {
+                            conn.Open();
+                            using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@account", dict["account"]);
+                                cmd.Parameters.AddWithValue("@enabled", dict["enabled"]);
+                                cmd.Parameters.AddWithValue("@role", dict["role"]);
+                                cmd.Parameters.AddWithValue("@count", Convert.ToInt16(dict["count"]) + 1);
+                                SqlDataReader r = cmd.ExecuteReader();
+                                if (r.Read())
+                                {
+                                    // 回傳錯誤次數
+                                    result.Set(104, "wrong password", r["f_count"]);
+                                }
+                                else
+                                {
+                                    result.Set(105, "member not found");
+                                }
+                                // 關閉連線
+                                conn.Close();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"ex: {ex}");
+                        result.Set(101, "網路錯誤");
+                    }
+                }
+            }
+            Debug.WriteLine($"checkpointB=> {JsonConvert.SerializeObject(dict)}");
+
+            
             return result.Stringify();
         }
 
