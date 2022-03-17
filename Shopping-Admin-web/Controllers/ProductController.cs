@@ -59,25 +59,34 @@ namespace Shopping_Admin_web.Controllers
                     result.Set(100, "缺少參數");
                     return result.Stringify();
                 }
+                else
+                {
+                    // 檢查價格, 數量 不可為負數
+                    if (item.Key == "price" || item.Key == "amount") {
+                        if (Convert.ToInt16(item.Value) < 0) {
+                            result.Set(114, "價格與數量不可為負");
+                            return result.Stringify();
+                        }
+                    }
+                    // 檢查name不可為空
+                    if (item.Key == "name" && item.Value.ToString().Length == 0)
+                    {
+                        result.Set(113, "商品名稱不可為空");
+                        return result.Stringify();
+                    }
+                }
             }
 
-            // TODO: 檢查價格
-            // TODO: name不可為空
-            // TODO: file只取第一筆就好
             try
             {
-                foreach (string file in httpRequest.Files)
-                {
-                    Debug.WriteLine($"file: {file}");
-                    var postedFile = httpRequest.Files[file];
+                var postedFile = httpRequest.Files[0];
 
-                    // 串上時戳_原始檔名
-                    var filePath = HttpContext.Current.Server.MapPath($"~/Uploads/{DateTimeOffset.Now.ToUnixTimeSeconds()}_" + postedFile.FileName);
-                    postedFile.SaveAs(filePath);
+                // 串上時戳_原始檔名
+                var filePath = HttpContext.Current.Server.MapPath($"~/Uploads/{DateTimeOffset.Now.ToUnixTimeSeconds()}_" + postedFile.FileName);
+                postedFile.SaveAs(filePath);
 
-                    // TODO: 存進庫的路徑疑似有問題
-                    dict["picture"] = $"/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}";
-                }
+                // TODO: 存進庫的路徑疑似有問題
+                dict["picture"] = $"/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}";
 
                 Debug.WriteLine($"dict: {JsonConvert.SerializeObject(dict)}");
 
@@ -230,22 +239,18 @@ namespace Shopping_Admin_web.Controllers
                 }
             }
 
+            // 名稱不可為空字串
             if (dict["name"].ToString().Length == 0) {
                 result.Set(113, "商品名稱不可為空");
                 return result.Stringify();
             }
 
+            // 價格, 數量不可為負數
             if (Convert.ToInt16(dict["price"]) < 0 || Convert.ToInt16(dict["amount"]) < 0)
             {
                 result.Set(114, "價格與數量不可為負");
                 return result.Stringify();
             }
-
-
-            // ====
-            //var dict = new Dictionary<string, object>();
-            //Result result = new Result(100, "缺少參數");
-            Debug.WriteLine("SerializeObject payload=> ", JsonConvert.SerializeObject(dict));
 
             // 檢查完參數再寫進庫
             try
