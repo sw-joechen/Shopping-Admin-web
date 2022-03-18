@@ -1,6 +1,6 @@
 import request from "../Utils/request";
 
-export const registerAgent = (data) => {
+export const RegisterAgent = (data) => {
   return request({
     method: "post",
     url: "/api/agent/registerAgent",
@@ -28,7 +28,7 @@ export const LoginAgent = (data) => {
     });
 };
 
-export const getAgentsList = (account) => {
+export const GetAgentsList = (account) => {
   return request({
     method: "post",
     url: "/api/agent/getAgentsList",
@@ -42,10 +42,24 @@ export const getAgentsList = (account) => {
     });
 };
 
-export const updateAgent = (data) => {
+export const UpdateAgent = (data) => {
   return request({
     method: "post",
     url: "/api/agent/updateAgent",
+    data,
+  })
+    .then((res) => {
+      return JSON.parse(res.data);
+    })
+    .catch((err) => {
+      console.log("err: ", err);
+    });
+};
+
+export const UnlockAgent = (data) => {
+  return request({
+    method: "post",
+    url: "/api/agent/UnlockAgent",
     data,
   })
     .then((res) => {

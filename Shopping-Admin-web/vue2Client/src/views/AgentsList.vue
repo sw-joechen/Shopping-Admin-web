@@ -58,6 +58,7 @@
         :datas="agentsListComputed"
         :headersPlaceholder="tableHeaderPlaceholder"
         @edit="editHandler"
+        @unlock="unlockHandler"
       />
     </div>
 
@@ -95,7 +96,12 @@
 <script>
 import BtnSubmit from "@/components/BtnPrimary.vue";
 import FormDialog from "@/components/Dialogs/DialogView.vue";
-import { getAgentsList, registerAgent, updateAgent } from "@/APIs/Agent";
+import {
+  GetAgentsList,
+  RegisterAgent,
+  UpdateAgent,
+  UnlockAgent,
+} from "@/APIs/Agent";
 import TableView from "@/components/Table/TableView.vue";
 import OptionSelector from "@/components/OptionSelector.vue";
 import SwtichView from "@/components/SwtichView.vue";
@@ -162,7 +168,7 @@ export default {
     };
   },
   async mounted() {
-    const res = await getAgentsList();
+    const res = await GetAgentsList();
     if (res && res.code === 200) this.sourceAgentsList = res.data;
     else {
       this.$store.commit("eventBus/Push", {
@@ -172,6 +178,28 @@ export default {
     }
   },
   methods: {
+    async unlockHandler(accountInfo) {
+      let account = "";
+      accountInfo.forEach((item) => {
+        if (item.key === "account") {
+          account = item.value;
+        }
+      });
+      const res = await UnlockAgent({
+        account,
+      });
+      if (res.code === 200) {
+        this.$store.commit("eventBus/Push", {
+          type: "success",
+          content: "解鎖成功",
+        });
+      } else {
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: errorList[res.code],
+        });
+      }
+    },
     clearEditDialog() {
       this.oldAccountInfo = {};
       this.dialogEditPwd = "";
@@ -181,13 +209,13 @@ export default {
       this.isShowEditDialog = payload;
     },
     async onSubmitEditDialogHandler() {
-      const res = await updateAgent({
+      const res = await UpdateAgent({
         account: this.oldAccountInfo.account,
         enabled: this.dialogEditEnabled,
         role: this.oldAccountInfo.role,
       });
       if (res.code === 200) {
-        const response = await getAgentsList();
+        const response = await GetAgentsList();
         if (response.code === 200) {
           this.sourceAgentsList = response.data;
         } else {
@@ -217,7 +245,7 @@ export default {
       });
 
       // 取得欲編輯帳號的完整帳號資訊
-      const res = await getAgentsList({
+      const res = await GetAgentsList({
         account: this.oldAccountInfo.account,
       });
       if (res.code === 200) {
@@ -236,7 +264,7 @@ export default {
     async onSearchHandler() {
       this.queryData.enabled = this.queryEnabled;
       this.sourceAgentsList = [];
-      const res = await getAgentsList();
+      const res = await GetAgentsList();
       if (res.code === 200) this.sourceAgentsList = res.data;
       else {
         this.$store.commit("eventBus/Push", {
@@ -249,7 +277,7 @@ export default {
       this.queryEnabled = payload.value;
     },
     async registerHandler() {
-      const res = await registerAgent({
+      const res = await RegisterAgent({
         account: this.dialogAccount,
         pwd: this.dialogPwd,
       });
@@ -259,7 +287,7 @@ export default {
         this.dialogPwd = "";
 
         // 新增成功後重取清單
-        const res = await getAgentsList();
+        const res = await GetAgentsList();
         if (res.code === 200) {
           this.sourceAgentsList = res.data;
           this.$store.commit("eventBus/Push", {

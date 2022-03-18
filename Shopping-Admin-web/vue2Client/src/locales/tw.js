@@ -1,6 +1,7 @@
 export default {
   common: {
     edit: "編輯",
+    unlock: "解鎖",
   },
   agentList: {
     table: {

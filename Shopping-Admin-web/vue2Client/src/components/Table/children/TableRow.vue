@@ -1,9 +1,23 @@
 <template>
   <tr class="tableRow">
     <td v-for="(cell, index) in row" :key="index">
-      <div class="btnContainer" v-if="cell.key === 'operation'">
-        <BtnEdit :label="$t('common.edit')" @submit="editHandler" />
+      <div class="layout flex" v-if="cell.key === 'operation'">
+        <div class="btnContainer">
+          <BtnPrimary
+            v-if="isEditBtnRequired"
+            :label="$t('common.edit')"
+            @submit="editHandler"
+          />
+        </div>
+        <div class="btnContainer">
+          <BtnPrimary
+            v-if="isUnlockBtnRequired"
+            :label="$t('common.unlock')"
+            @submit="unlockHandler"
+          />
+        </div>
       </div>
+
       {{ contentFilter(cell) }}
     </td>
   </tr>
@@ -11,19 +25,30 @@
 
 <script>
 import { DateTime } from "luxon";
-import BtnEdit from "../../BtnPrimary.vue";
+import BtnPrimary from "../../BtnPrimary.vue";
 export default {
   name: "tableRow",
   components: {
-    BtnEdit,
+    BtnPrimary,
   },
   props: {
     row: {
       required: true,
       type: Array,
     },
+    isEditBtnRequired: {
+      required: false,
+      default: true,
+    },
+    isUnlockBtnRequired: {
+      required: false,
+      default: true,
+    },
   },
   methods: {
+    unlockHandler() {
+      this.$emit("unlock", this.row);
+    },
     editHandler() {
       this.$emit("edit", this.row);
     },
@@ -69,6 +94,9 @@ export default {
   @apply even:bg-gray-300 hover:bg-gray-400 even:border-b odd:bg-white border-gray-400 p-2;
   td {
     @apply p-3 text-left;
+    .btnContainer {
+      @apply mr-2;
+    }
   }
 }
 </style>

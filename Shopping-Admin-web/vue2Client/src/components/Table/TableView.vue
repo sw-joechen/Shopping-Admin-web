@@ -7,6 +7,9 @@
         :key="index"
         :row="row"
         @edit="editHandler"
+        @unlock="unlockHandler"
+        :isEditBtnRequired="isEditBtnRequired"
+        :isUnlockBtnRequired="isUnlockBtnRequired"
       />
     </table>
   </div>
@@ -37,8 +40,19 @@ export default {
       type: Boolean,
       default: true,
     },
+    isEditBtnRequired: {
+      required: false,
+      default: true,
+    },
+    isUnlockBtnRequired: {
+      required: false,
+      default: true,
+    },
   },
   methods: {
+    unlockHandler(payload) {
+      this.$emit("unlock", payload);
+    },
     editHandler(payload) {
       this.$emit("edit", payload);
     },

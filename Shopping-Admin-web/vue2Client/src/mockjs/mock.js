@@ -95,6 +95,18 @@ const updateAgent = (payload) => {
   return JSON.stringify(result);
 };
 
+const UnlockAgent = (payload) => {
+  const params = JSON.parse(payload.body);
+  const result = {
+    code: 200,
+    msg: "success",
+    data: {
+      account: params.account,
+    },
+  };
+  return JSON.stringify(result);
+};
+
 if (process.env.NODE_ENV === "development") {
   // 拦截该url
   Mock.mock("/api/agent/getAgentsList", getAgentsList);
@@ -104,4 +116,6 @@ if (process.env.NODE_ENV === "development") {
   Mock.mock("/api/agent/registerAgent", registerAgent);
 
   Mock.mock("/api/agent/updateAgent", updateAgent);
+
+  Mock.mock("/api/agent/UnlockAgent", UnlockAgent);
 }
