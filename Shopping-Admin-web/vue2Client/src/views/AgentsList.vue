@@ -57,6 +57,7 @@
       <TableView
         :datas="agentsListComputed"
         :headersPlaceholder="tableHeaderPlaceholder"
+        :btnDisabledList="btnDisabledList"
         @edit="editHandler"
         @unlock="unlockHandler"
       />
@@ -165,6 +166,7 @@ export default {
         pwd: "",
         role: "",
       },
+      btnDisabledList: [],
     };
   },
   async mounted() {
@@ -178,13 +180,58 @@ export default {
     }
   },
   methods: {
-    async unlockHandler(accountInfo) {
-      let account = "";
-      accountInfo.forEach((item) => {
-        if (item.key === "account") {
-          account = item.value;
+    addDisabledBtn(payload) {
+      const { idx, btnType } = payload;
+      const target = this.btnDisabledList.find((el) => el.idx === idx);
+
+      if (target) {
+        target.btnType.push(btnType);
+      } else {
+        this.btnDisabledList.push({
+          idx,
+          btnType: [btnType],
+        });
+      }
+    },
+    removeDisabledBtn(payload) {
+      const { idx, btnType } = payload;
+
+      const targetIdx = this.btnDisabledList.findIndex(
+        (btn) => btn.idx === idx
+      );
+      if (targetIdx !== -1) {
+        // btnType只剩一項的話整個刪掉
+        if (this.btnDisabledList[targetIdx].btnType.length <= 1) {
+          this.btnDisabledList.splice(targetIdx, 1);
+        } else {
+          // 針對該次btnType做刪除
+          const typeIdx = this.btnDisabledList[targetIdx].btnType.findIndex(
+            (type) => type === btnType
+          );
+          if (typeIdx !== -1)
+            this.btnDisabledList[targetIdx].btnType.splice(typeIdx, 1);
         }
+      }
+    },
+    async unlockHandler(payload) {
+      console.log("payload=> ", payload);
+      let account = "";
+      let idx = null;
+
+      for (const [key, value] of Object.entries(payload)) {
+        if (key === "account") {
+          account = value;
+        }
+        if (key === "idx") {
+          idx = value;
+        }
+      }
+
+      this.addDisabledBtn({
+        idx,
+        btnType: "unlock",
       });
+
       const res = await UnlockAgent({
         account,
       });
@@ -199,6 +246,11 @@ export default {
           content: errorList[res.code],
         });
       }
+
+      this.removeDisabledBtn({
+        idx,
+        btnType: "unlock",
+      });
     },
     clearEditDialog() {
       this.oldAccountInfo = {};
@@ -230,6 +282,7 @@ export default {
           content: errorList[res.code],
         });
       }
+
       this.toggleEditDialogHandler(!this.isShowEditDialog);
       this.clearEditDialog();
     },

@@ -7,9 +7,10 @@
         :key="index"
         :row="row"
         @edit="editHandler"
-        @unlock="unlockHandler"
+        @unlock="unlockHandler($event, index)"
         :isEditBtnRequired="isEditBtnRequired"
         :isUnlockBtnRequired="isUnlockBtnRequired"
+        :diabledList="btnDisabledProcesser(index)"
       />
     </table>
   </div>
@@ -48,13 +49,34 @@ export default {
       required: false,
       default: true,
     },
+    btnDisabledList: {
+      type: Array,
+    },
   },
   methods: {
-    unlockHandler(payload) {
-      this.$emit("unlock", payload);
+    unlockHandler(payload, idx) {
+      const obj = {};
+      payload.forEach((el) => {
+        obj[el.key] = el.value;
+      });
+
+      this.$emit("unlock", {
+        idx,
+        ...obj,
+      });
     },
     editHandler(payload) {
       this.$emit("edit", payload);
+    },
+    btnDisabledProcesser(rowIdx) {
+      let result = [];
+      this.btnDisabledList.forEach((btn) => {
+        if (btn.idx === rowIdx) {
+          result = btn.btnType;
+          return true;
+        }
+      });
+      return result;
     },
   },
   computed: {

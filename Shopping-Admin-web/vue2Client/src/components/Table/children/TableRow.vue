@@ -4,6 +4,7 @@
       <div class="layout flex" v-if="cell.key === 'operation'">
         <div class="btnContainer">
           <BtnPrimary
+            :disabled="isDisabled('edit')"
             v-if="isEditBtnRequired"
             :label="$t('common.edit')"
             @submit="editHandler"
@@ -11,6 +12,7 @@
         </div>
         <div class="btnContainer">
           <BtnPrimary
+            :disabled="isDisabled('unlock')"
             v-if="isUnlockBtnRequired"
             :label="$t('common.unlock')"
             @submit="unlockHandler"
@@ -44,8 +46,15 @@ export default {
       required: false,
       default: true,
     },
+    diabledList: {
+      required: true,
+      type: Array,
+    },
   },
   methods: {
+    isDisabled(btnType) {
+      return this.diabledList.some((el) => el === btnType);
+    },
     unlockHandler() {
       this.$emit("unlock", this.row);
     },
