@@ -107,8 +107,42 @@ const UnlockAgent = (payload) => {
   return JSON.stringify(result);
 };
 
+const GetProductsList = () => {
+  const result = {
+    code: 200,
+    msg: "success",
+    data: [
+      {
+        id: "2",
+        name: "test",
+        amount: 1,
+        createdDate: "2022-03-17T15:43:55.653",
+        description: "desc",
+        enabled: true,
+        picture: "pic",
+        price: 1,
+        type: "t1",
+        updatedDate: "2022-03-17T15:43:55.653",
+      },
+      {
+        amount: 243,
+        createdDate: "2022-03-17T15:43:55.653",
+        description: "desc2",
+        enabled: false,
+        id: "23",
+        name: "test2",
+        picture: "pic2",
+        price: 1,
+        type: "type2",
+        updatedDate: "2022-03-17T15:43:55.653",
+      },
+    ],
+  };
+  return JSON.stringify(result);
+};
+
 if (process.env.NODE_ENV === "development") {
-  // 拦截该url
+  // agent
   Mock.mock("/api/agent/getAgentsList", getAgentsList);
 
   Mock.mock("/api/agent/loginAgent", loginAgent);
@@ -118,4 +152,7 @@ if (process.env.NODE_ENV === "development") {
   Mock.mock("/api/agent/updateAgent", updateAgent);
 
   Mock.mock("/api/agent/UnlockAgent", UnlockAgent);
+
+  // product
+  Mock.mock("/api/product/GetProductsList", GetProductsList);
 }

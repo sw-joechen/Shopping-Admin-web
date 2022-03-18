@@ -83,8 +83,8 @@ export default {
       const { key, value } = payload;
       if (key === "enabled" && typeof value === "number") {
         return value === 1
-          ? this.$t(`agentList.table.enabled`)
-          : this.$t(`agentList.table.disabled`);
+          ? this.$t(`common.tableHeader.enabled`)
+          : this.$t(`common.tableHeader.disabled`);
       }
       return value;
     },

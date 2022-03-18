@@ -1,7 +1,7 @@
 <template>
   <tr class="tableHeader">
     <th class="th" v-for="(el, index) in header" :key="index" :header="el">
-      {{ $t(`agentList.table.${el.key}`) }}
+      {{ $t(`common.tableHeader.${el.key}`) }}
     </th>
   </tr>
 </template>

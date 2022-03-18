@@ -70,16 +70,19 @@ export default {
     },
     btnDisabledProcesser(rowIdx) {
       let result = [];
-      this.btnDisabledList.forEach((btn) => {
-        if (btn.idx === rowIdx) {
-          result = btn.btnType;
-          return true;
-        }
-      });
+      if (this.btnDisabledList) {
+        this.btnDisabledList.forEach((btn) => {
+          if (btn.idx === rowIdx) {
+            result = btn.btnType;
+            return true;
+          }
+        });
+      }
       return result;
     },
   },
   computed: {
+    // TODO: 要改成自定義欄位順序, 吃headersPlaceHolder
     tableHeaders() {
       if (this.datas.length) {
         let lastIndex = 0;
