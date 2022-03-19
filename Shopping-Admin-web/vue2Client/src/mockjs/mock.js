@@ -141,6 +141,16 @@ const GetProductsList = () => {
   return JSON.stringify(result);
 };
 
+const AddProduct = () => {
+  // const params = JSON.parse(payload.body);
+  const result = {
+    code: 200,
+    msg: "success",
+    data: {},
+  };
+  return JSON.stringify(result);
+};
+
 if (process.env.NODE_ENV === "development") {
   // agent
   Mock.mock("/api/agent/getAgentsList", getAgentsList);
@@ -155,4 +165,6 @@ if (process.env.NODE_ENV === "development") {
 
   // product
   Mock.mock("/api/product/GetProductsList", GetProductsList);
+
+  Mock.mock("/api/product/AddProduct", AddProduct);
 }

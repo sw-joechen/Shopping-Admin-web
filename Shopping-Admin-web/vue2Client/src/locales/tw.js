@@ -4,6 +4,7 @@ export default {
     unlock: "解鎖",
     search: "搜尋",
     add: "新增",
+    success: "操作成功",
     tableHeader: {
       id: "ID",
       account: "帳號",

@@ -20,7 +20,7 @@ export const AddProduct = (data) => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
-    url: "/api/product/addProduct",
+    url: "/api/product/AddProduct",
     data,
   })
     .then((res) => {

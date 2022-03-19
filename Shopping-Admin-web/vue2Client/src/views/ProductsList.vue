@@ -99,10 +99,12 @@
             {{ $t("common.tableHeader.description") }}
           </label>
           <input
+            :class="{ '!border-red-600': isDescWarning }"
             v-model="addData.desc"
             type="text"
             class="input"
             :placeholder="$t('common.tableHeader.description')"
+            @focus="isDescWarning = false"
           />
         </div>
 
@@ -117,6 +119,7 @@
             type="text"
             class="input"
             :placeholder="$t('common.tableHeader.price')"
+            @focus="isPriceWarning = false"
           />
         </div>
 
@@ -126,10 +129,12 @@
             {{ $t("common.tableHeader.amount") }}
           </label>
           <input
+            :class="{ '!border-red-600': isAmountWarning }"
             v-model="addData.amount"
             type="text"
             class="input"
             :placeholder="$t('common.tableHeader.amount')"
+            @focus="isAmountWarning = false"
           />
         </div>
 
@@ -153,17 +158,17 @@
               {{ $t("common.tableHeader.picture") }}
             </label>
             <input
+              :class="{ '!border-red-600': isFileWarning }"
               accept="image/*"
               type="file"
               class="input"
               :placeholder="$t('common.tableHeader.picture')"
               @change="uploadImage($event)"
+              @focus="isFileWarning = false"
             />
           </div>
           <div class="preview flex justify-center items-center">
-            <!-- <template v-if="addData.preview"> -->
-            <img class="img" :src="addData.preview" />
-            <!-- </template> -->
+            <img class="img w-[200px]" :src="previewImage" />
           </div>
         </div>
       </div>
@@ -177,8 +182,9 @@ import OptionSelector from "../components/OptionSelector.vue";
 import FormDialog from "../components/Dialogs/DialogView.vue";
 // import TableView from "../components/Table/TableView.vue";
 
-import { GetProductsList } from "../APIs/Product";
+import { GetProductsList, AddProduct } from "../APIs/Product";
 import { DateTime } from "luxon";
+import ErrorCodeList from "@/ErrorCodeList";
 // import ErrorCodeList from "../ErrorCodeList";
 const EOptions = {
   all: 0,
@@ -237,42 +243,25 @@ export default {
         price: null,
         amount: null,
         type: "",
-        pic: null,
-        image: "",
+        img: null,
       },
-      preview: null,
+      previewImage: null,
       isNameWarning: false,
       isPriceWarning: false,
       isAmountWarning: false,
+      isDescWarning: false,
+      isFileWarning: false,
     };
   },
   methods: {
     uploadImage(event) {
       const input = event.target;
-      console.log("input: ", input);
-
-      if (input.files && input.files[0]) {
-        // create a new FileReader to read this image and convert to base64 format
-        var reader = new FileReader();
-        // Define a callback function to run, when FileReader finishes its job
-        reader.onload = (e) => {
-          this.preview = e.target.result;
-        };
-        // Start the reader job - read file as a data url (base64 format)
-        reader.readAsDataURL(input.files[0]);
-        console.log("preview: ", this.preview);
+      if (input.files) {
+        this.previewImage = URL.createObjectURL(input.files[0]);
+        this.addData.img = input.files[0];
       }
-
-      // ====
-      // const input = event.target;
-      // if (input.files) {
-      //   this.preview = URL.createObjectURL(input.files[0]);
-      //   this.addData.image = input.files[0];
-      //   console.log("image: ", this.addData.image);
-      //   console.log("preview: ", this.preview);
-      // }
     },
-    onSubmitAddDialogHandler() {
+    async onSubmitAddDialogHandler() {
       // 檢查名稱不可為空
       if (!this.addData.name.length) {
         this.isNameWarning = true;
@@ -281,6 +270,16 @@ export default {
           content: this.$t("productList.checkInputsPlz"),
         });
       }
+
+      // 檢查描述不可為空
+      if (!this.addData.desc.length) {
+        this.isDescWarning = true;
+        return this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: this.$t("productList.checkInputsPlz"),
+        });
+      }
+
       // 檢查price
       const isPriceNum = /^\d+$/.test(this.addData.price);
       if (!isPriceNum) {
@@ -300,6 +299,39 @@ export default {
           content: this.$t("productList.checkInputsPlz"),
         });
       }
+
+      // 檢查file
+      if (!this.addData.img) {
+        this.isFileWarning = true;
+        return this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: this.$t("productList.checkInputsPlz"),
+        });
+      }
+
+      const fd = new FormData();
+      fd.append("name", this.addData.name);
+      fd.append("price", this.addData.price);
+      fd.append("amount", this.addData.amount);
+      fd.append("description", this.addData.desc);
+      fd.append("type", this.addData.type);
+      fd.append("img", this.addData.img);
+
+      const res = await AddProduct(fd);
+      console.log("res=> ", res);
+
+      if (res.code === 200) {
+        this.$store.commit("eventBus/Push", {
+          type: "success",
+          content: this.$t("common.success"),
+        });
+      } else {
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: ErrorCodeList[res.code],
+        });
+      }
+      this.toggleAddDialogHandler();
     },
     toggleAddDialogHandler() {
       this.isShowAddDialog = !this.isShowAddDialog;
@@ -312,7 +344,9 @@ export default {
         price: null,
         amount: null,
         type: "",
+        img: null,
       };
+      this.previewImage = null;
     },
     extraFormatter(data, column) {
       // 將狀態做i18n
