@@ -382,7 +382,6 @@ export default {
         price: null,
         amount: null,
         type: "",
-        picture: null,
         enabled: null,
         file: null,
       },
@@ -459,13 +458,18 @@ export default {
     },
     uploadImage(event, type) {
       const input = event.target;
-      if (input.files) {
+      console.log("checkpointA=> ", input.files);
+      if (input.files.length) {
         this.previewImage = URL.createObjectURL(input.files[0]);
         if (type === "add") {
           this.addData.file = input.files[0];
         } else if (type === "edit") {
           this.editData.file = input.files[0];
         }
+      } else {
+        this.addData.file = null;
+        this.editData.file = null;
+        this.previewImage = null;
       }
     },
     async onSubmitAddDialogHandler() {
@@ -514,7 +518,7 @@ export default {
         price: null,
         amount: null,
         type: "",
-        picture: null,
+        file: null,
       };
       this.previewImage = null;
     },
@@ -652,7 +656,7 @@ export default {
     checkFile(srcType) {
       // 檢查file
       if (srcType === "add") {
-        if (this.addData.picture) {
+        if (this.addData.file) {
           return true;
         }
 
@@ -663,7 +667,7 @@ export default {
         });
         return false;
       } else {
-        if (this.editData.picture) {
+        if (this.editData.file) {
           return true;
         }
 
