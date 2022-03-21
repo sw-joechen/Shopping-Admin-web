@@ -28,7 +28,6 @@ namespace Shopping_Admin_web.Controllers
         public string AddProduct()
         {
             Result result = new Result(100, "缺少參數");
-            var dict = new Dictionary<string, object>();
 
             if (!Request.Content.IsMimeMultipartContent())
             {
@@ -45,49 +44,49 @@ namespace Shopping_Admin_web.Controllers
                 return result.Stringify();
             }
 
-            dict["name"] = httpRequest.Params["name"];
-            dict["price"] = httpRequest.Params["price"];
-            dict["amount"] = httpRequest.Params["amount"];
-            dict["description"] = httpRequest.Params["description"];
-            dict["type"] = httpRequest.Params["type"];
-
-            Debug.WriteLine($"dict: {JsonConvert.SerializeObject(dict)}");
-            // 檢查參數
-            foreach (KeyValuePair<string, object> item in dict)
-            {
-                if (item.Value == null)
-                {
-                    result.Set(109, "無效的參數");
-                    return result.Stringify();
-                }
-                else
-                {
-                    // 檢查價格, 數量 不可為負數
-                    if (item.Key == "price" || item.Key == "amount") {
-                        if (item.Value != null && item.Value.ToString().Length != 0 && Convert.ToInt16(item.Value) < 0) {
-                            result.Set(114, "價格與數量不可為負");
-                            return result.Stringify();
-                        }
-                    }
-                    // 檢查name不可為空
-                    if (item.Key == "name" && item.Value.ToString().Length == 0)
-                    {
-                        result.Set(113, "商品名稱不可為空");
-                        return result.Stringify();
-                    }
-                }
-            }
-
             try
             {
+                string name = httpRequest.Params["name"];
+                string price = httpRequest.Params["price"];
+                string amount = httpRequest.Params["amount"];
+                string description = httpRequest.Params["description"];
+                string type = httpRequest.Params["type"];
+                string picture;
+
+                Debug.WriteLine($"name=> {name}");
+                Debug.WriteLine($"price=> {price}");
+                Debug.WriteLine($"amount=> {amount}");
+                Debug.WriteLine($"description=> {description}");
+                Debug.WriteLine($"type=> {type}");
+
+                // 檢查價格不可為負數
+                if (Convert.ToInt32(price) < 0)
+                {
+                    result.Set(114, "價格與數量不可為負");
+                    return result.Stringify();
+                }
+
+                // 檢查數量不可為負數
+                if (Convert.ToInt32(amount) < 0)
+                {
+                    result.Set(114, "價格與數量不可為負");
+                    return result.Stringify();
+                }
+
+                // 名稱不可為空字串
+                if (name.Length == 0)
+                {
+                    result.Set(113, "商品名稱不可為空");
+                    return result.Stringify();
+                }
+
                 var postedFile = httpRequest.Files[0];
 
                 // 串上時戳_原始檔名
-                var filePath = HttpContext.Current.Server.MapPath($"~/Uploads/{DateTimeOffset.Now.ToUnixTimeSeconds()}_" + postedFile.FileName);
+                var filePath = HttpContext.Current.Server.MapPath($"~/Uploads/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}");
                 postedFile.SaveAs(filePath);
 
-                // TODO: 存進庫的路徑疑似有問題
-                dict["picture"] = $"/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}";
+                picture = $"/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}";                
 
                 // 寫進庫
                 using (SqlConnection conn = new SqlConnection(connectString))
@@ -98,12 +97,12 @@ namespace Shopping_Admin_web.Controllers
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@enabled", 1);
-                        cmd.Parameters.AddWithValue("@name", dict["name"]);
-                        cmd.Parameters.AddWithValue("@price", dict["price"]);
-                        cmd.Parameters.AddWithValue("@picture", dict["picture"]);
-                        cmd.Parameters.AddWithValue("@amount", dict["amount"]);
-                        cmd.Parameters.AddWithValue("@description", dict["description"]);
-                        cmd.Parameters.AddWithValue("@type", dict["type"]);
+                        cmd.Parameters.AddWithValue("@name", name);
+                        cmd.Parameters.AddWithValue("@price", price);
+                        cmd.Parameters.AddWithValue("@picture", picture);
+                        cmd.Parameters.AddWithValue("@amount", amount);
+                        cmd.Parameters.AddWithValue("@description", description);
+                        cmd.Parameters.AddWithValue("@type", type);
                         SqlDataReader r = cmd.ExecuteReader();
                         if (r.Read())
                         {
@@ -113,7 +112,7 @@ namespace Shopping_Admin_web.Controllers
 
                     if (sqlResponse == 200)
                     {
-                        result.Set(200, "success", dict);
+                        result.Set(200, "success");
                     }
                     else
                     {
