@@ -25,5 +25,6 @@ export default {
   productList: {
     addFormTitle: "新增商品",
     checkInputsPlz: "請檢查輸入欄位",
+    editFormTitle: "編輯商品",
   },
 };

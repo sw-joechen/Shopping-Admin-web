@@ -29,7 +29,7 @@ export default {
   name: "swtichView",
   props: {
     toggle: {
-      type: Boolean,
+      type: Boolean || null,
       required: true,
     },
   },
