@@ -133,23 +133,55 @@ namespace Shopping_Admin_web.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/getProductsList")]
-        public string GetProductsList([FromBody] Product payload)
+        public string GetProductsList()
         {
-            Debug.WriteLine(JsonConvert.SerializeObject(payload));
+            var httpRequest = HttpContext.Current.Request;
             Result result = new Result(100, "缺少參數");
             List<Product> productList = new List<Product> { };
-            string spName = payload == null ? "pro_saw_getProductList" : "pro_saw_getProductByID";
 
             try
             {
+                string paramID = httpRequest.Params["id"]; 
+                string name = httpRequest.Params["name"] ?? null;
+                string type = httpRequest.Params["type"] ?? null;
+                string paramEnabled = httpRequest.Params["enabled"];
+
+                int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)): -1;
+                int id = paramID != null ? Convert.ToInt32(paramID) : -1;
+
+                Debug.WriteLine($"id=> {id}");
+                Debug.WriteLine($"name=> {name}");
+                Debug.WriteLine($"type=> {type}");
+                Debug.WriteLine($"enabled=> {enabled}");
+
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(spName, conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getProductList", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        if (payload != null && payload.id != null) 
-                            cmd.Parameters.AddWithValue("@id", payload.id);
+                        if (id == -1)
+                            cmd.Parameters.AddWithValue("@id", DBNull.Value);                        
+                        else
+                            cmd.Parameters.AddWithValue("@id", id);
+
+                        if(name == null)
+                            cmd.Parameters.AddWithValue("@name", DBNull.Value);                                           
+                        else
+                            cmd.Parameters.AddWithValue("@name", name);
+
+                        if(type == null)
+                            cmd.Parameters.AddWithValue("@type", DBNull.Value);
+                        
+                        else
+                            cmd.Parameters.AddWithValue("@type", type);
+
+                        if(enabled == -1)
+                            cmd.Parameters.AddWithValue("@enabled", DBNull.Value);
+                        
+                        else
+                            cmd.Parameters.AddWithValue("@enabled", enabled);
+
                         SqlDataReader r = cmd.ExecuteReader();
 
                         if (r.HasRows)
@@ -157,7 +189,6 @@ namespace Shopping_Admin_web.Controllers
                             while (r.Read())
                             {
                                 int status = Convert.ToInt16(r["f_enabled"]);
-                                var httpRequest = HttpContext.Current.Request;
                                 productList.Add(new Product
                                 {
                                     id = r["f_id"].ToString(),
