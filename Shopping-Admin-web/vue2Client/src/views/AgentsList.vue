@@ -269,6 +269,10 @@ export default {
       if (res.code === 200) {
         const response = await GetAgentsList();
         if (response.code === 200) {
+          this.$store.commit("eventBus/Push", {
+            type: "success",
+            content: this.$t("common.success"),
+          });
           this.sourceAgentsList = response.data;
         } else {
           this.$store.commit("eventBus/Push", {
