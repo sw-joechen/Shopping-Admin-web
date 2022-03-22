@@ -419,10 +419,11 @@ export default {
             content: this.$t("common.success"),
           });
         }
+
+        this.clearEditData();
+        this.previewImage = null;
+        this.toggleEditDialogHandler();
       }
-      this.clearEditData();
-      this.previewImage = null;
-      this.toggleEditDialogHandler();
     },
     async editHandler(payload) {
       const { id } = payload;
@@ -445,6 +446,7 @@ export default {
       this.toggleEditDialogHandler();
     },
     toggleEditDialogHandler() {
+      this.clearFormWarning();
       this.isShowEditDialog = !this.isShowEditDialog;
     },
     clearEditData() {
@@ -457,6 +459,13 @@ export default {
         picture: null,
         enabled: null,
       };
+    },
+    clearFormWarning() {
+      this.isNameWarning = false;
+      this.isPriceWarning = false;
+      this.isAmountWarning = false;
+      this.isDescWarning = false;
+      this.isFileWarning = false;
     },
     uploadImage(event, type) {
       const input = event.target;
@@ -548,14 +557,13 @@ export default {
         );
       }
 
-      fd.append(
-        "name",
-        this.queryData.name.length !== 0 ? this.queryData.name : null
-      );
-      fd.append(
-        "type",
-        this.queryData.type.length !== 0 ? this.queryData.type : null
-      );
+      if (this.queryData.name.length) {
+        fd.append("name", this.queryData.name);
+      }
+
+      if (this.queryData.type.length) {
+        fd.append("type", this.queryData.type.length);
+      }
 
       const res = await GetProductsList(fd);
       if (res.code === 200) {
