@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Cookies from "js-cookie";
 
 Vue.use(VueRouter);
 
@@ -56,6 +57,24 @@ const routes = [
 
 const router = new VueRouter({
   routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+  const cookie = Cookies.get("admin_account");
+
+  if (to.matched.some((record) => record.meta.isAuthRequired)) {
+    if (cookie) {
+      next();
+    } else {
+      // cookie沒東西, 導到登入頁
+      next({ name: "login" });
+    }
+  } else if (to.name === "login" && cookie) {
+    // 已登入狀態進入login會被導回首頁
+    next({ name: "home" });
+  } else {
+    next();
+  }
 });
 
 export default router;
