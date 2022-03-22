@@ -426,7 +426,9 @@ export default {
     },
     async editHandler(payload) {
       const { id } = payload;
-      const res = await GetProductsList({ id });
+      const fd = new FormData();
+      fd.append("id", id);
+      const res = await GetProductsList(fd);
 
       if (res.code === 200 && res.data.length) {
         this.editData.id = res.data[0].id;
@@ -538,8 +540,33 @@ export default {
       }
     },
     async searchHandler() {
-      const res = await GetProductsList();
-      this.productList = res.data;
+      const fd = new FormData();
+      if (this.queryData.enabled !== 0) {
+        fd.append(
+          "enabled",
+          this.queryData.enabled === EOptions.enabled ? true : false
+        );
+      }
+
+      fd.append(
+        "name",
+        this.queryData.name.length !== 0 ? this.queryData.name : null
+      );
+      fd.append(
+        "type",
+        this.queryData.type.length !== 0 ? this.queryData.type : null
+      );
+
+      const res = await GetProductsList(fd);
+      if (res.code === 200) {
+        this.productList = res.data;
+      } else {
+        this.productList = [];
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: ErrorCodeList[res.code],
+        });
+      }
     },
     onEnabledOptionChangeHandler(payload) {
       this.queryData.enabled = payload.value;
