@@ -50,7 +50,7 @@ namespace Shopping_Admin_web.Controllers
                         // 開啟連線
                         conn.Open();
 
-                        using (SqlCommand cmd = new SqlCommand("register_t_agent", conn))
+                        using (SqlCommand cmd = new SqlCommand("pro_saw_addAgent", conn))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.AddWithValue("@account", payload.account);
@@ -106,7 +106,7 @@ namespace Shopping_Admin_web.Controllers
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("search_agent", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getAgentByAccount", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", payload.account);
@@ -162,7 +162,7 @@ namespace Shopping_Admin_web.Controllers
                         using (SqlConnection conn = new SqlConnection(connectString))
                         {
                             conn.Open();
-                            using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
+                            using (SqlCommand cmd = new SqlCommand("pro_saw_editAgent", conn))
                             {
                                 cmd.CommandType = CommandType.StoredProcedure;
                                 cmd.Parameters.AddWithValue("@account", dict["account"]);
@@ -225,7 +225,7 @@ namespace Shopping_Admin_web.Controllers
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("search_agent", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getAgentByAccount", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", payload.account);
@@ -262,7 +262,7 @@ namespace Shopping_Admin_web.Controllers
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_editAgent", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", dict["account"]);
@@ -315,7 +315,7 @@ namespace Shopping_Admin_web.Controllers
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("search_agent", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getAgentByAccount", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", payload.account);
@@ -351,7 +351,7 @@ namespace Shopping_Admin_web.Controllers
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("update_t_agents", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_editAgent", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", payload.account);
@@ -366,7 +366,8 @@ namespace Shopping_Admin_web.Controllers
                                 new {
                                     account = r["f_account"],
                                     role = r["f_role"],
-                                    enabled = r["f_enabled"]
+                                    enabled = r["f_enabled"],
+                                    count = r["f_count"]
                                 }
                             );
                         }
@@ -399,7 +400,7 @@ namespace Shopping_Admin_web.Controllers
                     using (SqlConnection conn = new SqlConnection(connectString))
                     {
                         conn.Open();
-                        using (SqlCommand cmd = new SqlCommand("search_agent", conn))
+                        using (SqlCommand cmd = new SqlCommand("pro_saw_getAgentByAccount", conn))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.AddWithValue("@account", payload.account);
@@ -439,7 +440,7 @@ namespace Shopping_Admin_web.Controllers
                     using (SqlConnection conn = new SqlConnection(connectString))
                     {
                         conn.Open();
-                        using (SqlCommand cmd = new SqlCommand("get_agentList", conn))
+                        using (SqlCommand cmd = new SqlCommand("pro_saw_getAgentList", conn))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
                             SqlDataReader r = cmd.ExecuteReader();
@@ -455,7 +456,7 @@ namespace Shopping_Admin_web.Controllers
                                         enabled = Convert.ToInt16(r["f_enabled"]),
                                         createdDate = r["f_createdDate"].ToString(),
                                         updatedDate = r["f_updatedDate"].ToString(),
-                                        role = r["f_role"].ToString()
+                                        //role = r["f_role"].ToString()
                                     });
                                 }
                                 result.Set(200, "success", agentList);

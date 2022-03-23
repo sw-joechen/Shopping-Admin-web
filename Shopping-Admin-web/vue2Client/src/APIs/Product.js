@@ -4,6 +4,9 @@ export const GetProductsList = (data) => {
   return request({
     method: "post",
     url: "/api/product/GetProductsList",
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
     data,
   })
     .then((res) => {

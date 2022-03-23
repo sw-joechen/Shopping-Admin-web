@@ -29,6 +29,7 @@
             id="pwd"
             type="password"
             placeholder="密碼"
+            @keyup.enter="LoginHandler"
           />
           <!-- <p class="text-red-500 text-xs italic">Please choose a password.</p> -->
         </div>
