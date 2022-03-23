@@ -396,8 +396,7 @@ export default {
         this.checkName("edit") &&
         this.checkDescription("edit") &&
         this.checkPrice("edit") &&
-        this.checkAmount("edit") &&
-        this.checkFile("edit");
+        this.checkAmount("edit");
 
       if (checkParams) {
         const fd = new FormData();
@@ -562,7 +561,7 @@ export default {
       }
 
       if (this.queryData.type.length) {
-        fd.append("type", this.queryData.type.length);
+        fd.append("type", this.queryData.type);
       }
 
       const res = await GetProductsList(fd);
