@@ -58,18 +58,20 @@
               :key="indexColumn"
               class="p-3 text-left"
             >
-              <div class="imgContainer" v-if="column === 'picture'">
-                <img class="w-16" :src="item[column]" />
+              <div class="max-w-xs">
+                <div class="imgContainer" v-if="column === 'picture'">
+                  <img class="w-16" :src="item[column]" />
+                </div>
+                <div class="btnContainer" v-else-if="column === 'operation'">
+                  <BtnPrimary
+                    :label="$t('common.edit')"
+                    @submit="editHandler(item)"
+                  />
+                </div>
+                <span v-else class="break-all">
+                  {{ extraFormatter(item, column) }}
+                </span>
               </div>
-              <div class="btnContainer" v-else-if="column === 'operation'">
-                <BtnPrimary
-                  :label="$t('common.edit')"
-                  @submit="editHandler(item)"
-                />
-              </div>
-              <span v-else>
-                {{ extraFormatter(item, column) }}
-              </span>
             </td>
           </tr>
         </tbody>
@@ -105,11 +107,11 @@
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
             {{ $t("common.tableHeader.description") }}
           </label>
-          <input
+          <textarea
             :class="{ '!border-red-600': isDescWarning }"
+            class="textarea"
             v-model="editData.description"
             type="text"
-            class="input"
             :placeholder="$t('common.tableHeader.description')"
             @focus="isDescWarning = false"
           />
@@ -219,11 +221,11 @@
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
             {{ $t("common.tableHeader.description") }}
           </label>
-          <input
+          <textarea
             :class="{ '!border-red-600': isDescWarning }"
             v-model="addData.desc"
             type="text"
-            class="input"
+            class="textarea"
             :placeholder="$t('common.tableHeader.description')"
             @focus="isDescWarning = false"
           />
@@ -668,6 +670,9 @@ export default {
     @apply mr-3 mb-2;
     .input {
       @apply bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none;
+    }
+    .textarea {
+      @apply w-full h-20 p-2 resize-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 outline-none;
     }
   }
   .tableContainer {
