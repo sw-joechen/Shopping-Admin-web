@@ -7,7 +7,7 @@
       :key="index"
       :to="el.to"
       class="h-14 leading-[56px] text-center text-green2 font-bold text-lg hover:text-white hover:bg-green1 transition-colors duration-300"
-      :class="{ 'bg-green1': isCurrentRouteActive(el.to.name) }"
+      :class="{ 'bg-green1 !text-white': isCurrentRouteActive(el.to.name) }"
     >
       {{ el.name }}
     </router-link>
