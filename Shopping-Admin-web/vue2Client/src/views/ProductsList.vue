@@ -151,10 +151,12 @@
             {{ $t("common.tableHeader.type") }}
           </label>
           <input
+            :class="{ '!border-red-600': isTypeWarning }"
             v-model="editData.type"
             type="text"
             class="input"
             :placeholder="$t('common.tableHeader.type')"
+            @focus="isTypeWarning = false"
           />
         </div>
 
@@ -263,10 +265,12 @@
             {{ $t("common.tableHeader.type") }}
           </label>
           <input
+            :class="{ '!border-red-600': isTypeWarning }"
             v-model="addData.type"
             type="text"
             class="input"
             :placeholder="$t('common.tableHeader.type')"
+            @focus="isTypeWarning = false"
           />
         </div>
 
@@ -305,8 +309,7 @@ import SwtichView from "../components/SwtichView.vue";
 import { GetProductsList, AddProduct, UpdateProduct } from "../APIs/Product";
 import { DateTime } from "luxon";
 import ErrorCodeList from "@/ErrorCodeList";
-// import axios from "axios";
-// import ErrorCodeList from "../ErrorCodeList";
+import { isContaineSpecialCharaters, isPureNumber } from "@/Utils/validators";
 const EOptions = {
   all: 0,
   enabled: 1,
@@ -374,6 +377,7 @@ export default {
       isPriceWarning: false,
       isAmountWarning: false,
       isDescWarning: false,
+      isTypeWarning: false,
       isFileWarning: false,
       editData: {
         id: "",
@@ -395,13 +399,28 @@ export default {
       this.editData.enabled = value;
     },
     async onSubmitEditDialogHandler() {
-      const checkParams =
-        this.checkName("edit") &&
-        this.checkDescription("edit") &&
-        this.checkPrice("edit") &&
-        this.checkAmount("edit");
+      const isNameValid = this.checkString(this.editData.name);
+      if (!isNameValid) this.isNameWarning = true;
 
-      if (checkParams) {
+      const isDescValid = this.checkString(this.editData.description);
+      if (!isDescValid) this.isDescWarning = true;
+
+      const isPriceValid = this.checkNumber(this.editData.price);
+      if (!isPriceValid) this.isPriceWarning = true;
+
+      const isAmountValid = this.checkNumber(this.editData.amount);
+      if (!isAmountValid) this.isAmountWarning = true;
+
+      const isTypeValid = this.checkString(this.editData.type);
+      if (!isTypeValid) this.isTypeWarning = true;
+
+      if (
+        isNameValid &&
+        isDescValid &&
+        isPriceValid &&
+        isAmountValid &&
+        isTypeValid
+      ) {
         const fd = new FormData();
         fd.append("id", this.editData.id);
         fd.append("name", this.editData.name);
@@ -425,6 +444,11 @@ export default {
         this.clearEditData();
         this.previewImage = null;
         this.toggleEditDialogHandler();
+      } else {
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: this.$t("productList.checkInputsPlz"),
+        });
       }
     },
     async editHandler(payload) {
@@ -467,6 +491,7 @@ export default {
       this.isPriceWarning = false;
       this.isAmountWarning = false;
       this.isDescWarning = false;
+      this.isTypeWarning = false;
       this.isFileWarning = false;
     },
     uploadImage(event, type) {
@@ -486,14 +511,32 @@ export default {
       }
     },
     async onSubmitAddDialogHandler() {
-      const checkParams =
-        this.checkName("add") &&
-        this.checkDescription("add") &&
-        this.checkPrice("add") &&
-        this.checkAmount("add") &&
-        this.checkFile("add");
+      const isNameValid = this.checkString(this.addData.name);
+      if (!isNameValid) this.isNameWarning = true;
 
-      if (checkParams) {
+      const isDescValid = this.checkString(this.addData.desc);
+      if (!isDescValid) this.isDescWarning = true;
+
+      const isPriceValid = this.checkNumber(this.addData.price);
+      if (!isPriceValid) this.isPriceWarning = true;
+
+      const isAmountValid = this.checkNumber(this.addData.amount);
+      if (!isAmountValid) this.isAmountWarning = true;
+
+      const isTypeValid = this.checkString(this.addData.type);
+      if (!isTypeValid) this.isTypeWarning = true;
+
+      const isFileExist = this.checkFile(this.addData.file);
+      if (!isFileExist) this.isFileWarning = true;
+
+      if (
+        isNameValid &&
+        isDescValid &&
+        isPriceValid &&
+        isAmountValid &&
+        isTypeValid &&
+        isFileExist
+      ) {
         const fd = new FormData();
         fd.append("name", this.addData.name);
         fd.append("price", this.addData.price);
@@ -518,11 +561,18 @@ export default {
           });
         }
         this.toggleAddDialogHandler();
+      } else {
+        // 輸入欄位異常通知
+        this.$store.commit("eventBus/Push", {
+          type: "error",
+          content: this.$t("productList.checkInputsPlz"),
+        });
       }
     },
     toggleAddDialogHandler() {
       this.isShowAddDialog = !this.isShowAddDialog;
       this.clearAddData();
+      this.clearFormWarning();
     },
     clearAddData() {
       this.addData = {
@@ -581,140 +631,29 @@ export default {
     onEnabledOptionChangeHandler(payload) {
       this.queryData.enabled = payload.value;
     },
-    checkName(srcType) {
-      // 檢查名稱不可為空
-      if (srcType === "add") {
-        if (this.addData.name.length) {
-          return true;
-        }
 
-        this.isNameWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      } else {
-        if (this.editData.name.length) {
-          return true;
-        }
-
-        this.isNameWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
+    // 檢查字串不包含特殊字元, 空白
+    checkString(str) {
+      if (!str.length) {
         return false;
       }
+      if (isContaineSpecialCharaters(str)) {
+        return false;
+      }
+      return true;
     },
 
-    checkDescription(srcType) {
-      // 檢查描述不可為空
-      if (srcType === "add") {
-        if (this.addData.desc.length) {
-          return true;
-        }
-
-        this.isDescWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      } else {
-        if (this.editData.description.length) {
-          return true;
-        }
-
-        this.isDescWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
+    // 檢查數字不包含小數點, 空白
+    checkNumber(number) {
+      if (isPureNumber(number)) {
+        return true;
       }
+      return false;
     },
-    checkPrice(srcType) {
-      // 檢查price
-      if (srcType === "add") {
-        const isPriceNum = /^\d+$/.test(this.addData.price);
-        if (isPriceNum) {
-          return true;
-        }
 
-        this.isPriceWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      } else {
-        const isPriceNum = /^\d+$/.test(this.editData.price);
-        if (isPriceNum) {
-          return true;
-        }
-
-        this.isPriceWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      }
-    },
-    checkAmount(srcType) {
-      // 檢查amount
-      if (srcType === "add") {
-        const isAmountNum = /^\d+$/.test(this.addData.amount);
-        if (isAmountNum) {
-          return true;
-        }
-
-        this.isAmountWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      } else {
-        const isAmountNum = /^\d+$/.test(this.editData.amount);
-        if (isAmountNum) {
-          return true;
-        }
-
-        this.isAmountWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      }
-    },
-    checkFile(srcType) {
-      // 檢查file
-      if (srcType === "add") {
-        if (this.addData.file) {
-          return true;
-        }
-
-        this.isFileWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      } else {
-        if (this.editData.file) {
-          return true;
-        }
-
-        this.isFileWarning = true;
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
-        });
-        return false;
-      }
+    // 檢查file
+    checkFile(file) {
+      return file !== null;
     },
   },
 };
