@@ -387,6 +387,9 @@ export default {
       },
     };
   },
+  created() {
+    this.searchHandler();
+  },
   methods: {
     onDialogEditToggle(value) {
       this.editData.enabled = value;
