@@ -636,10 +636,7 @@ export default {
     async SearchHandler() {
       const fd = new FormData();
       if (this.queryData.enabled !== 0) {
-        fd.append(
-          'enabled',
-          this.queryData.enabled === EOptions.enabled ? true : false
-        );
+        fd.append('enabled', this.queryData.enabled === EOptions.enabled);
       }
 
       if (this.queryData.name.length) {
