@@ -2,53 +2,71 @@
   <div class="agentsList p-5">
     <!-- input query -->
     <div class="inputGroup flex">
-      <BtnSubmit label="新增" class="pr-2" @submit="AddHandler" />
+      <BtnSubmit :label="$t('common.add')" class="pr-2" @submit="AddHandler" />
       <OptionSelector
         class="px-2"
         :options="options"
         @onChange="EnabledOptionChangeHandler"
       />
-      <BtnSubmit label="搜尋" class="pr-2" @submit="SearchHandler" />
+      <BtnSubmit
+        :label="$t('common.search')"
+        class="pr-2"
+        @submit="SearchHandler"
+      />
     </div>
 
     <!-- 新增帳號dialog -->
     <FormDialog
       v-if="isShowAddDialog"
       :isShowDialog="isShowAddDialog"
-      title="新增後台帳號"
+      :title="$t('agentList.addFormTitle')"
       @toggle="ToggleAddDialogHandler"
       @submit="SubmitAddFormHandler"
     >
       <form>
-        <div class="inputGroup flex">
-          <label class="whitespace-nowrap pr-3 leading-[42px]">帳號</label>
+        <!-- 帳號 -->
+        <div class="inputGroup flex relative !pb-9">
+          <label class="whitespace-nowrap pr-3 leading-[42px]">
+            {{ $t('common.tableHeader.account') }}
+          </label>
           <input
+            :class="{ '!border-red-600': isAccountWarning }"
             v-model="dialogAccount"
             type="text"
             class="input"
-            placeholder="請輸入帳號"
+            :placeholder="$t('agentList.accountPlaceholder')"
             required
-            @keypress="KeypressHandler"
+            @focus="isAccountWarning = false"
           />
+          <p
+            v-show="isAccountWarning"
+            class="text-red-500 text-xs italic absolute bottom-0"
+          >
+            {{ $t('agentList.accountWarning') }}
+          </p>
         </div>
-        <p v-show="isInvalid" class="text-red-500 text-xs italic">
-          帳號需以英文開頭,英數字皆可,介於6~20字元
-        </p>
 
-        <div class="inputGroup flex">
-          <label class="whitespace-nowrap pr-3 leading-[42px]">密碼</label>
+        <!-- 密碼 -->
+        <div class="inputGroup flex relative !pb-6">
+          <label class="whitespace-nowrap pr-3 leading-[42px]">
+            {{ $t('common.pwd') }}
+          </label>
           <input
+            :class="{ '!border-red-600': isPwdWarning }"
             v-model="dialogPwd"
             type="password"
             class="input"
-            placeholder="請輸入密碼"
+            :placeholder="$t('agentList.pwdPlaceholder')"
             required
-            @keypress="KeypressHandler"
+            @focus="isPwdWarning = false"
           />
+          <p
+            v-show="isPwdWarning"
+            class="text-red-500 text-xs italic absolute bottom-0"
+          >
+            {{ $t('agentList.pwdWarning') }}
+          </p>
         </div>
-        <p v-show="isInvalid" class="text-red-500 text-xs italic">
-          密碼須包含大小寫字母及數字,超過6字元
-        </p>
       </form>
     </FormDialog>
 
@@ -66,13 +84,16 @@
     <FormDialog
       v-if="isShowEditDialog"
       :isShowDialog="isShowEditDialog"
-      title="編輯帳號"
+      :title="$t('agentList.editFormTitle')"
       @toggle="ToggleEditDialogHandler"
       @submit="SubmitEditFormHandler"
     >
       <div class="wrapper">
+        <!-- 帳號 -->
         <div class="inputGroup flex">
-          <label class="whitespace-nowrap pr-3 leading-[42px]">帳號</label>
+          <label class="whitespace-nowrap pr-3 leading-[42px]">
+            {{ $t('common.tableHeader.account') }}
+          </label>
           <input
             type="text"
             class="input"
@@ -80,13 +101,16 @@
             :placeholder="oldAccountInfo.account"
           />
         </div>
+
+        <!-- 啟用 -->
         <div class="inputGroup flex">
-          <label class="whitespace-nowrap pr-3 leading-[42px]">禁用</label>
+          <label class="whitespace-nowrap pr-3 leading-[42px]">
+            {{ $t('common.tableHeader.enabled') }}
+          </label>
           <SwtichView
             :toggle="dialogEditEnabled"
             @toggle="ToggleEditDialogSwitch"
           />
-          <label class="whitespace-nowrap pr-3 leading-[42px]">啟用</label>
         </div>
       </div>
     </FormDialog>
@@ -141,7 +165,8 @@ export default {
       isShowAddDialog: false,
       dialogAccount: '',
       dialogPwd: '',
-      isInvalid: false,
+      isAccountWarning: false,
+      isPwdWarning: false,
       isShowEditDialog: false,
 
       dialogEditPwd: '',
@@ -283,19 +308,13 @@ export default {
       }
     },
     SubmitAddFormHandler() {
-      let isValid = false;
+      const isAccountValid = IsAccountValid(this.dialogAccount);
+      if (!isAccountValid) this.isAccountWarning = true;
 
-      isValid =
-        IsAccountValid(this.dialogAccount) && IsPwdValid(this.dialogPwd);
+      const isPwdValid = IsPwdValid(this.dialogPwd);
+      if (!isPwdValid) this.isPwdWarning = true;
 
-      if (isValid) {
-        this.RegisterHandler();
-      } else {
-        this.isInvalid = true;
-      }
-    },
-    KeypressHandler() {
-      this.isInvalid = false;
+      if (isAccountValid && isPwdValid) this.RegisterHandler();
     },
     AddHandler() {
       this.isShowAddDialog = !this.isShowAddDialog;
@@ -307,7 +326,8 @@ export default {
     InitAddDialogForm() {
       this.dialogAccount = '';
       this.dialogPwd = '';
-      this.isInvalid = false;
+      this.isAccountWarning = false;
+      this.isPwdWarning = false;
     },
   },
   computed: {

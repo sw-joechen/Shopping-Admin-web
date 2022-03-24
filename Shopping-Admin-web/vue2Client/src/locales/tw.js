@@ -5,6 +5,7 @@ export default {
     search: '搜尋',
     add: '新增',
     success: '操作成功',
+    pwd: '密碼',
     tableHeader: {
       id: 'ID',
       account: '帳號',
@@ -21,7 +22,14 @@ export default {
       type: '商品類型',
     },
   },
-  agentList: {},
+  agentList: {
+    addFormTitle: '新增後台帳號',
+    accountPlaceholder: '請輸入帳號',
+    accountWarning: '帳號需以英文開頭, 僅限英數字, 介於6~20字元',
+    pwdPlaceholder: '請輸入密碼',
+    pwdWarning: '密碼須包含大小寫字母及數字,超過6字元',
+    editFormTitle: '編輯帳號',
+  },
   productList: {
     addFormTitle: '新增商品',
     checkInputsPlz: '請檢查輸入欄位',
