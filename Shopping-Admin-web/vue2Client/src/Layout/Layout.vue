@@ -2,7 +2,9 @@
   <div class="layout flex">
     <Menu />
 
-    <div class="content w-full bg-grey1 ml-[210px] min-h-screen">
+    <div
+      class="content w-full bg-grey1 ml-[210px] min-h-screen overflow-x-scroll"
+    >
       <header class="h-14 bg-white border-b border-grey2 flex justify-end px-2">
         <div class="wrapper flex">
           <div class="imgContainer flex justify-center items-center px-2">

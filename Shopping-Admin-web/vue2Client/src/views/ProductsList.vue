@@ -42,7 +42,12 @@
           <tr
             class="text-left border-t border-b-2 border-grey2 p-2 bg-blue-400 text-white text-xl;"
           >
-            <th class="p-3" scope="col" v-for="col in columns" :key="col">
+            <th
+              class="p-3 min-w-[120px]"
+              scope="col"
+              v-for="col in columns"
+              :key="col"
+            >
               {{ $t(`common.tableHeader.${col}`) }}
             </th>
           </tr>
@@ -62,7 +67,10 @@
                 <div class="imgContainer" v-if="column === 'picture'">
                   <img class="w-16" :src="item[column]" />
                 </div>
-                <div class="btnContainer" v-else-if="column === 'operation'">
+                <div
+                  class="btnContainer min-w-[64px]"
+                  v-else-if="column === 'operation'"
+                >
                   <BtnPrimary
                     :label="$t('common.edit')"
                     @submit="editHandler(item)"
@@ -673,8 +681,6 @@ export default {
     .textarea {
       @apply w-full h-20 p-2 resize-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 outline-none;
     }
-  }
-  .tableContainer {
   }
 }
 </style>
