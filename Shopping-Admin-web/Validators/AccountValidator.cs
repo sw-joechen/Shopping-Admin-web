@@ -22,7 +22,7 @@ namespace Shopping_Admin_web.Validators
             bool result = false;
 
             // 帳號規則: 英文開頭, 英數皆可 限6~20字元 
-            Regex regex = new Regex("^[A-Za-z][A-Za-z0-9]{5,19}");
+            Regex regex = new Regex("^[A-Za-z][A-Za-z0-9]{5,19}$");
             if (regex.IsMatch(account))            
                 result = true;
             return result;
