@@ -43,7 +43,7 @@
             class="text-left border-t border-b-2 border-grey2 p-2 bg-blue-400 text-white text-xl;"
           >
             <th
-              class="p-3 min-w-[120px]"
+              class="py-3 px-1 min-w-[120px]"
               scope="col"
               v-for="col in columns"
               :key="col"
@@ -61,7 +61,7 @@
             <td
               v-for="(column, indexColumn) in columns"
               :key="indexColumn"
-              class="p-3 text-left"
+              class="py-3 px-1 text-left"
             >
               <div class="max-w-xs">
                 <div class="imgContainer" v-if="column === 'picture'">
