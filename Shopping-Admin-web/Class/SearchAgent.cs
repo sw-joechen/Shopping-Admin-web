@@ -14,5 +14,6 @@ namespace Shopping_Admin_web.Class
         public string updatedDate { get; set; }
         public string role { get; set; }
         public string pwd { get; set; }
+        public string count { get; set; }
     }
 }

@@ -8,5 +8,6 @@
         public string createdDate { get; set; }
         public string updatedDate { get; set; }
         public string role { get; set; }
+        public string count { get; set; }
     }
 }

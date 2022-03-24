@@ -417,8 +417,9 @@ namespace Shopping_Admin_web.Controllers
                                         enabled = Convert.ToInt16(r["f_enabled"]),
                                         createdDate = r["f_createdDate"].ToString(),
                                         updatedDate = r["f_updatedDate"].ToString(),
+                                        pwd = r["f_pwd"].ToString(),
                                         role = r["f_role"].ToString(),
-                                        pwd = r["f_pwd"].ToString()
+                                        count = r["f_count"].ToString()
                                     });
                                 }
                                 result.Set(200, "success", searchAgentList);
@@ -456,7 +457,8 @@ namespace Shopping_Admin_web.Controllers
                                         enabled = Convert.ToInt16(r["f_enabled"]),
                                         createdDate = r["f_createdDate"].ToString(),
                                         updatedDate = r["f_updatedDate"].ToString(),
-                                        //role = r["f_role"].ToString()
+                                        role = r["f_role"].ToString(),
+                                        count = r["f_count"].ToString()
                                     });
                                 }
                                 result.Set(200, "success", agentList);
