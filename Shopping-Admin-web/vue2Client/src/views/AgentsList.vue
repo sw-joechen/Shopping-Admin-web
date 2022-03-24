@@ -6,7 +6,7 @@
       <OptionSelector
         class="px-2"
         :options="options"
-        @onChange="EnabledOptionChangeHandler"
+        :value.sync="queryData.enabled"
       />
       <BtnSubmit
         :label="$t('common.search')"
@@ -159,9 +159,8 @@ export default {
       ],
       sourceAgentsList: [],
       queryData: {
-        enabled: 0,
+        enabled: EOptions.all,
       },
-      queryEnabled: 0,
       isShowAddDialog: false,
       dialogAccount: '',
       dialogPwd: '',
@@ -180,17 +179,45 @@ export default {
       btnDisabledList: [],
     };
   },
+  computed: {
+    forceInit() {
+      return this.$store.state.forceInit;
+    },
+    agentsListComputed() {
+      if (this.sourceAgentsList && this.sourceAgentsList.length) {
+        if (this.queryData.enabled === EOptions.all) {
+          return this.sourceAgentsList;
+        }
+        return this.sourceAgentsList.filter((item) => {
+          if (this.queryData.enabled === EOptions.enabled) {
+            return item.enabled;
+          } else if (this.queryData.enabled === EOptions.disabled) {
+            return item.enabled === 0;
+          }
+        });
+      }
+      return [];
+    },
+  },
+  watch: {
+    forceInit: {
+      immediate: true,
+      handler: function (val) {
+        if (val) {
+          this.InitQueryData();
+          this.SearchHandler();
+          this.$store.commit('setForceInit', false);
+        }
+      },
+    },
+  },
   async mounted() {
-    const res = await GetAgentsList();
-    if (res && res.code === 200) this.sourceAgentsList = res.data;
-    else {
-      this.$store.commit('eventBus/Push', {
-        type: 'error',
-        content: errorList[res.code],
-      });
-    }
+    this.SearchHandler();
   },
   methods: {
+    InitQueryData() {
+      this.queryData.enabled = EOptions.all;
+    },
     async UnlockCompletedHandler(payload) {
       const res = this.sourceAgentsList.find(
         (agent) => agent.account === payload.account
@@ -262,7 +289,6 @@ export default {
     },
 
     async SearchHandler() {
-      this.queryData.enabled = this.queryEnabled;
       this.sourceAgentsList = [];
       const res = await GetAgentsList();
       if (res.code === 200) this.sourceAgentsList = res.data;
@@ -272,9 +298,6 @@ export default {
           content: errorList[res.code],
         });
       }
-    },
-    EnabledOptionChangeHandler(payload) {
-      this.queryEnabled = payload.value;
     },
     async RegisterHandler() {
       const res = await RegisterAgent({
@@ -328,23 +351,6 @@ export default {
       this.dialogPwd = '';
       this.isAccountWarning = false;
       this.isPwdWarning = false;
-    },
-  },
-  computed: {
-    agentsListComputed() {
-      if (this.sourceAgentsList && this.sourceAgentsList.length) {
-        if (this.queryData.enabled === EOptions.all) {
-          return this.sourceAgentsList;
-        }
-        return this.sourceAgentsList.filter((item) => {
-          if (this.queryData.enabled === EOptions.enabled) {
-            return item.enabled;
-          } else if (this.queryData.enabled === EOptions.disabled) {
-            return item.enabled === 0;
-          }
-        });
-      }
-      return [];
     },
   },
 };

@@ -17,7 +17,7 @@
       <OptionSelector
         class="px-2"
         :options="options"
-        @onChange="EnabledOptionChangeHandler"
+        :value.sync="queryData.enabled"
       />
 
       <BtnPrimary
@@ -403,10 +403,32 @@ export default {
       },
     };
   },
+  computed: {
+    forceInit() {
+      return this.$store.state.forceInit;
+    },
+  },
+  watch: {
+    forceInit: {
+      immediate: true,
+      handler: function (val) {
+        if (val) {
+          this.InitQueryData();
+          this.SearchHandler();
+          this.$store.commit('setForceInit', false);
+        }
+      },
+    },
+  },
   created() {
     this.SearchHandler();
   },
   methods: {
+    InitQueryData() {
+      this.queryData.enabled = EOptions.all;
+      this.queryData.name = '';
+      this.queryData.type = '';
+    },
     ToggleEditDialogSwitch(value) {
       this.editData.enabled = value;
     },
@@ -638,9 +660,6 @@ export default {
           content: ErrorCodeList[res.code],
         });
       }
-    },
-    EnabledOptionChangeHandler(payload) {
-      this.queryData.enabled = payload.value;
     },
 
     // 檢查字串不包含特殊字元, 空白

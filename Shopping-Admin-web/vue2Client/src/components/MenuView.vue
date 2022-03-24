@@ -37,7 +37,7 @@ export default {
     },
     ClickHandler(to) {
       if (to.name === this.$route.name) {
-        this.$router.go(0);
+        this.$store.commit('setForceInit', true);
       }
       this.$router
         .push({
