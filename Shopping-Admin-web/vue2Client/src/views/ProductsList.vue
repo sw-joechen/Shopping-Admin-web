@@ -352,7 +352,6 @@ export default {
         "amount",
         "type",
         "enabled",
-        "createdDate",
         "updatedDate",
         "operation",
       ],
