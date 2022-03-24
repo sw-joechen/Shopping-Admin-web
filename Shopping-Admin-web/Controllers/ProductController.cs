@@ -188,7 +188,6 @@ namespace Shopping_Admin_web.Controllers
                         {
                             while (r.Read())
                             {
-                                int status = Convert.ToInt16(r["f_enabled"]);
                                 productList.Add(new Product
                                 {
                                     id = r["f_id"].ToString(),
@@ -198,7 +197,7 @@ namespace Shopping_Admin_web.Controllers
                                     picture = $"{httpRequest.Url.Scheme}://{httpRequest.Url.Authority}/Uploads{r["f_picture"].ToString()}",
                                     amount = Convert.ToInt16(r["f_amount"]),
                                     type = r["f_type"].ToString(),
-                                    enabled = Convert.ToBoolean(status),
+                                    enabled = Convert.ToBoolean(Convert.ToInt16(r["f_enabled"])),
                                     createdDate = r["f_createdDate"].ToString(),
                                     updatedDate = r["f_updatedDate"].ToString(),
                                 });
