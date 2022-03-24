@@ -7,17 +7,17 @@
         v-for="el in list"
         :key="el.id"
         :notify="el"
-        @close="closeHandler"
+        @close="CloseHandler"
       />
     </transition-group>
   </div>
 </template>
 
 <script>
-import NotifyView from "./children/NotifyView.vue";
+import NotifyView from './children/NotifyView.vue';
 let unsubscribe = null;
 export default {
-  name: "notificationWrapper",
+  name: 'notificationWrapper',
   components: {
     NotifyView,
   },
@@ -35,7 +35,7 @@ export default {
   },
   created() {
     unsubscribe = this.$store.subscribe((mutation, state) => {
-      if (mutation.type === "eventBus/Push") {
+      if (mutation.type === 'eventBus/Push') {
         const notify = state.eventBus.notificationList.shift();
 
         this.list.push({
@@ -50,7 +50,7 @@ export default {
     unsubscribe();
   },
   methods: {
-    closeHandler(targetID) {
+    CloseHandler(targetID) {
       const idx = this.list.findIndex((el) => el.id === targetID);
       if (idx !== -1) {
         this.list.splice(idx, 1);
