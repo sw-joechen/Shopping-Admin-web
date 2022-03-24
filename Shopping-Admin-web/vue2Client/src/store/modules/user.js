@@ -1,10 +1,10 @@
-import Cookies from "js-cookie";
-import { DateTime } from "luxon";
+import Cookies from 'js-cookie';
+import { DateTime } from 'luxon';
 
 const state = () => ({
-  account: Cookies.get("admin_account") || "",
-  role: Cookies.get("admin_role") || "",
-  isLoggedIn: Cookies.get("admin_account") ? true : false,
+  account: Cookies.get('admin_account') || '',
+  role: Cookies.get('admin_role') || '',
+  isLoggedIn: Cookies.get('admin_account') ? true : false,
 });
 
 const getters = {};
@@ -20,15 +20,15 @@ const mutations = {
 
     // TODO: 有效時間拉到server給
     const expiredDatetime = DateTime.now().plus({ day: 7 }).toISO();
-    Cookies.set("admin_account", account, {
+    Cookies.set('admin_account', account, {
       expires: new Date(expiredDatetime),
     });
   },
   clearUser(state) {
-    state.account = "";
-    state.role = "";
+    state.account = '';
+    state.role = '';
     state.isLoggedIn = false;
-    Cookies.remove("admin_account");
+    Cookies.remove('admin_account');
   },
 };
 

@@ -4,13 +4,13 @@
     <div class="query flex">
       <div class="inputGroup flex">
         <label class="whitespace-nowrap pr-3 leading-[42px]">
-          {{ $t("common.tableHeader.name") }}
+          {{ $t('common.tableHeader.name') }}
         </label>
         <input type="text" class="input" v-model="queryData.name" required />
       </div>
       <div class="inputGroup flex">
         <label class="whitespace-nowrap pr-3 leading-[42px]">
-          {{ $t("common.tableHeader.type") }}
+          {{ $t('common.tableHeader.type') }}
         </label>
         <input type="text" class="input" v-model="queryData.type" required />
       </div>
@@ -98,7 +98,7 @@
         <!-- 商品名稱 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.name") }}
+            {{ $t('common.tableHeader.name') }}
           </label>
           <input
             v-model="editData.name"
@@ -113,7 +113,7 @@
         <!-- 描述 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.description") }}
+            {{ $t('common.tableHeader.description') }}
           </label>
           <textarea
             :class="{ '!border-red-600': isDescWarning }"
@@ -128,7 +128,7 @@
         <!-- 價格 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.price") }}
+            {{ $t('common.tableHeader.price') }}
           </label>
           <input
             :class="{ '!border-red-600': isPriceWarning }"
@@ -143,7 +143,7 @@
         <!-- 數量 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.amount") }}
+            {{ $t('common.tableHeader.amount') }}
           </label>
           <input
             :class="{ '!border-red-600': isAmountWarning }"
@@ -158,7 +158,7 @@
         <!-- 類型 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.type") }}
+            {{ $t('common.tableHeader.type') }}
           </label>
           <input
             :class="{ '!border-red-600': isTypeWarning }"
@@ -181,7 +181,7 @@
         <div class="imgUploader">
           <div class="inputGroup flex">
             <label class="label whitespace-nowrap mr-3 leading-[42px]">
-              {{ $t("common.tableHeader.picture") }}
+              {{ $t('common.tableHeader.picture') }}
             </label>
             <input
               :class="{ '!border-red-600': isFileWarning }"
@@ -212,7 +212,7 @@
         <!-- 商品名稱 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.name") }}
+            {{ $t('common.tableHeader.name') }}
           </label>
           <input
             v-model="addData.name"
@@ -227,7 +227,7 @@
         <!-- 描述 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.description") }}
+            {{ $t('common.tableHeader.description') }}
           </label>
           <textarea
             :class="{ '!border-red-600': isDescWarning }"
@@ -242,7 +242,7 @@
         <!-- 價格 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.price") }}
+            {{ $t('common.tableHeader.price') }}
           </label>
           <input
             :class="{ '!border-red-600': isPriceWarning }"
@@ -257,7 +257,7 @@
         <!-- 數量 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.amount") }}
+            {{ $t('common.tableHeader.amount') }}
           </label>
           <input
             :class="{ '!border-red-600': isAmountWarning }"
@@ -272,7 +272,7 @@
         <!-- 類型 -->
         <div class="inputGroup flex">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
-            {{ $t("common.tableHeader.type") }}
+            {{ $t('common.tableHeader.type') }}
           </label>
           <input
             :class="{ '!border-red-600': isTypeWarning }"
@@ -288,7 +288,7 @@
         <div class="imgUploader">
           <div class="inputGroup flex">
             <label class="label whitespace-nowrap mr-3 leading-[42px]">
-              {{ $t("common.tableHeader.picture") }}
+              {{ $t('common.tableHeader.picture') }}
             </label>
             <input
               :class="{ '!border-red-600': isFileWarning }"
@@ -310,16 +310,16 @@
 </template>
 
 <script>
-import BtnPrimary from "../components/BtnPrimary.vue";
-import OptionSelector from "../components/OptionSelector.vue";
-import FormDialog from "../components/Dialogs/DialogView.vue";
-import SwtichView from "../components/SwtichView.vue";
+import BtnPrimary from '../components/BtnPrimary.vue';
+import OptionSelector from '../components/OptionSelector.vue';
+import FormDialog from '../components/Dialogs/DialogView.vue';
+import SwtichView from '../components/SwtichView.vue';
 // import TableView from "../components/Table/TableView.vue";
 
-import { GetProductsList, AddProduct, UpdateProduct } from "../APIs/Product";
-import { DateTime } from "luxon";
-import ErrorCodeList from "@/ErrorCodeList";
-import { isContaineSpecialCharaters, isPureNumber } from "@/Utils/validators";
+import { GetProductsList, AddProduct, UpdateProduct } from '../APIs/Product';
+import { DateTime } from 'luxon';
+import ErrorCodeList from '@/ErrorCodeList';
+import { isContaineSpecialCharaters, isPureNumber } from '@/Utils/validators';
 const EOptions = {
   all: 0,
   enabled: 1,
@@ -327,7 +327,7 @@ const EOptions = {
 };
 
 export default {
-  name: "productsList",
+  name: 'productsList',
   components: {
     BtnPrimary,
     OptionSelector,
@@ -339,45 +339,45 @@ export default {
     return {
       options: [
         {
-          label: "全部",
+          label: '全部',
           value: EOptions.all,
         },
         {
-          label: "啟用",
+          label: '啟用',
           value: EOptions.enabled,
         },
         {
-          label: "禁用",
+          label: '禁用',
           value: EOptions.disabled,
         },
       ],
       columns: [
-        "id",
-        "name",
-        "description",
-        "price",
-        "picture",
-        "amount",
-        "type",
-        "enabled",
-        "updatedDate",
-        "operation",
+        'id',
+        'name',
+        'description',
+        'price',
+        'picture',
+        'amount',
+        'type',
+        'enabled',
+        'updatedDate',
+        'operation',
       ],
       btnDisabledList: [],
       queryData: {
         enabled: EOptions.all,
-        name: "",
-        type: "",
+        name: '',
+        type: '',
       },
       productList: [],
       isShowAddDialog: false,
       isShowEditDialog: false,
       addData: {
-        name: "",
-        desc: "",
+        name: '',
+        desc: '',
         price: null,
         amount: null,
-        type: "",
+        type: '',
         picture: null,
         file: null,
       },
@@ -389,12 +389,12 @@ export default {
       isTypeWarning: false,
       isFileWarning: false,
       editData: {
-        id: "",
-        name: "",
-        description: "",
+        id: '',
+        name: '',
+        description: '',
         price: null,
         amount: null,
-        type: "",
+        type: '',
         enabled: null,
         file: null,
       },
@@ -431,22 +431,22 @@ export default {
         isTypeValid
       ) {
         const fd = new FormData();
-        fd.append("id", this.editData.id);
-        fd.append("name", this.editData.name);
-        fd.append("price", this.editData.price);
-        fd.append("amount", this.editData.amount);
-        fd.append("description", this.editData.description);
-        fd.append("type", this.editData.type);
-        fd.append("picture", this.editData.picture);
-        fd.append("enabled", this.editData.enabled);
-        if (this.editData.file !== null) fd.append("file", this.editData.file);
+        fd.append('id', this.editData.id);
+        fd.append('name', this.editData.name);
+        fd.append('price', this.editData.price);
+        fd.append('amount', this.editData.amount);
+        fd.append('description', this.editData.description);
+        fd.append('type', this.editData.type);
+        fd.append('picture', this.editData.picture);
+        fd.append('enabled', this.editData.enabled);
+        if (this.editData.file !== null) fd.append('file', this.editData.file);
 
         const res = await UpdateProduct(fd);
         if (res.code === 200) {
           this.searchHandler();
-          this.$store.commit("eventBus/Push", {
-            type: "success",
-            content: this.$t("common.success"),
+          this.$store.commit('eventBus/Push', {
+            type: 'success',
+            content: this.$t('common.success'),
           });
         }
 
@@ -454,16 +454,16 @@ export default {
         this.previewImage = null;
         this.toggleEditDialogHandler();
       } else {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: this.$t('productList.checkInputsPlz'),
         });
       }
     },
     async editHandler(payload) {
       const { id } = payload;
       const fd = new FormData();
-      fd.append("id", id);
+      fd.append('id', id);
       const res = await GetProductsList(fd);
 
       if (res.code === 200 && res.data.length) {
@@ -486,11 +486,11 @@ export default {
     },
     clearEditData() {
       this.editData = {
-        name: "",
-        desc: "",
+        name: '',
+        desc: '',
         price: null,
         amount: null,
-        type: "",
+        type: '',
         picture: null,
         enabled: null,
       };
@@ -505,12 +505,12 @@ export default {
     },
     uploadImage(event, type) {
       const input = event.target;
-      console.log("checkpointA=> ", input.files);
+      console.log('checkpointA=> ', input.files);
       if (input.files.length) {
         this.previewImage = URL.createObjectURL(input.files[0]);
-        if (type === "add") {
+        if (type === 'add') {
           this.addData.file = input.files[0];
-        } else if (type === "edit") {
+        } else if (type === 'edit') {
           this.editData.file = input.files[0];
         }
       } else {
@@ -547,34 +547,34 @@ export default {
         isFileExist
       ) {
         const fd = new FormData();
-        fd.append("name", this.addData.name);
-        fd.append("price", this.addData.price);
-        fd.append("amount", this.addData.amount);
-        fd.append("description", this.addData.desc);
-        fd.append("type", this.addData.type);
-        fd.append("picture", this.addData.picture);
-        fd.append("file", this.addData.file);
+        fd.append('name', this.addData.name);
+        fd.append('price', this.addData.price);
+        fd.append('amount', this.addData.amount);
+        fd.append('description', this.addData.desc);
+        fd.append('type', this.addData.type);
+        fd.append('picture', this.addData.picture);
+        fd.append('file', this.addData.file);
 
         const res = await AddProduct(fd);
 
         if (res.code === 200) {
-          this.$store.commit("eventBus/Push", {
-            type: "success",
-            content: this.$t("common.success"),
+          this.$store.commit('eventBus/Push', {
+            type: 'success',
+            content: this.$t('common.success'),
           });
           this.searchHandler();
         } else {
-          this.$store.commit("eventBus/Push", {
-            type: "error",
+          this.$store.commit('eventBus/Push', {
+            type: 'error',
             content: ErrorCodeList[res.code],
           });
         }
         this.toggleAddDialogHandler();
       } else {
         // 輸入欄位異常通知
-        this.$store.commit("eventBus/Push", {
-          type: "error",
-          content: this.$t("productList.checkInputsPlz"),
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: this.$t('productList.checkInputsPlz'),
         });
       }
     },
@@ -585,26 +585,26 @@ export default {
     },
     clearAddData() {
       this.addData = {
-        name: "",
-        desc: "",
+        name: '',
+        desc: '',
         price: null,
         amount: null,
-        type: "",
+        type: '',
         file: null,
       };
       this.previewImage = null;
     },
     extraFormatter(data, column) {
       // 將狀態做i18n
-      if (column === "enabled") {
+      if (column === 'enabled') {
         return data[column]
-          ? this.$t("common.tableHeader.enabled")
-          : this.$t("common.tableHeader.disabled");
-      } else if (column === "createdDate" || column === "updatedDate") {
+          ? this.$t('common.tableHeader.enabled')
+          : this.$t('common.tableHeader.disabled');
+      } else if (column === 'createdDate' || column === 'updatedDate') {
         // 將日期做格式化
         const date = new Date(data[column]);
         const dt = DateTime.fromJSDate(date);
-        return dt.toFormat("yyyy/MM/dd HH:mm:ss");
+        return dt.toFormat('yyyy/MM/dd HH:mm:ss');
       } else {
         return data[column];
       }
@@ -613,17 +613,17 @@ export default {
       const fd = new FormData();
       if (this.queryData.enabled !== 0) {
         fd.append(
-          "enabled",
+          'enabled',
           this.queryData.enabled === EOptions.enabled ? true : false
         );
       }
 
       if (this.queryData.name.length) {
-        fd.append("name", this.queryData.name);
+        fd.append('name', this.queryData.name);
       }
 
       if (this.queryData.type.length) {
-        fd.append("type", this.queryData.type);
+        fd.append('type', this.queryData.type);
       }
 
       const res = await GetProductsList(fd);
@@ -631,8 +631,8 @@ export default {
         this.productList = res.data;
       } else {
         this.productList = [];
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: ErrorCodeList[res.code],
         });
       }

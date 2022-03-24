@@ -1,7 +1,7 @@
 <template>
   <div class="welcome">
     <div class="txt text-3xl font-bold">
-      Welcome {{ $store.state.user || "" }}
+      Welcome {{ $store.state.user || '' }}
       <button class="border border-red-600" @click="clickHandler">
         click me
       </button>
@@ -11,12 +11,12 @@
 
 <script>
 export default {
-  name: "WelcomeView",
+  name: 'WelcomeView',
   methods: {
     clickHandler() {
-      this.$store.commit("eventBus/Push", {
-        type: "success",
-        content: "測試成功",
+      this.$store.commit('eventBus/Push', {
+        type: 'success',
+        content: '測試成功',
       });
     },
   },

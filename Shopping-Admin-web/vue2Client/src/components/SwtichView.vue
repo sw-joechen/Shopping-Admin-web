@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  name: "swtichView",
+  name: 'swtichView',
   props: {
     toggle: {
       type: Boolean || null,
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     clickHandler() {
-      this.$emit("toggle", !this.toggle);
+      this.$emit('toggle', !this.toggle);
     },
   },
 };

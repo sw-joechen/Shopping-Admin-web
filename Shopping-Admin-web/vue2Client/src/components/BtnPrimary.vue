@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     ClickHandler() {
-      this.$emit("submit");
+      this.$emit('submit');
     },
   },
 };

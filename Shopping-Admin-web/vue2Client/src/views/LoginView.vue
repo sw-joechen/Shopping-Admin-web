@@ -42,25 +42,25 @@
 </template>
 
 <script>
-import BtnLogin from "@/components/BtnPrimary.vue";
-import { LoginAgent } from "../APIs/Agent";
-import errorList from "../ErrorCodeList";
+import BtnLogin from '@/components/BtnPrimary.vue';
+import { LoginAgent } from '../APIs/Agent';
+import errorList from '../ErrorCodeList';
 export default {
-  name: "loginView",
+  name: 'loginView',
   components: {
     BtnLogin,
   },
   data: () => {
     return {
-      account: "",
-      pwd: "",
+      account: '',
+      pwd: '',
     };
   },
   methods: {
     async LoginHandler() {
       if (!this.account.length || !this.pwd.length) {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: errorList[102],
         });
         return;
@@ -71,15 +71,15 @@ export default {
       });
 
       if (res.code === 200) {
-        this.$store.commit("user/setUser", {
+        this.$store.commit('user/setUser', {
           account: res.data.account,
           role: res.data.role,
         });
 
-        this.$router.push({ name: "home" });
+        this.$router.push({ name: 'home' });
       } else {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: errorList[res.code],
         });
       }

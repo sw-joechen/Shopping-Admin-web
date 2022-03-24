@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import { DateTime } from "luxon";
-import BtnPrimary from "../../BtnPrimary.vue";
+import { DateTime } from 'luxon';
+import BtnPrimary from '../../BtnPrimary.vue';
 export default {
-  name: "tableRow",
+  name: 'tableRow',
   components: {
     BtnPrimary,
   },
@@ -56,22 +56,22 @@ export default {
       return this.diabledList.some((el) => el === btnType);
     },
     unlockHandler() {
-      this.$emit("unlock", this.row);
+      this.$emit('unlock', this.row);
     },
     editHandler() {
-      this.$emit("edit", this.row);
+      this.$emit('edit', this.row);
     },
     contentFilter(payload) {
       const { key, value } = payload;
       switch (key) {
-        case "enabled": {
+        case 'enabled': {
           return this.enabledTransferer(payload);
         }
-        case "createdDate":
-        case "updatedDate": {
+        case 'createdDate':
+        case 'updatedDate': {
           return this.dateFormatter(payload);
         }
-        case "operation": {
+        case 'operation': {
           break;
         }
         default:
@@ -81,7 +81,7 @@ export default {
     // 多語系啟、禁用
     enabledTransferer(payload) {
       const { key, value } = payload;
-      if (key === "enabled" && typeof value === "number") {
+      if (key === 'enabled' && typeof value === 'number') {
         return value === 1
           ? this.$t(`common.tableHeader.enabled`)
           : this.$t(`common.tableHeader.disabled`);
@@ -92,7 +92,7 @@ export default {
     dateFormatter(payload) {
       const date = new Date(payload.value);
       const dt = DateTime.fromJSDate(date);
-      return dt.toFormat("yyyy/MM/dd HH:mm:ss");
+      return dt.toFormat('yyyy/MM/dd HH:mm:ss');
     },
   },
 };

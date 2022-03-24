@@ -33,11 +33,11 @@
 </template>
 
 <script>
-import Menu from "@/components/MenuView.vue";
-import LogOutBtn from "@/components/BtnPrimary.vue";
-import ConfirmDialog from "@/components/Dialogs/DialogView.vue";
+import Menu from '@/components/MenuView.vue';
+import LogOutBtn from '@/components/BtnPrimary.vue';
+import ConfirmDialog from '@/components/Dialogs/DialogView.vue';
 export default {
-  name: "LayoutView",
+  name: 'LayoutView',
   components: {
     Menu,
     LogOutBtn,
@@ -54,8 +54,8 @@ export default {
     },
     logOutHandler() {
       this.toggleHandler();
-      this.$store.commit("user/clearUser");
-      this.$router.replace({ name: "login" });
+      this.$store.commit('user/clearUser');
+      this.$router.replace({ name: 'login' });
     },
   },
 };

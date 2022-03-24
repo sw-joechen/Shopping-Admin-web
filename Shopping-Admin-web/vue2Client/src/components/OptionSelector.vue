@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     onChangeHandler() {
-      this.$emit("onChange", {
+      this.$emit('onChange', {
         value: this.value,
       });
     },

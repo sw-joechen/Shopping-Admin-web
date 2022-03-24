@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import TableHeader from "./children/TableHeader.vue";
-import TableRow from "./children/TableRow.vue";
+import TableHeader from './children/TableHeader.vue';
+import TableRow from './children/TableRow.vue';
 
 export default {
-  name: "tableView",
+  name: 'tableView',
   components: {
     TableHeader,
     TableRow,
@@ -60,13 +60,13 @@ export default {
         obj[el.key] = el.value;
       });
 
-      this.$emit("unlock", {
+      this.$emit('unlock', {
         idx,
         ...obj,
       });
     },
     editHandler(payload) {
-      this.$emit("edit", payload);
+      this.$emit('edit', payload);
     },
     btnDisabledProcesser(rowIdx) {
       let result = [];
@@ -98,7 +98,7 @@ export default {
         if (this.isOperational) {
           result.push({
             index: lastIndex++,
-            key: "operation",
+            key: 'operation',
           });
         }
         return result;
@@ -121,8 +121,8 @@ export default {
         });
         if (this.isOperational) {
           result.push({
-            key: "operation",
-            value: "",
+            key: 'operation',
+            value: '',
           });
         }
         return result;

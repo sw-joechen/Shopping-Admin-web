@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import SuccessIcon from "./SuccessIcon.vue";
-import ErrorIcon from "./ErrorIcon.vue";
+import SuccessIcon from './SuccessIcon.vue';
+import ErrorIcon from './ErrorIcon.vue';
 const DISPLAY_DURATION = 2000;
 export default {
-  name: "notifyView",
+  name: 'notifyView',
   components: {
     SuccessIcon,
     ErrorIcon,
@@ -28,12 +28,12 @@ export default {
   },
   created() {
     setTimeout(() => {
-      this.$emit("close", this.notify.id);
+      this.$emit('close', this.notify.id);
     }, DISPLAY_DURATION);
   },
   computed: {
     GetNotifyBg() {
-      return this.notify.type === "success" ? "bg-green4" : "bg-red1";
+      return this.notify.type === 'success' ? 'bg-green4' : 'bg-red1';
     },
   },
 };

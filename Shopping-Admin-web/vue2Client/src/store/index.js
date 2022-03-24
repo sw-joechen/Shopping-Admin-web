@@ -1,7 +1,7 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import user from "./modules/user";
-import eventBus from "./modules/eventBus";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import user from './modules/user';
+import eventBus from './modules/eventBus';
 
 Vue.use(Vuex);
 

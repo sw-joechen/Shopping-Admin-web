@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import NotificationWrapper from "@/components/Notification.vue/NotificationWrapper.vue";
+import NotificationWrapper from '@/components/Notification.vue/NotificationWrapper.vue';
 
 export default {
   components: {

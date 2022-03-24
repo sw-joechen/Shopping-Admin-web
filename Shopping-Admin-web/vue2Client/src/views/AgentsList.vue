@@ -95,19 +95,19 @@
 </template>
 
 <script>
-import BtnSubmit from "@/components/BtnPrimary.vue";
-import FormDialog from "@/components/Dialogs/DialogView.vue";
+import BtnSubmit from '@/components/BtnPrimary.vue';
+import FormDialog from '@/components/Dialogs/DialogView.vue';
 import {
   GetAgentsList,
   RegisterAgent,
   UpdateAgent,
   UnlockAgent,
-} from "@/APIs/Agent";
-import TableView from "@/components/Table/TableView.vue";
-import OptionSelector from "@/components/OptionSelector.vue";
-import SwtichView from "@/components/SwtichView.vue";
-import { isAccountValid, isPwdValid } from "../Utils/validators";
-import errorList from "../ErrorCodeList";
+} from '@/APIs/Agent';
+import TableView from '@/components/Table/TableView.vue';
+import OptionSelector from '@/components/OptionSelector.vue';
+import SwtichView from '@/components/SwtichView.vue';
+import { isAccountValid, isPwdValid } from '../Utils/validators';
+import errorList from '../ErrorCodeList';
 const EOptions = {
   all: 0,
   enabled: 1,
@@ -115,7 +115,7 @@ const EOptions = {
 };
 
 export default {
-  name: "agentsList",
+  name: 'agentsList',
   components: {
     BtnSubmit,
     FormDialog,
@@ -126,24 +126,24 @@ export default {
   data: () => {
     return {
       tableHeaderPlaceholder: [
-        "id",
-        "account",
-        "enabled",
-        "createdDate",
-        "updatedDate",
-        "operation",
+        'id',
+        'account',
+        'enabled',
+        'createdDate',
+        'updatedDate',
+        'operation',
       ],
       options: [
         {
-          label: "全部",
+          label: '全部',
           value: EOptions.all,
         },
         {
-          label: "啟用",
+          label: '啟用',
           value: EOptions.enabled,
         },
         {
-          label: "禁用",
+          label: '禁用',
           value: EOptions.disabled,
         },
       ],
@@ -153,18 +153,18 @@ export default {
       },
       queryEnabled: 0,
       isShowAddDialog: false,
-      dialogAccount: "",
-      dialogPwd: "",
+      dialogAccount: '',
+      dialogPwd: '',
       isInvalid: false,
       isShowEditDialog: false,
 
-      dialogEditPwd: "",
+      dialogEditPwd: '',
       dialogEditEnabled: true,
       oldAccountInfo: {
-        account: "",
+        account: '',
         enabled: null,
-        pwd: "",
-        role: "",
+        pwd: '',
+        role: '',
       },
       btnDisabledList: [],
     };
@@ -173,8 +173,8 @@ export default {
     const res = await GetAgentsList();
     if (res && res.code === 200) this.sourceAgentsList = res.data;
     else {
-      this.$store.commit("eventBus/Push", {
-        type: "error",
+      this.$store.commit('eventBus/Push', {
+        type: 'error',
         content: errorList[res.code],
       });
     }
@@ -214,47 +214,47 @@ export default {
       }
     },
     async unlockHandler(payload) {
-      console.log("payload=> ", payload);
-      let account = "";
+      console.log('payload=> ', payload);
+      let account = '';
       let idx = null;
 
       for (const [key, value] of Object.entries(payload)) {
-        if (key === "account") {
+        if (key === 'account') {
           account = value;
         }
-        if (key === "idx") {
+        if (key === 'idx') {
           idx = value;
         }
       }
 
       this.addDisabledBtn({
         idx,
-        btnType: "unlock",
+        btnType: 'unlock',
       });
 
       const res = await UnlockAgent({
         account,
       });
       if (res.code === 200) {
-        this.$store.commit("eventBus/Push", {
-          type: "success",
-          content: "解鎖成功",
+        this.$store.commit('eventBus/Push', {
+          type: 'success',
+          content: '解鎖成功',
         });
       } else {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: errorList[res.code],
         });
       }
 
       this.removeDisabledBtn({
         idx,
-        btnType: "unlock",
+        btnType: 'unlock',
       });
     },
     clearEditDialog() {
       this.oldAccountInfo = {};
-      this.dialogEditPwd = "";
+      this.dialogEditPwd = '';
       this.dialogEditEnabled = true;
     },
     toggleEditDialogHandler(payload) {
@@ -269,20 +269,20 @@ export default {
       if (res.code === 200) {
         const response = await GetAgentsList();
         if (response.code === 200) {
-          this.$store.commit("eventBus/Push", {
-            type: "success",
-            content: this.$t("common.success"),
+          this.$store.commit('eventBus/Push', {
+            type: 'success',
+            content: this.$t('common.success'),
           });
           this.sourceAgentsList = response.data;
         } else {
-          this.$store.commit("eventBus/Push", {
-            type: "error",
+          this.$store.commit('eventBus/Push', {
+            type: 'error',
             content: errorList[res.code],
           });
         }
       } else {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: errorList[res.code],
         });
       }
@@ -296,7 +296,7 @@ export default {
     async editHandler(accountInfo) {
       this.toggleEditDialogHandler(!this.isShowEditDialog);
       accountInfo.forEach((item) => {
-        if (item.key === "account") {
+        if (item.key === 'account') {
           this.oldAccountInfo.account = item.value;
         }
       });
@@ -311,8 +311,8 @@ export default {
         this.oldAccountInfo.role = res.data[0].role;
         this.onDialogEditToggle(!!res.data[0].enabled);
       } else {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: errorList[res.code],
         });
       }
@@ -324,8 +324,8 @@ export default {
       const res = await GetAgentsList();
       if (res.code === 200) this.sourceAgentsList = res.data;
       else {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: errorList[res.code],
         });
       }
@@ -340,26 +340,26 @@ export default {
       });
       if (res.code === 200) {
         this.toggleAddDialogHandler(false);
-        this.dialogAccount = "";
-        this.dialogPwd = "";
+        this.dialogAccount = '';
+        this.dialogPwd = '';
 
         // 新增成功後重取清單
         const res = await GetAgentsList();
         if (res.code === 200) {
           this.sourceAgentsList = res.data;
-          this.$store.commit("eventBus/Push", {
-            type: "success",
-            content: "新增成功",
+          this.$store.commit('eventBus/Push', {
+            type: 'success',
+            content: '新增成功',
           });
         } else {
-          this.$store.commit("eventBus/Push", {
-            type: "error",
+          this.$store.commit('eventBus/Push', {
+            type: 'error',
             content: errorList[res.code],
           });
         }
       } else {
-        this.$store.commit("eventBus/Push", {
-          type: "error",
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
           content: errorList[res.code],
         });
       }
@@ -387,8 +387,8 @@ export default {
       this.isShowAddDialog = payload;
     },
     initAddDialogForm() {
-      this.dialogAccount = "";
-      this.dialogPwd = "";
+      this.dialogAccount = '';
+      this.dialogPwd = '';
       this.isInvalid = false;
     },
   },

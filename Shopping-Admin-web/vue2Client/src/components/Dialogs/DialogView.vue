@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import BtnSubmit from "../BtnPrimary.vue";
+import BtnSubmit from '../BtnPrimary.vue';
 export default {
-  name: "DialogView",
+  name: 'DialogView',
   components: {
     BtnSubmit,
   },
@@ -44,10 +44,10 @@ export default {
   },
   methods: {
     toggleHandler() {
-      this.$emit("toggle", !this.isShowDialog);
+      this.$emit('toggle', !this.isShowDialog);
     },
     submitHandler() {
-      this.$emit("submit");
+      this.$emit('submit');
     },
   },
 };

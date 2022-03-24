@@ -1,4 +1,4 @@
-import Mock from "mockjs";
+import Mock from 'mockjs';
 
 const getAgentsList = (payload) => {
   let tempData = [];
@@ -9,53 +9,53 @@ const getAgentsList = (payload) => {
         id: 1,
         account: params.account,
         enabled: 1,
-        createdDate: "2022-03-07T15:41:06.280",
-        updatedDate: "2022-03-07T15:41:06.280",
-        pwd: "dwqopdkpoqw",
+        createdDate: '2022-03-07T15:41:06.280',
+        updatedDate: '2022-03-07T15:41:06.280',
+        pwd: 'dwqopdkpoqw',
       });
     }
   } else {
     tempData = [
       {
         id: 1,
-        account: "a12345",
+        account: 'a12345',
         enabled: 0,
-        createdDate: "2022-03-07T15:41:06.280",
-        updatedDate: "2022-03-07T15:41:06.280",
+        createdDate: '2022-03-07T15:41:06.280',
+        updatedDate: '2022-03-07T15:41:06.280',
       },
       {
         id: 240,
-        account: "a11111",
+        account: 'a11111',
         enabled: 0,
-        createdDate: "2022-03-07T15:41:06.280",
-        updatedDate: "2022-03-07T15:41:06.280",
+        createdDate: '2022-03-07T15:41:06.280',
+        updatedDate: '2022-03-07T15:41:06.280',
       },
       {
         id: 26,
-        account: "a22222",
+        account: 'a22222',
         enabled: 0,
-        createdDate: "2022-03-07T15:41:06.280",
-        updatedDate: "2022-03-07T15:41:06.280",
+        createdDate: '2022-03-07T15:41:06.280',
+        updatedDate: '2022-03-07T15:41:06.280',
       },
       {
         id: 13,
-        account: "a33333",
+        account: 'a33333',
         enabled: 1,
-        createdDate: "2022-03-07T15:59:16.037",
-        updatedDate: "2022-03-07T15:59:16.037",
+        createdDate: '2022-03-07T15:59:16.037',
+        updatedDate: '2022-03-07T15:59:16.037',
       },
       {
         id: 97,
-        account: "a33333",
+        account: 'a33333',
         enabled: 1,
-        createdDate: "2022-03-07T15:59:16.037",
-        updatedDate: "2022-03-07T15:59:16.037",
+        createdDate: '2022-03-07T15:59:16.037',
+        updatedDate: '2022-03-07T15:59:16.037',
       },
     ];
   }
   const result = {
     code: 200,
-    msg: "success",
+    msg: 'success',
     data: tempData,
   };
   return JSON.stringify(result);
@@ -64,10 +64,10 @@ const getAgentsList = (payload) => {
 const loginAgent = () => {
   const result = {
     code: 200,
-    msg: "success",
+    msg: 'success',
     data: {
-      account: "a12345",
-      role: "",
+      account: 'a12345',
+      role: '',
     },
   };
   return JSON.stringify(result);
@@ -76,7 +76,7 @@ const loginAgent = () => {
 const registerAgent = () => {
   const result = {
     code: 200,
-    msg: "success",
+    msg: 'success',
   };
   return JSON.stringify(result);
 };
@@ -85,7 +85,7 @@ const updateAgent = (payload) => {
   const params = JSON.parse(payload.body);
   const result = {
     code: 200,
-    msg: "success",
+    msg: 'success',
     data: {
       account: params.account,
       role: params.role,
@@ -99,7 +99,7 @@ const UnlockAgent = (payload) => {
   const params = JSON.parse(payload.body);
   const result = {
     code: 200,
-    msg: "success",
+    msg: 'success',
     data: {
       account: params.account,
     },
@@ -110,57 +110,57 @@ const UnlockAgent = (payload) => {
 const GetProductsList = () => {
   const result = {
     code: 200,
-    msg: "success",
+    msg: 'success',
     data: [
       {
-        id: "1",
-        name: "aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb",
+        id: '1',
+        name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
         amount: 1,
-        createdDate: "2022-03-17T15:43:55.653",
+        createdDate: '2022-03-17T15:43:55.653',
         description:
-          "xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy",
+          'xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
         enabled: true,
-        picture: "https://picsum.photos/200",
+        picture: 'https://picsum.photos/200',
         price: 1,
-        type: "t1",
-        updatedDate: "2022-03-17T15:43:55.653",
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
       },
       {
-        id: "2",
-        name: "test",
+        id: '2',
+        name: 'test',
         amount: 1,
-        createdDate: "2022-03-17T15:43:55.653",
-        description: "desc",
+        createdDate: '2022-03-17T15:43:55.653',
+        description: 'desc',
         enabled: true,
-        picture: "https://picsum.photos/200",
+        picture: 'https://picsum.photos/200',
         price: 1,
-        type: "t1",
-        updatedDate: "2022-03-17T15:43:55.653",
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
       },
       {
         amount: 243,
-        createdDate: "2022-03-17T15:43:55.653",
-        description: "desc2",
+        createdDate: '2022-03-17T15:43:55.653',
+        description: 'desc2',
         enabled: false,
-        id: "23",
-        name: "test2",
-        picture: "https://picsum.photos/200",
+        id: '23',
+        name: 'test2',
+        picture: 'https://picsum.photos/200',
         price: 1,
-        type: "type2",
-        updatedDate: "2022-03-17T15:43:55.653",
+        type: 'type2',
+        updatedDate: '2022-03-17T15:43:55.653',
       },
       {
-        id: "76",
-        name: "aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb",
+        id: '76',
+        name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
         amount: 1,
-        createdDate: "2022-03-17T15:43:55.653",
+        createdDate: '2022-03-17T15:43:55.653',
         description:
-          "xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy",
+          'xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
         enabled: true,
-        picture: "https://picsum.photos/200",
+        picture: 'https://picsum.photos/200',
         price: 1,
-        type: "t1",
-        updatedDate: "2022-03-17T15:43:55.653",
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
       },
     ],
   };
@@ -171,26 +171,26 @@ const AddProduct = () => {
   // const params = JSON.parse(payload.body);
   const result = {
     code: 200,
-    msg: "success",
+    msg: 'success',
     data: {},
   };
   return JSON.stringify(result);
 };
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === 'development') {
   // agent
-  Mock.mock("/api/agent/getAgentsList", getAgentsList);
+  Mock.mock('/api/agent/getAgentsList', getAgentsList);
 
-  Mock.mock("/api/agent/loginAgent", loginAgent);
+  Mock.mock('/api/agent/loginAgent', loginAgent);
 
-  Mock.mock("/api/agent/registerAgent", registerAgent);
+  Mock.mock('/api/agent/registerAgent', registerAgent);
 
-  Mock.mock("/api/agent/updateAgent", updateAgent);
+  Mock.mock('/api/agent/updateAgent', updateAgent);
 
-  Mock.mock("/api/agent/UnlockAgent", UnlockAgent);
+  Mock.mock('/api/agent/UnlockAgent', UnlockAgent);
 
   // product
-  Mock.mock("/api/product/GetProductsList", GetProductsList);
+  Mock.mock('/api/product/GetProductsList', GetProductsList);
 
-  Mock.mock("/api/product/AddProduct", AddProduct);
+  Mock.mock('/api/product/AddProduct', AddProduct);
 }

@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "tableHeader",
+  name: 'tableHeader',
   props: {
     header: {
       required: true,

@@ -16,14 +16,14 @@
 
 <script>
 export default {
-  name: "menuView",
+  name: 'menuView',
   data: () => {
     return {
       routes: [
-        { name: "首頁", to: { name: "welcome" } },
-        { name: "後台帳號管理", to: { name: "agentsList" } },
-        { name: "用戶帳號管理", to: { name: "membersList" } },
-        { name: "商品管理", to: { name: "productsList" } },
+        { name: '首頁', to: { name: 'welcome' } },
+        { name: '後台帳號管理', to: { name: 'agentsList' } },
+        { name: '用戶帳號管理', to: { name: 'membersList' } },
+        { name: '商品管理', to: { name: 'productsList' } },
       ],
     };
   },
