@@ -1,30 +1,100 @@
 <template>
-  <div class="tableView w-full">
+  <div class="agentsTable pt-5">
     <table class="w-full">
-      <TableHeader :header="tableHeaders" v-if="tableHeaders" />
-      <TableRow
-        v-for="(row, index) in tableRows"
-        :key="index"
-        :row="row"
-        @edit="editHandler"
-        @unlock="unlockHandler($event, index)"
-        :isEditBtnRequired="isEditBtnRequired"
-        :isUnlockBtnRequired="isUnlockBtnRequired"
-        :diabledList="btnDisabledProcesser(index)"
-      />
+      <thead>
+        <tr
+          class="text-left border-t border-b-2 border-grey2 p-2 bg-blue-400 text-white text-xl;"
+        >
+          <th
+            class="py-3 px-1 min-w-[120px]"
+            scope="col"
+            v-for="col in columns"
+            :key="col"
+          >
+            {{ $t(`common.tableHeader.${col}`) }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in datas"
+          :key="index"
+          class="even:bg-gray-300 hover:bg-gray-400 even:border-b odd:bg-white border-gray-400 p-2"
+        >
+          <td class="id bodyTd">
+            <div class="max-w-xs">
+              <span class="break-all">
+                {{ item.id }}
+              </span>
+            </div>
+          </td>
+
+          <td class="account bodyTd">
+            <div class="max-w-xs">
+              <span class="break-all">
+                {{ item.account }}
+              </span>
+            </div>
+          </td>
+
+          <td class="enabled bodyTd">
+            <div class="max-w-xs">
+              <span class="break-all">
+                {{
+                  item.enabled
+                    ? $t('common.tableHeader.enabled')
+                    : $t('common.tableHeader.disabled')
+                }}
+              </span>
+            </div>
+          </td>
+
+          <td class="createdDate bodyTd">
+            <div class="max-w-xs">
+              <span class="break-all">
+                {{ DateFormatter(item.createdDate) }}
+              </span>
+            </div>
+          </td>
+
+          <td class="updatedDate bodyTd">
+            <div class="max-w-xs">
+              <span class="break-all">
+                {{ DateFormatter(item.updatedDate) }}
+              </span>
+            </div>
+          </td>
+
+          <td class="opertation bodyTd">
+            <div class="max-w-xs flex">
+              <BtnPrimary
+                class="mr-2"
+                :label="$t('common.edit')"
+                @submit="EditHandler(item)"
+              />
+              <BtnPrimary
+                v-if="item.count >= 3"
+                :label="$t('common.unlock')"
+                @submit="UnlockHandler(item)"
+              />
+            </div>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>
 
 <script>
-import TableHeader from './children/TableHeader.vue';
-import TableRow from './children/TableRow.vue';
+import { DateTime } from 'luxon';
+import { UnlockAgent } from '@/APIs/Agent';
+import errorList from '@/ErrorCodeList';
+import BtnPrimary from '../BtnPrimary.vue';
 
 export default {
   name: 'tableView',
   components: {
-    TableHeader,
-    TableRow,
+    BtnPrimary,
   },
   props: {
     datas: {
@@ -32,104 +102,58 @@ export default {
       type: Array,
       // default: () => [],
     },
-    headersPlaceholder: {
-      required: true,
-      type: Array,
-    },
-    isOperational: {
-      required: false,
-      type: Boolean,
-      default: true,
-    },
-    isEditBtnRequired: {
-      required: false,
-      default: true,
-    },
-    isUnlockBtnRequired: {
-      required: false,
-      default: true,
-    },
-    btnDisabledList: {
-      type: Array,
-    },
+  },
+  data: () => {
+    return {
+      columns: [
+        'id',
+        'account',
+        'enabled',
+        'createdDate',
+        'updatedDate',
+        'operation',
+      ],
+    };
   },
   methods: {
-    unlockHandler(payload, idx) {
-      const obj = {};
-      payload.forEach((el) => {
-        obj[el.key] = el.value;
-      });
+    // 將日期格式化
+    DateFormatter(inputDate) {
+      const date = new Date(inputDate);
+      const dt = DateTime.fromJSDate(date);
+      return dt.toFormat('yyyy/MM/dd HH:mm:ss');
+    },
 
-      this.$emit('unlock', {
-        idx,
-        ...obj,
+    async UnlockHandler(payload) {
+      const res = await UnlockAgent({
+        account: payload.account,
       });
-    },
-    editHandler(payload) {
-      this.$emit('edit', payload);
-    },
-    btnDisabledProcesser(rowIdx) {
-      let result = [];
-      if (this.btnDisabledList) {
-        this.btnDisabledList.forEach((btn) => {
-          if (btn.idx === rowIdx) {
-            result = btn.btnType;
-            return true;
-          }
+      if (res.code === 200) {
+        this.$emit('unlockCompleted', {
+          account: payload.account,
         });
-      }
-      return result;
-    },
-  },
-  computed: {
-    // TODO: 要改成自定義欄位順序, 吃headersPlaceHolder
-    tableHeaders() {
-      if (this.datas.length) {
-        let lastIndex = 0;
-        const result = Object.keys(this.datas[0]).map((header, index) => {
-          lastIndex = index;
-          return {
-            index: index,
-            key: header,
-          };
+        this.$store.commit('eventBus/Push', {
+          type: 'success',
+          content: '解鎖成功',
         });
-
-        // 新增操作(編輯)標頭
-        if (this.isOperational) {
-          result.push({
-            index: lastIndex++,
-            key: 'operation',
-          });
-        }
-        return result;
       } else {
-        return this.headersPlaceholder.map((el, index) => {
-          return {
-            index: index,
-            key: el,
-          };
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: errorList[res.code],
         });
       }
     },
-    tableRows() {
-      return this.datas.map((obj) => {
-        const result = Object.keys(obj).map((key, idx2) => {
-          return {
-            key: key,
-            value: Object.values(obj)[idx2],
-          };
-        });
-        if (this.isOperational) {
-          result.push({
-            key: 'operation',
-            value: '',
-          });
-        }
-        return result;
-      });
+
+    EditHandler(payload) {
+      this.$emit('edit', payload);
     },
   },
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.agentsTable {
+  .bodyTd {
+    @apply py-3 px-1 text-left;
+  }
+}
+</style>

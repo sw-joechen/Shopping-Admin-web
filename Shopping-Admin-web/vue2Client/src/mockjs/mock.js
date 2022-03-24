@@ -12,6 +12,7 @@ const getAgentsList = (payload) => {
         createdDate: '2022-03-07T15:41:06.280',
         updatedDate: '2022-03-07T15:41:06.280',
         pwd: 'dwqopdkpoqw',
+        count: 0,
       });
     }
   } else {
@@ -22,6 +23,7 @@ const getAgentsList = (payload) => {
         enabled: 0,
         createdDate: '2022-03-07T15:41:06.280',
         updatedDate: '2022-03-07T15:41:06.280',
+        count: 0,
       },
       {
         id: 240,
@@ -29,6 +31,7 @@ const getAgentsList = (payload) => {
         enabled: 0,
         createdDate: '2022-03-07T15:41:06.280',
         updatedDate: '2022-03-07T15:41:06.280',
+        count: 0,
       },
       {
         id: 26,
@@ -36,6 +39,7 @@ const getAgentsList = (payload) => {
         enabled: 0,
         createdDate: '2022-03-07T15:41:06.280',
         updatedDate: '2022-03-07T15:41:06.280',
+        count: 0,
       },
       {
         id: 13,
@@ -43,13 +47,15 @@ const getAgentsList = (payload) => {
         enabled: 1,
         createdDate: '2022-03-07T15:59:16.037',
         updatedDate: '2022-03-07T15:59:16.037',
+        count: 2,
       },
       {
         id: 97,
-        account: 'a33333',
+        account: 'a44444',
         enabled: 1,
         createdDate: '2022-03-07T15:59:16.037',
         updatedDate: '2022-03-07T15:59:16.037',
+        count: 3,
       },
     ];
   }

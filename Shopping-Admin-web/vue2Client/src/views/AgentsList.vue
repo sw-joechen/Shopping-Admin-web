@@ -56,10 +56,9 @@
     <div class="tableContainer pt-5">
       <TableView
         :datas="agentsListComputed"
-        :headersPlaceholder="tableHeaderPlaceholder"
         :btnDisabledList="btnDisabledList"
         @edit="editHandler"
-        @unlock="unlockHandler"
+        @unlockCompleted="unlockCompletedHandler"
       />
     </div>
 
@@ -97,12 +96,7 @@
 <script>
 import BtnSubmit from '@/components/BtnPrimary.vue';
 import FormDialog from '@/components/Dialogs/DialogView.vue';
-import {
-  GetAgentsList,
-  RegisterAgent,
-  UpdateAgent,
-  UnlockAgent,
-} from '@/APIs/Agent';
+import { GetAgentsList, RegisterAgent, UpdateAgent } from '@/APIs/Agent';
 import TableView from '@/components/Table/TableView.vue';
 import OptionSelector from '@/components/OptionSelector.vue';
 import SwtichView from '@/components/SwtichView.vue';
@@ -125,14 +119,6 @@ export default {
   },
   data: () => {
     return {
-      tableHeaderPlaceholder: [
-        'id',
-        'account',
-        'enabled',
-        'createdDate',
-        'updatedDate',
-        'operation',
-      ],
       options: [
         {
           label: '全部',
@@ -180,77 +166,13 @@ export default {
     }
   },
   methods: {
-    addDisabledBtn(payload) {
-      const { idx, btnType } = payload;
-      const target = this.btnDisabledList.find((el) => el.idx === idx);
-
-      if (target) {
-        target.btnType.push(btnType);
-      } else {
-        this.btnDisabledList.push({
-          idx,
-          btnType: [btnType],
-        });
-      }
-    },
-    removeDisabledBtn(payload) {
-      const { idx, btnType } = payload;
-
-      const targetIdx = this.btnDisabledList.findIndex(
-        (btn) => btn.idx === idx
+    async unlockCompletedHandler(payload) {
+      const res = this.sourceAgentsList.find(
+        (agent) => agent.account === payload.account
       );
-      if (targetIdx !== -1) {
-        // btnType只剩一項的話整個刪掉
-        if (this.btnDisabledList[targetIdx].btnType.length <= 1) {
-          this.btnDisabledList.splice(targetIdx, 1);
-        } else {
-          // 針對該次btnType做刪除
-          const typeIdx = this.btnDisabledList[targetIdx].btnType.findIndex(
-            (type) => type === btnType
-          );
-          if (typeIdx !== -1)
-            this.btnDisabledList[targetIdx].btnType.splice(typeIdx, 1);
-        }
+      if (res) {
+        res.count = 0;
       }
-    },
-    async unlockHandler(payload) {
-      console.log('payload=> ', payload);
-      let account = '';
-      let idx = null;
-
-      for (const [key, value] of Object.entries(payload)) {
-        if (key === 'account') {
-          account = value;
-        }
-        if (key === 'idx') {
-          idx = value;
-        }
-      }
-
-      this.addDisabledBtn({
-        idx,
-        btnType: 'unlock',
-      });
-
-      const res = await UnlockAgent({
-        account,
-      });
-      if (res.code === 200) {
-        this.$store.commit('eventBus/Push', {
-          type: 'success',
-          content: '解鎖成功',
-        });
-      } else {
-        this.$store.commit('eventBus/Push', {
-          type: 'error',
-          content: errorList[res.code],
-        });
-      }
-
-      this.removeDisabledBtn({
-        idx,
-        btnType: 'unlock',
-      });
     },
     clearEditDialog() {
       this.oldAccountInfo = {};
@@ -295,11 +217,7 @@ export default {
     },
     async editHandler(accountInfo) {
       this.toggleEditDialogHandler(!this.isShowEditDialog);
-      accountInfo.forEach((item) => {
-        if (item.key === 'account') {
-          this.oldAccountInfo.account = item.value;
-        }
-      });
+      this.oldAccountInfo.account = accountInfo.account;
 
       // 取得欲編輯帳號的完整帳號資訊
       const res = await GetAgentsList({
