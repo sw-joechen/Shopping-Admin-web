@@ -15,10 +15,6 @@ const mutations = {
   Push(state, payload) {
     state.notificationList.push(payload);
   },
-  Shift(state) {
-    const result = state.shift();
-    return result;
-  },
 };
 
 export default {

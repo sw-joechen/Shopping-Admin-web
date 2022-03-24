@@ -25,7 +25,7 @@
           title="確定要登出嗎"
           @toggle="ToggleHandler"
           @submit="LogOutHandler"
-        ></ConfirmDialog>
+        />
         <router-view />
       </div>
     </div>

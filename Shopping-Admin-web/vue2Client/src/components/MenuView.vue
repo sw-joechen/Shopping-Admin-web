@@ -2,15 +2,16 @@
   <div
     class="menu overflow-auto fixed flex flex-col border-t border-r border-grey2 w-[210px] h-screen py-10"
   >
-    <router-link
+    <a
       v-for="(el, index) in routes"
       :key="index"
       :to="el.to"
-      class="h-14 leading-[56px] text-center text-green2 font-bold text-lg hover:text-white hover:bg-green1 transition-colors duration-300"
+      class="select-none cursor-pointer h-14 leading-[56px] text-center text-green2 font-bold text-lg hover:text-white hover:bg-green1 transition-colors duration-300"
       :class="{ 'bg-green1 !text-white': IsCurrentRouteActive(el.to.name) }"
+      @click="ClickHandler(el.to)"
     >
       {{ el.name }}
-    </router-link>
+    </a>
   </div>
 </template>
 
@@ -33,6 +34,19 @@ export default {
         return true;
       }
       return false;
+    },
+    ClickHandler(to) {
+      if (to.name === this.$route.name) {
+        this.$router.go(0);
+      }
+      this.$router
+        .push({
+          name: to.name,
+          params: {
+            timestamp: new Date(),
+          },
+        })
+        .catch(() => {});
     },
   },
 };
