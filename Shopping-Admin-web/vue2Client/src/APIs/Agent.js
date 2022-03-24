@@ -28,11 +28,38 @@ export const LoginAgent = (data) => {
     });
 };
 
-export const GetAgentsList = (account) => {
+export const GetAgentsList = () => {
   return request({
     method: 'post',
     url: '/api/agent/getAgentsList',
-    data: account ? account : null,
+  })
+    .then((res) => {
+      return JSON.parse(res.data);
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    });
+};
+
+export const GetAgentByAccount = (data) => {
+  return request({
+    method: 'post',
+    url: '/api/agent/getAgentByAccount',
+    data,
+  })
+    .then((res) => {
+      return JSON.parse(res.data);
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    });
+};
+
+export const GetAgentsListByStatus = (data) => {
+  return request({
+    method: 'post',
+    url: '/api/agent/getAgentsListByStatus',
+    data,
   })
     .then((res) => {
       return JSON.parse(res.data);

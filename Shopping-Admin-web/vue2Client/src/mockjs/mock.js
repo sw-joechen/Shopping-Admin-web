@@ -67,6 +67,57 @@ const getAgentsList = (payload) => {
   return JSON.stringify(result);
 };
 
+const GetAgentsListByStatus = () => {
+  const tempData = [
+    {
+      id: 1,
+      account: 'a12345',
+      enabled: 0,
+      createdDate: '2022-03-07T15:41:06.280',
+      updatedDate: '2022-03-07T15:41:06.280',
+      count: 0,
+    },
+    {
+      id: 240,
+      account: 'a11111',
+      enabled: 0,
+      createdDate: '2022-03-07T15:41:06.280',
+      updatedDate: '2022-03-07T15:41:06.280',
+      count: 0,
+    },
+    {
+      id: 26,
+      account: 'a22222',
+      enabled: 0,
+      createdDate: '2022-03-07T15:41:06.280',
+      updatedDate: '2022-03-07T15:41:06.280',
+      count: 0,
+    },
+    {
+      id: 13,
+      account: 'a33333',
+      enabled: 1,
+      createdDate: '2022-03-07T15:59:16.037',
+      updatedDate: '2022-03-07T15:59:16.037',
+      count: 2,
+    },
+    {
+      id: 97,
+      account: 'a44444',
+      enabled: 1,
+      createdDate: '2022-03-07T15:59:16.037',
+      updatedDate: '2022-03-07T15:59:16.037',
+      count: 3,
+    },
+  ];
+  const result = {
+    code: 200,
+    msg: 'success',
+    data: tempData,
+  };
+  return JSON.stringify(result);
+};
+
 const loginAgent = () => {
   const result = {
     code: 200,
@@ -186,6 +237,8 @@ const AddProduct = () => {
 if (process.env.NODE_ENV === 'development') {
   // agent
   Mock.mock('/api/agent/getAgentsList', getAgentsList);
+
+  Mock.mock('/api/agent/getAgentsListByStatus', GetAgentsListByStatus);
 
   Mock.mock('/api/agent/loginAgent', loginAgent);
 

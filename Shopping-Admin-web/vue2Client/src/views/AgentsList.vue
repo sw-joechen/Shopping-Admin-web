@@ -73,7 +73,7 @@
     <!-- table -->
     <div class="tableContainer pt-5">
       <TableView
-        :datas="agentsListComputed"
+        :datas="sourceAgentsList"
         :btnDisabledList="btnDisabledList"
         @edit="EditHandler"
         @unlockCompleted="UnlockCompletedHandler"
@@ -120,7 +120,12 @@
 <script>
 import BtnSubmit from '@/components/BtnPrimary.vue';
 import FormDialog from '@/components/Dialogs/DialogView.vue';
-import { GetAgentsList, RegisterAgent, UpdateAgent } from '@/APIs/Agent';
+import {
+  GetAgentByAccount,
+  RegisterAgent,
+  UpdateAgent,
+  GetAgentsListByStatus,
+} from '@/APIs/Agent';
 import TableView from '@/components/Table/TableView.vue';
 import OptionSelector from '@/components/OptionSelector.vue';
 import SwtichView from '@/components/SwtichView.vue';
@@ -183,21 +188,6 @@ export default {
     forceInit() {
       return this.$store.state.forceInit;
     },
-    agentsListComputed() {
-      if (this.sourceAgentsList && this.sourceAgentsList.length) {
-        if (this.queryData.enabled === EOptions.all) {
-          return this.sourceAgentsList;
-        }
-        return this.sourceAgentsList.filter((item) => {
-          if (this.queryData.enabled === EOptions.enabled) {
-            return item.enabled;
-          } else if (this.queryData.enabled === EOptions.disabled) {
-            return item.enabled === 0;
-          }
-        });
-      }
-      return [];
-    },
   },
   watch: {
     forceInit: {
@@ -241,19 +231,7 @@ export default {
         role: this.oldAccountInfo.role,
       });
       if (res.code === 200) {
-        const response = await GetAgentsList();
-        if (response.code === 200) {
-          this.$store.commit('eventBus/Push', {
-            type: 'success',
-            content: this.$t('common.success'),
-          });
-          this.sourceAgentsList = response.data;
-        } else {
-          this.$store.commit('eventBus/Push', {
-            type: 'error',
-            content: errorList[res.code],
-          });
-        }
+        this.SearchHandler();
       } else {
         this.$store.commit('eventBus/Push', {
           type: 'error',
@@ -271,10 +249,11 @@ export default {
       this.ToggleEditDialogHandler(!this.isShowEditDialog);
       this.oldAccountInfo.account = accountInfo.account;
 
+      const fd = new FormData();
+      fd.append('account', this.oldAccountInfo.account);
       // 取得欲編輯帳號的完整帳號資訊
-      const res = await GetAgentsList({
-        account: this.oldAccountInfo.account,
-      });
+      const res = await GetAgentByAccount(fd);
+
       if (res.code === 200) {
         this.oldAccountInfo.pwd = res.data[0].pwd;
         this.oldAccountInfo.enabled = res.data[0].enabled;
@@ -289,8 +268,12 @@ export default {
     },
 
     async SearchHandler() {
+      const fd = new FormData();
+      if (this.queryData.enabled !== 0) {
+        fd.append('enabled', this.queryData.enabled === EOptions.enabled);
+      }
       this.sourceAgentsList = [];
-      const res = await GetAgentsList();
+      const res = await GetAgentsListByStatus(fd);
       if (res.code === 200) this.sourceAgentsList = res.data;
       else {
         this.$store.commit('eventBus/Push', {
@@ -310,19 +293,7 @@ export default {
         this.dialogPwd = '';
 
         // 新增成功後重取清單
-        const res = await GetAgentsList();
-        if (res.code === 200) {
-          this.sourceAgentsList = res.data;
-          this.$store.commit('eventBus/Push', {
-            type: 'success',
-            content: '新增成功',
-          });
-        } else {
-          this.$store.commit('eventBus/Push', {
-            type: 'error',
-            content: errorList[res.code],
-          });
-        }
+        this.SearchHandler();
       } else {
         this.$store.commit('eventBus/Push', {
           type: 'error',
