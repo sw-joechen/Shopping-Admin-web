@@ -2,13 +2,13 @@
   <div class="agentsList p-5">
     <!-- input query -->
     <div class="inputGroup flex">
-      <BtnSubmit label="新增" class="pr-2" @submit="onAddHandler" />
+      <BtnSubmit label="新增" class="pr-2" @submit="AddHandler" />
       <OptionSelector
         class="px-2"
         :options="options"
-        @onChange="onEnabledOptionChangeHandler"
+        @onChange="EnabledOptionChangeHandler"
       />
-      <BtnSubmit label="搜尋" class="pr-2" @submit="onSearchHandler" />
+      <BtnSubmit label="搜尋" class="pr-2" @submit="SearchHandler" />
     </div>
 
     <!-- 新增帳號dialog -->
@@ -16,8 +16,8 @@
       v-if="isShowAddDialog"
       :isShowDialog="isShowAddDialog"
       title="新增後台帳號"
-      @toggle="toggleAddDialogHandler"
-      @submit="onSubmitAddDialogHandler"
+      @toggle="ToggleAddDialogHandler"
+      @submit="SubmitAddFormHandler"
     >
       <form>
         <div class="inputGroup flex">
@@ -28,7 +28,7 @@
             class="input"
             placeholder="請輸入帳號"
             required
-            @keypress="changeHandler"
+            @keypress="KeypressHandler"
           />
         </div>
         <p v-show="isInvalid" class="text-red-500 text-xs italic">
@@ -43,7 +43,7 @@
             class="input"
             placeholder="請輸入密碼"
             required
-            @keypress="changeHandler"
+            @keypress="KeypressHandler"
           />
         </div>
         <p v-show="isInvalid" class="text-red-500 text-xs italic">
@@ -57,8 +57,8 @@
       <TableView
         :datas="agentsListComputed"
         :btnDisabledList="btnDisabledList"
-        @edit="editHandler"
-        @unlockCompleted="unlockCompletedHandler"
+        @edit="EditHandler"
+        @unlockCompleted="UnlockCompletedHandler"
       />
     </div>
 
@@ -67,8 +67,8 @@
       v-if="isShowEditDialog"
       :isShowDialog="isShowEditDialog"
       title="編輯帳號"
-      @toggle="toggleEditDialogHandler"
-      @submit="onSubmitEditDialogHandler"
+      @toggle="ToggleEditDialogHandler"
+      @submit="SubmitEditFormHandler"
     >
       <div class="wrapper">
         <div class="inputGroup flex">
@@ -84,7 +84,7 @@
           <label class="whitespace-nowrap pr-3 leading-[42px]">禁用</label>
           <SwtichView
             :toggle="dialogEditEnabled"
-            @toggle="onDialogEditToggle"
+            @toggle="ToggleEditDialogSwitch"
           />
           <label class="whitespace-nowrap pr-3 leading-[42px]">啟用</label>
         </div>
@@ -100,7 +100,7 @@ import { GetAgentsList, RegisterAgent, UpdateAgent } from '@/APIs/Agent';
 import TableView from '@/components/Table/TableView.vue';
 import OptionSelector from '@/components/OptionSelector.vue';
 import SwtichView from '@/components/SwtichView.vue';
-import { isAccountValid, isPwdValid } from '../Utils/validators';
+import { IsAccountValid, IsPwdValid } from '../Utils/validators';
 import errorList from '../ErrorCodeList';
 const EOptions = {
   all: 0,
@@ -166,7 +166,7 @@ export default {
     }
   },
   methods: {
-    async unlockCompletedHandler(payload) {
+    async UnlockCompletedHandler(payload) {
       const res = this.sourceAgentsList.find(
         (agent) => agent.account === payload.account
       );
@@ -174,15 +174,15 @@ export default {
         res.count = 0;
       }
     },
-    clearEditDialog() {
+    ClearEditDialog() {
       this.oldAccountInfo = {};
       this.dialogEditPwd = '';
       this.dialogEditEnabled = true;
     },
-    toggleEditDialogHandler(payload) {
+    ToggleEditDialogHandler(payload) {
       this.isShowEditDialog = payload;
     },
-    async onSubmitEditDialogHandler() {
+    async SubmitEditFormHandler() {
       const res = await UpdateAgent({
         account: this.oldAccountInfo.account,
         enabled: this.dialogEditEnabled,
@@ -209,14 +209,14 @@ export default {
         });
       }
 
-      this.toggleEditDialogHandler(!this.isShowEditDialog);
-      this.clearEditDialog();
+      this.ToggleEditDialogHandler(!this.isShowEditDialog);
+      this.ClearEditDialog();
     },
-    onDialogEditToggle(value) {
+    ToggleEditDialogSwitch(value) {
       this.dialogEditEnabled = value;
     },
-    async editHandler(accountInfo) {
-      this.toggleEditDialogHandler(!this.isShowEditDialog);
+    async EditHandler(accountInfo) {
+      this.ToggleEditDialogHandler(!this.isShowEditDialog);
       this.oldAccountInfo.account = accountInfo.account;
 
       // 取得欲編輯帳號的完整帳號資訊
@@ -227,7 +227,7 @@ export default {
         this.oldAccountInfo.pwd = res.data[0].pwd;
         this.oldAccountInfo.enabled = res.data[0].enabled;
         this.oldAccountInfo.role = res.data[0].role;
-        this.onDialogEditToggle(!!res.data[0].enabled);
+        this.ToggleEditDialogSwitch(!!res.data[0].enabled);
       } else {
         this.$store.commit('eventBus/Push', {
           type: 'error',
@@ -236,7 +236,7 @@ export default {
       }
     },
 
-    async onSearchHandler() {
+    async SearchHandler() {
       this.queryData.enabled = this.queryEnabled;
       this.sourceAgentsList = [];
       const res = await GetAgentsList();
@@ -248,16 +248,16 @@ export default {
         });
       }
     },
-    onEnabledOptionChangeHandler(payload) {
+    EnabledOptionChangeHandler(payload) {
       this.queryEnabled = payload.value;
     },
-    async registerHandler() {
+    async RegisterHandler() {
       const res = await RegisterAgent({
         account: this.dialogAccount,
         pwd: this.dialogPwd,
       });
       if (res.code === 200) {
-        this.toggleAddDialogHandler(false);
+        this.ToggleAddDialogHandler(false);
         this.dialogAccount = '';
         this.dialogPwd = '';
 
@@ -282,29 +282,29 @@ export default {
         });
       }
     },
-    onSubmitAddDialogHandler() {
+    SubmitAddFormHandler() {
       let isValid = false;
 
       isValid =
-        isAccountValid(this.dialogAccount) && isPwdValid(this.dialogPwd);
+        IsAccountValid(this.dialogAccount) && IsPwdValid(this.dialogPwd);
 
       if (isValid) {
-        this.registerHandler();
+        this.RegisterHandler();
       } else {
         this.isInvalid = true;
       }
     },
-    changeHandler() {
+    KeypressHandler() {
       this.isInvalid = false;
     },
-    onAddHandler() {
+    AddHandler() {
       this.isShowAddDialog = !this.isShowAddDialog;
     },
-    toggleAddDialogHandler(payload) {
-      this.initAddDialogForm();
+    ToggleAddDialogHandler(payload) {
+      this.InitAddDialogForm();
       this.isShowAddDialog = payload;
     },
-    initAddDialogForm() {
+    InitAddDialogForm() {
       this.dialogAccount = '';
       this.dialogPwd = '';
       this.isInvalid = false;

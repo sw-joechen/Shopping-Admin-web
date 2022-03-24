@@ -1,7 +1,7 @@
 // 帳號規則: 英文開頭, 英數皆可 限6~20字元
 const accountRegex = new RegExp('^[A-Za-z][A-Za-z0-9]{5,19}$');
 
-export const isAccountValid = (account) => {
+export const IsAccountValid = (account) => {
   return accountRegex.test(account);
 };
 
@@ -10,7 +10,7 @@ const pwdRegex = new RegExp(
   '^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])[a-zA-Z0-9!@#$%^&*]{6,}$'
 );
 
-export const isPwdValid = (pwd) => {
+export const IsPwdValid = (pwd) => {
   return pwdRegex.test(pwd);
 };
 
@@ -19,13 +19,13 @@ const specialCharactersRegex = new RegExp(
   /[ `~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/
 );
 
-export const isContaineSpecialCharaters = (str) => {
+export const IsContaineSpecialCharaters = (str) => {
   return specialCharactersRegex.test(str);
 };
 
 // 純數字
 const numberRegex = new RegExp(/^\d+$/);
 
-export const isPureNumber = (number) => {
+export const IsPureNumber = (number) => {
   return numberRegex.test(number);
 };

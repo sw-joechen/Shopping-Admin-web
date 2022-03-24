@@ -10,7 +10,7 @@
           type="checkbox"
           class="sr-only"
           :value="toggle"
-          @click="clickHandler"
+          @click="ClickHandler"
         />
         <!-- line -->
         <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
@@ -34,7 +34,7 @@ export default {
     },
   },
   methods: {
-    clickHandler() {
+    ClickHandler() {
       this.$emit('toggle', !this.toggle);
     },
   },

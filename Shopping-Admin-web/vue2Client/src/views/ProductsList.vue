@@ -17,13 +17,13 @@
       <OptionSelector
         class="px-2"
         :options="options"
-        @onChange="onEnabledOptionChangeHandler"
+        @onChange="EnabledOptionChangeHandler"
       />
 
       <BtnPrimary
         :label="$t('common.search')"
         class="pr-2"
-        @submit="searchHandler"
+        @submit="SearchHandler"
       />
     </div>
     <hr class="my-2" />
@@ -31,7 +31,7 @@
       <BtnPrimary
         :label="$t('common.add')"
         class="pr-2"
-        @submit="toggleAddDialogHandler"
+        @submit="ToggleAddDialogHandler"
       />
     </div>
 
@@ -73,11 +73,11 @@
                 >
                   <BtnPrimary
                     :label="$t('common.edit')"
-                    @submit="editHandler(item)"
+                    @submit="EditHandler(item)"
                   />
                 </div>
                 <span v-else class="break-all">
-                  {{ extraFormatter(item, column) }}
+                  {{ ExtraFormatter(item, column) }}
                 </span>
               </div>
             </td>
@@ -91,8 +91,8 @@
       v-if="isShowEditDialog"
       :isShowDialog="isShowEditDialog"
       :title="$t('productList.editFormTitle')"
-      @toggle="toggleEditDialogHandler"
-      @submit="onSubmitEditDialogHandler"
+      @toggle="ToggleEditDialogHandler"
+      @submit="SubmitEditFormHandler"
     >
       <div class="wrapper">
         <!-- 商品名稱 -->
@@ -173,7 +173,10 @@
         <!-- 狀態 -->
         <div class="inputGroup flex">
           <label class="whitespace-nowrap pr-3 leading-[42px]">禁用</label>
-          <SwtichView :toggle="editData.enabled" @toggle="onDialogEditToggle" />
+          <SwtichView
+            :toggle="editData.enabled"
+            @toggle="ToggleEditDialogSwitch"
+          />
           <label class="whitespace-nowrap pr-3 leading-[42px]">啟用</label>
         </div>
 
@@ -189,7 +192,7 @@
               type="file"
               class="input"
               :placeholder="$t('common.tableHeader.picture')"
-              @change="uploadImage($event, 'edit')"
+              @change="UploadImage($event, 'edit')"
               @focus="isFileWarning = false"
             />
           </div>
@@ -204,8 +207,8 @@
     <FormDialog
       v-if="isShowAddDialog"
       :isShowDialog="isShowAddDialog"
-      @toggle="toggleAddDialogHandler"
-      @submit="onSubmitAddDialogHandler"
+      @toggle="ToggleAddDialogHandler"
+      @submit="SubmitAddFormHandler"
       :title="$t('productList.addFormTitle')"
     >
       <div class="wrapper">
@@ -296,7 +299,7 @@
               type="file"
               class="input"
               :placeholder="$t('common.tableHeader.picture')"
-              @change="uploadImage($event, 'add')"
+              @change="UploadImage($event, 'add')"
               @focus="isFileWarning = false"
             />
           </div>
@@ -319,7 +322,7 @@ import SwtichView from '../components/SwtichView.vue';
 import { GetProductsList, AddProduct, UpdateProduct } from '../APIs/Product';
 import { DateTime } from 'luxon';
 import ErrorCodeList from '@/ErrorCodeList';
-import { isContaineSpecialCharaters, isPureNumber } from '@/Utils/validators';
+import { IsContaineSpecialCharaters, IsPureNumber } from '@/Utils/validators';
 const EOptions = {
   all: 0,
   enabled: 1,
@@ -401,26 +404,26 @@ export default {
     };
   },
   created() {
-    this.searchHandler();
+    this.SearchHandler();
   },
   methods: {
-    onDialogEditToggle(value) {
+    ToggleEditDialogSwitch(value) {
       this.editData.enabled = value;
     },
-    async onSubmitEditDialogHandler() {
-      const isNameValid = this.checkString(this.editData.name);
+    async SubmitEditFormHandler() {
+      const isNameValid = this.CheckString(this.editData.name);
       if (!isNameValid) this.isNameWarning = true;
 
-      const isDescValid = this.checkString(this.editData.description);
+      const isDescValid = this.CheckString(this.editData.description);
       if (!isDescValid) this.isDescWarning = true;
 
-      const isPriceValid = this.checkNumber(this.editData.price);
+      const isPriceValid = this.CheckNumber(this.editData.price);
       if (!isPriceValid) this.isPriceWarning = true;
 
-      const isAmountValid = this.checkNumber(this.editData.amount);
+      const isAmountValid = this.CheckNumber(this.editData.amount);
       if (!isAmountValid) this.isAmountWarning = true;
 
-      const isTypeValid = this.checkString(this.editData.type);
+      const isTypeValid = this.CheckString(this.editData.type);
       if (!isTypeValid) this.isTypeWarning = true;
 
       if (
@@ -443,16 +446,16 @@ export default {
 
         const res = await UpdateProduct(fd);
         if (res.code === 200) {
-          this.searchHandler();
+          this.SearchHandler();
           this.$store.commit('eventBus/Push', {
             type: 'success',
             content: this.$t('common.success'),
           });
         }
 
-        this.clearEditData();
+        this.ClearEditData();
         this.previewImage = null;
-        this.toggleEditDialogHandler();
+        this.ToggleEditDialogHandler();
       } else {
         this.$store.commit('eventBus/Push', {
           type: 'error',
@@ -460,7 +463,7 @@ export default {
         });
       }
     },
-    async editHandler(payload) {
+    async EditHandler(payload) {
       const { id } = payload;
       const fd = new FormData();
       fd.append('id', id);
@@ -478,13 +481,13 @@ export default {
       }
 
       this.previewImage = this.editData.picture;
-      this.toggleEditDialogHandler();
+      this.ToggleEditDialogHandler();
     },
-    toggleEditDialogHandler() {
-      this.clearFormWarning();
+    ToggleEditDialogHandler() {
+      this.ClearFormWarning();
       this.isShowEditDialog = !this.isShowEditDialog;
     },
-    clearEditData() {
+    ClearEditData() {
       this.editData = {
         name: '',
         desc: '',
@@ -495,7 +498,7 @@ export default {
         enabled: null,
       };
     },
-    clearFormWarning() {
+    ClearFormWarning() {
       this.isNameWarning = false;
       this.isPriceWarning = false;
       this.isAmountWarning = false;
@@ -503,9 +506,8 @@ export default {
       this.isTypeWarning = false;
       this.isFileWarning = false;
     },
-    uploadImage(event, type) {
+    UploadImage(event, type) {
       const input = event.target;
-      console.log('checkpointA=> ', input.files);
       if (input.files.length) {
         this.previewImage = URL.createObjectURL(input.files[0]);
         if (type === 'add') {
@@ -519,23 +521,23 @@ export default {
         this.previewImage = null;
       }
     },
-    async onSubmitAddDialogHandler() {
-      const isNameValid = this.checkString(this.addData.name);
+    async SubmitAddFormHandler() {
+      const isNameValid = this.CheckString(this.addData.name);
       if (!isNameValid) this.isNameWarning = true;
 
-      const isDescValid = this.checkString(this.addData.desc);
+      const isDescValid = this.CheckString(this.addData.desc);
       if (!isDescValid) this.isDescWarning = true;
 
-      const isPriceValid = this.checkNumber(this.addData.price);
+      const isPriceValid = this.CheckNumber(this.addData.price);
       if (!isPriceValid) this.isPriceWarning = true;
 
-      const isAmountValid = this.checkNumber(this.addData.amount);
+      const isAmountValid = this.CheckNumber(this.addData.amount);
       if (!isAmountValid) this.isAmountWarning = true;
 
-      const isTypeValid = this.checkString(this.addData.type);
+      const isTypeValid = this.CheckString(this.addData.type);
       if (!isTypeValid) this.isTypeWarning = true;
 
-      const isFileExist = this.checkFile(this.addData.file);
+      const isFileExist = this.CheckFile(this.addData.file);
       if (!isFileExist) this.isFileWarning = true;
 
       if (
@@ -562,14 +564,14 @@ export default {
             type: 'success',
             content: this.$t('common.success'),
           });
-          this.searchHandler();
+          this.SearchHandler();
         } else {
           this.$store.commit('eventBus/Push', {
             type: 'error',
             content: ErrorCodeList[res.code],
           });
         }
-        this.toggleAddDialogHandler();
+        this.ToggleAddDialogHandler();
       } else {
         // 輸入欄位異常通知
         this.$store.commit('eventBus/Push', {
@@ -578,12 +580,12 @@ export default {
         });
       }
     },
-    toggleAddDialogHandler() {
+    ToggleAddDialogHandler() {
       this.isShowAddDialog = !this.isShowAddDialog;
-      this.clearAddData();
-      this.clearFormWarning();
+      this.ClearAddData();
+      this.ClearFormWarning();
     },
-    clearAddData() {
+    ClearAddData() {
       this.addData = {
         name: '',
         desc: '',
@@ -594,7 +596,7 @@ export default {
       };
       this.previewImage = null;
     },
-    extraFormatter(data, column) {
+    ExtraFormatter(data, column) {
       // 將狀態做i18n
       if (column === 'enabled') {
         return data[column]
@@ -609,7 +611,7 @@ export default {
         return data[column];
       }
     },
-    async searchHandler() {
+    async SearchHandler() {
       const fd = new FormData();
       if (this.queryData.enabled !== 0) {
         fd.append(
@@ -637,31 +639,31 @@ export default {
         });
       }
     },
-    onEnabledOptionChangeHandler(payload) {
+    EnabledOptionChangeHandler(payload) {
       this.queryData.enabled = payload.value;
     },
 
     // 檢查字串不包含特殊字元, 空白
-    checkString(str) {
+    CheckString(str) {
       if (!str.length) {
         return false;
       }
-      if (isContaineSpecialCharaters(str)) {
+      if (IsContaineSpecialCharaters(str)) {
         return false;
       }
       return true;
     },
 
     // 檢查數字不包含小數點, 空白
-    checkNumber(number) {
-      if (isPureNumber(number)) {
+    CheckNumber(number) {
+      if (IsPureNumber(number)) {
         return true;
       }
       return false;
     },
 
     // 檢查file
-    checkFile(file) {
+    CheckFile(file) {
       return file !== null;
     },
   },

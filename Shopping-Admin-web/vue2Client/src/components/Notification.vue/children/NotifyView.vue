@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="GetNotifyBg"
+    :class="getNotifyBg"
     class="notifyView flex rounded-lg text-white pointer-events-auto ml-auto mb-4 py-[22px] px-6 min-w-[326px] min-h-[64px]"
   >
     <SuccessIcon v-show="notify.type === 'success'" />
@@ -32,7 +32,7 @@ export default {
     }, DISPLAY_DURATION);
   },
   computed: {
-    GetNotifyBg() {
+    getNotifyBg() {
       return this.notify.type === 'success' ? 'bg-green4' : 'bg-red1';
     },
   },

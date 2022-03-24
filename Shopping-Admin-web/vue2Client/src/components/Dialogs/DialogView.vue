@@ -3,7 +3,7 @@
     <!-- overlay -->
     <div
       class="overlay fixed top-0 left-0 w-full h-full bg-black1 pointer-events-auto"
-      @click="toggleHandler"
+      @click="ToggleHandler"
     ></div>
 
     <!-- modal -->
@@ -18,7 +18,7 @@
           <slot></slot>
         </div>
         <div class="bottom flex justify-center p-3">
-          <BtnSubmit label="確定" @submit="submitHandler" />
+          <BtnSubmit label="確定" @submit="SubmitHandler" />
         </div>
       </div>
     </div>
@@ -43,10 +43,10 @@ export default {
     },
   },
   methods: {
-    toggleHandler() {
+    ToggleHandler() {
       this.$emit('toggle', !this.isShowDialog);
     },
-    submitHandler() {
+    SubmitHandler() {
       this.$emit('submit');
     },
   },

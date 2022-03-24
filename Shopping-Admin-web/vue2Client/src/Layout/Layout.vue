@@ -14,7 +14,7 @@
             <div class="txt">{{ $store.state.user.account }}</div>
           </div>
           <div class="logoutContainer flex items-center px-2">
-            <LogOutBtn label="登出" @submit="toggleHandler" />
+            <LogOutBtn label="登出" @submit="ToggleHandler" />
           </div>
         </div>
       </header>
@@ -23,8 +23,8 @@
           v-if="isShowLogOutDialog"
           :is-show-dialog="isShowLogOutDialog"
           title="確定要登出嗎"
-          @toggle="toggleHandler"
-          @submit="logOutHandler"
+          @toggle="ToggleHandler"
+          @submit="LogOutHandler"
         ></ConfirmDialog>
         <router-view />
       </div>
@@ -49,11 +49,11 @@ export default {
     };
   },
   methods: {
-    toggleHandler() {
+    ToggleHandler() {
       this.isShowLogOutDialog = !this.isShowLogOutDialog;
     },
-    logOutHandler() {
-      this.toggleHandler();
+    LogOutHandler() {
+      this.ToggleHandler();
       this.$store.commit('user/clearUser');
       this.$router.replace({ name: 'login' });
     },
