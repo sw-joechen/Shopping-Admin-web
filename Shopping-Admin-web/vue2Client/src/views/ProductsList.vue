@@ -262,7 +262,7 @@
         </div>
 
         <!-- 描述 -->
-        <div class="inputGroup flex">
+        <div class="inputGroup flex relative">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
             {{ $t('common.tableHeader.description') }}
           </label>
