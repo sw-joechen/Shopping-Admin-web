@@ -65,17 +65,22 @@
             </div>
           </td>
 
+          <td class="count bodyTd">
+            <div class="max-w-xs text-center">
+              <BtnPrimary
+                v-if="item.count >= 3"
+                :label="$t('common.unlock')"
+                @submit="UnlockHandler(item)"
+              />
+            </div>
+          </td>
+
           <td class="opertation bodyTd">
             <div class="max-w-xs flex justify-center">
               <BtnPrimary
                 class="mr-2"
                 :label="$t('common.edit')"
                 @submit="EditHandler(item)"
-              />
-              <BtnPrimary
-                v-if="item.count >= 3"
-                :label="$t('common.unlock')"
-                @submit="UnlockHandler(item)"
               />
             </div>
           </td>
@@ -111,6 +116,7 @@ export default {
         'enabled',
         'createdDate',
         'updatedDate',
+        'count',
         'operation',
       ],
     };

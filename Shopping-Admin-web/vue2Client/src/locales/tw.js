@@ -20,6 +20,7 @@ export default {
       amount: '數量',
       description: '描述',
       type: '商品類型',
+      count: '登入錯誤已達上限',
     },
   },
   agentList: {
