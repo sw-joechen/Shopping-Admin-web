@@ -126,6 +126,7 @@ namespace Shopping_Admin_web.Controllers
                         else
                         {
                             result.Set(105, "member not found");
+                            return result.Stringify();
                         }
                         // 關閉連線
                         conn.Close();
