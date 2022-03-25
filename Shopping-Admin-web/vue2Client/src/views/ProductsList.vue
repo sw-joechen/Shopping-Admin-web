@@ -295,6 +295,7 @@
             class="input"
             :placeholder="$t('common.tableHeader.price')"
             @focus="isPriceWarning = false"
+            @keypress="keypressHandler"
           />
         </div>
 
@@ -310,6 +311,7 @@
             class="input"
             :placeholder="$t('common.tableHeader.amount')"
             @focus="isAmountWarning = false"
+            @keypress="keypressHandler"
           />
         </div>
 
@@ -465,6 +467,11 @@ export default {
     this.SearchHandler();
   },
   methods: {
+    keypressHandler(event) {
+      return event.charCode >= 48 && event.charCode <= 57
+        ? true
+        : event.preventDefault();
+    },
     InitQueryData() {
       this.queryData.enabled = EOptions.all;
       this.queryData.name = '';
