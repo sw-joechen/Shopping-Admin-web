@@ -112,6 +112,7 @@
     <Compile Include="SecurePasswordHasher\SecurePasswordHasher.cs" />
     <Compile Include="Validators\AccountValidator.cs" />
     <Compile Include="Validators\PwdValidator.cs" />
+    <Compile Include="Validators\SpecialCharacterValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

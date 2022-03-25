@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Shopping_Admin_web.Class;
+using Shopping_Admin_web.Validators;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -44,6 +45,12 @@ namespace Shopping_Admin_web.Controllers
                 return result.Stringify();
             }
 
+            if (httpRequest.Params["name"] == null || httpRequest.Params["price"] == null || httpRequest.Params["amount"] == null || httpRequest.Params["description"] == null || httpRequest.Params["type"] == null)
+            {
+                result.Set(100, "缺少參數");
+                return result.Stringify();
+            }
+
             try
             {
                 string name = httpRequest.Params["name"];
@@ -73,10 +80,18 @@ namespace Shopping_Admin_web.Controllers
                     return result.Stringify();
                 }
 
-                // 名稱不可為空字串
-                if (name.Length == 0)
+                // 檢查名稱
+                SpecialCharacterValidator specialCharacterValidator = new SpecialCharacterValidator();
+                if (specialCharacterValidator.IsStrContainSpecialCharacter(name))
                 {
-                    result.Set(113, "商品名稱不可為空");
+                    result.Set(113, "商品名稱不合法");
+                    return result.Stringify();
+                }
+
+                // 檢查描述
+                if (specialCharacterValidator.IsStrContainSpecialCharacter(description))
+                {
+                    result.Set(115, "商品描述不合法");
                     return result.Stringify();
                 }
 
@@ -86,7 +101,7 @@ namespace Shopping_Admin_web.Controllers
                 var filePath = HttpContext.Current.Server.MapPath($"~/Uploads/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}");
                 postedFile.SaveAs(filePath);
 
-                picture = $"/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}";                
+                picture = $"/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}";
 
                 // 寫進庫
                 using (SqlConnection conn = new SqlConnection(connectString))
@@ -141,12 +156,12 @@ namespace Shopping_Admin_web.Controllers
 
             try
             {
-                string paramID = httpRequest.Params["id"]; 
+                string paramID = httpRequest.Params["id"];
                 string name = httpRequest.Params["name"] ?? null;
                 string type = httpRequest.Params["type"] ?? null;
                 string paramEnabled = httpRequest.Params["enabled"];
 
-                int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)): -1;
+                int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
                 int id = paramID != null ? Convert.ToInt32(paramID) : -1;
 
                 Debug.WriteLine($"id=> {id}");
@@ -161,24 +176,24 @@ namespace Shopping_Admin_web.Controllers
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         if (id == -1)
-                            cmd.Parameters.AddWithValue("@id", DBNull.Value);                        
+                            cmd.Parameters.AddWithValue("@id", DBNull.Value);
                         else
                             cmd.Parameters.AddWithValue("@id", id);
 
-                        if(name == null)
-                            cmd.Parameters.AddWithValue("@name", DBNull.Value);                                           
+                        if (name == null)
+                            cmd.Parameters.AddWithValue("@name", DBNull.Value);
                         else
                             cmd.Parameters.AddWithValue("@name", name);
 
-                        if(type == null)
+                        if (type == null)
                             cmd.Parameters.AddWithValue("@type", DBNull.Value);
-                        
+
                         else
                             cmd.Parameters.AddWithValue("@type", type);
 
-                        if(enabled == -1)
+                        if (enabled == -1)
                             cmd.Parameters.AddWithValue("@enabled", DBNull.Value);
-                        
+
                         else
                             cmd.Parameters.AddWithValue("@enabled", enabled);
 
@@ -227,6 +242,7 @@ namespace Shopping_Admin_web.Controllers
         public string UpdateProduct()
         {
             Result result = new Result(100, "缺少參數");
+            var httpRequest = HttpContext.Current.Request;
 
             if (!Request.Content.IsMimeMultipartContent())
             {
@@ -234,10 +250,14 @@ namespace Shopping_Admin_web.Controllers
                 return result.Stringify();
             }
 
+            if (httpRequest.Params["id"] == null || httpRequest.Params["type"] == null || httpRequest.Params["price"] == null || httpRequest.Params["amount"] == null || httpRequest.Params["name"] == null || httpRequest.Params["description"] == null)
+            {
+                result.Set(100, "缺少參數");
+                return result.Stringify();
+            }
+
             try
             {
-                var httpRequest = HttpContext.Current.Request;
-
                 int enabled = Convert.ToInt32(Convert.ToBoolean(httpRequest.Params["enabled"]));
                 int id = Convert.ToInt32(httpRequest.Params["id"]);
                 string name = httpRequest.Params["name"];
@@ -256,7 +276,7 @@ namespace Shopping_Admin_web.Controllers
                 Debug.WriteLine($"type=> {type}");
                 Debug.WriteLine($"picture=> {picture}");
 
-                // TODO: 改用變數存的話 怎麼檢查null, 只帶key沒帶value的情形
+
                 // 檢查價格不可為負數
                 if (Convert.ToInt32(price) < 0)
                 {
@@ -271,9 +291,18 @@ namespace Shopping_Admin_web.Controllers
                     return result.Stringify();
                 }
 
-                // 名稱不可為空字串
-                if (name.Length == 0) {
-                    result.Set(113, "商品名稱不可為空");
+                // 檢查名稱
+                SpecialCharacterValidator specialCharacterValidator = new SpecialCharacterValidator();
+                if (name != null && specialCharacterValidator.IsStrContainSpecialCharacter(name))
+                {
+                    result.Set(113, "商品名稱不合法");
+                    return result.Stringify();
+                }
+
+                // 檢查描述
+                if (description != null && specialCharacterValidator.IsStrContainSpecialCharacter(description))
+                {
+                    result.Set(115, "商品描述不合法");
                     return result.Stringify();
                 }
 
