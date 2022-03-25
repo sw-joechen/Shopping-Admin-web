@@ -109,7 +109,7 @@
     >
       <div class="wrapper">
         <!-- 商品名稱 -->
-        <div class="inputGroup flex">
+        <div class="inputGroup flex relative">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
             {{ $t('common.tableHeader.name') }}
           </label>
@@ -120,11 +120,18 @@
             :class="{ '!border-red-600': isNameWarning }"
             :placeholder="$t('common.tableHeader.name')"
             @focus="isNameWarning = false"
+            maxlength="50"
           />
+          <p
+            v-show="isNameWarning"
+            class="text-red-500 text-xs italic absolute bottom-0 right-0"
+          >
+            字數上限50字, 不可空白
+          </p>
         </div>
 
         <!-- 描述 -->
-        <div class="inputGroup flex">
+        <div class="inputGroup flex relative">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
             {{ $t('common.tableHeader.description') }}
           </label>
@@ -135,7 +142,14 @@
             type="text"
             :placeholder="$t('common.tableHeader.description')"
             @focus="isDescWarning = false"
+            maxlength="100"
           />
+          <p
+            v-show="isDescWarning"
+            class="text-red-500 text-xs italic absolute bottom-0 right-0"
+          >
+            字數上限100字, 不可空白
+          </p>
         </div>
 
         <!-- 價格 -->
@@ -226,7 +240,7 @@
     >
       <div class="wrapper">
         <!-- 商品名稱 -->
-        <div class="inputGroup flex">
+        <div class="inputGroup flex relative">
           <label class="label whitespace-nowrap mr-3 leading-[42px]">
             {{ $t('common.tableHeader.name') }}
           </label>
@@ -237,7 +251,14 @@
             :class="{ '!border-red-600': isNameWarning }"
             :placeholder="$t('common.tableHeader.name')"
             @focus="isNameWarning = false"
+            maxlength="50"
           />
+          <p
+            v-show="isNameWarning"
+            class="text-red-500 text-xs italic absolute bottom-0 right-0"
+          >
+            字數上限50字, 不可空白
+          </p>
         </div>
 
         <!-- 描述 -->
@@ -252,7 +273,14 @@
             class="textarea"
             :placeholder="$t('common.tableHeader.description')"
             @focus="isDescWarning = false"
+            maxlength="100"
           />
+          <p
+            v-show="isDescWarning"
+            class="text-red-500 text-xs italic absolute bottom-0 right-0"
+          >
+            字數上限100字, 不可空白
+          </p>
         </div>
 
         <!-- 價格 -->
@@ -446,10 +474,14 @@ export default {
       this.editData.enabled = value;
     },
     async SubmitEditFormHandler() {
-      const isNameValid = this.CheckString(this.editData.name);
+      const isNameValid =
+        this.CheckString(this.editData.name) &&
+        this.CheckStringLength(this.editData.name, 50);
       if (!isNameValid) this.isNameWarning = true;
 
-      const isDescValid = this.CheckString(this.editData.description);
+      const isDescValid =
+        this.CheckString(this.editData.description) &&
+        this.CheckStringLength(this.editData.description, 100);
       if (!isDescValid) this.isDescWarning = true;
 
       const isPriceValid = this.CheckNumber(this.editData.price);
@@ -557,10 +589,14 @@ export default {
       }
     },
     async SubmitAddFormHandler() {
-      const isNameValid = this.CheckString(this.addData.name);
+      const isNameValid =
+        this.CheckString(this.addData.name) &&
+        this.CheckStringLength(this.addData.name, 50);
       if (!isNameValid) this.isNameWarning = true;
 
-      const isDescValid = this.CheckString(this.addData.desc);
+      const isDescValid =
+        this.CheckString(this.addData.desc) &&
+        this.CheckStringLength(this.addData.desc, 100);
       if (!isDescValid) this.isDescWarning = true;
 
       const isPriceValid = this.CheckNumber(this.addData.price);
@@ -686,6 +722,12 @@ export default {
     CheckFile(file) {
       return !!file;
     },
+
+    // 檢查字串長度
+    CheckStringLength(str, length) {
+      if (!str) return false;
+      return str.length <= length;
+    },
   },
 };
 </script>
@@ -701,7 +743,7 @@ export default {
     .label {
       @apply min-w-[60px] text-left;
     }
-    @apply mr-3 mb-2;
+    @apply mr-3 pb-5;
     .input {
       @apply bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-1 focus:border-blue-500 block w-full p-2.5 outline-none;
     }
