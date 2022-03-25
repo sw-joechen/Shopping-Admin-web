@@ -6,7 +6,7 @@
           class="text-left border-t border-b-2 border-grey2 p-2 bg-blue-400 text-white text-xl;"
         >
           <th
-            class="py-3 px-1 min-w-[120px]"
+            class="py-3 px-1 min-w-[120px] text-center"
             scope="col"
             v-for="col in columns"
             :key="col"
@@ -22,7 +22,7 @@
           class="even:bg-gray-300 hover:bg-gray-400 even:border-b odd:bg-white border-gray-400 p-2"
         >
           <td class="id bodyTd">
-            <div class="max-w-xs">
+            <div class="max-w-xs text-center">
               <span class="break-all">
                 {{ item.id }}
               </span>
@@ -30,7 +30,7 @@
           </td>
 
           <td class="account bodyTd">
-            <div class="max-w-xs">
+            <div class="max-w-xs text-center">
               <span class="break-all">
                 {{ item.account }}
               </span>
@@ -38,7 +38,7 @@
           </td>
 
           <td class="enabled bodyTd">
-            <div class="max-w-xs">
+            <div class="max-w-xs text-center">
               <span class="break-all">
                 {{
                   item.enabled
@@ -50,7 +50,7 @@
           </td>
 
           <td class="createdDate bodyTd">
-            <div class="max-w-xs">
+            <div class="max-w-xs text-center">
               <span class="break-all">
                 {{ DateFormatter(item.createdDate) }}
               </span>
@@ -58,7 +58,7 @@
           </td>
 
           <td class="updatedDate bodyTd">
-            <div class="max-w-xs">
+            <div class="max-w-xs text-center">
               <span class="break-all">
                 {{ DateFormatter(item.updatedDate) }}
               </span>
@@ -66,7 +66,7 @@
           </td>
 
           <td class="opertation bodyTd">
-            <div class="max-w-xs flex">
+            <div class="max-w-xs flex justify-center">
               <BtnPrimary
                 class="mr-2"
                 :label="$t('common.edit')"

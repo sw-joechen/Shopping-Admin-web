@@ -44,6 +44,11 @@
           >
             <th
               class="py-3 px-1 min-w-[120px]"
+              :class="
+                col === 'name' || col === 'description'
+                  ? 'text-left'
+                  : 'text-center'
+              "
               scope="col"
               v-for="col in columns"
               :key="col"
@@ -61,10 +66,18 @@
             <td
               v-for="(column, indexColumn) in columns"
               :key="indexColumn"
-              class="py-3 px-1 text-left"
+              class="py-3 px-1"
+              :class="
+                column === 'name' || column === 'description'
+                  ? 'text-left'
+                  : 'text-center'
+              "
             >
               <div class="max-w-xs">
-                <div class="imgContainer" v-if="column === 'picture'">
+                <div
+                  class="imgContainer flex justify-center"
+                  v-if="column === 'picture'"
+                >
                   <img class="w-16" :src="item[column]" />
                 </div>
                 <div
@@ -133,7 +146,7 @@
           <input
             :class="{ '!border-red-600': isPriceWarning }"
             v-model="editData.price"
-            type="text"
+            type="number"
             class="input"
             :placeholder="$t('common.tableHeader.price')"
             @focus="isPriceWarning = false"
@@ -148,7 +161,7 @@
           <input
             :class="{ '!border-red-600': isAmountWarning }"
             v-model="editData.amount"
-            type="text"
+            type="number"
             class="input"
             :placeholder="$t('common.tableHeader.amount')"
             @focus="isAmountWarning = false"
@@ -250,7 +263,7 @@
           <input
             :class="{ '!border-red-600': isPriceWarning }"
             v-model="addData.price"
-            type="text"
+            type="number"
             class="input"
             :placeholder="$t('common.tableHeader.price')"
             @focus="isPriceWarning = false"
@@ -265,7 +278,7 @@
           <input
             :class="{ '!border-red-600': isAmountWarning }"
             v-model="addData.amount"
-            type="text"
+            type="number"
             class="input"
             :placeholder="$t('common.tableHeader.amount')"
             @focus="isAmountWarning = false"
@@ -661,26 +674,17 @@ export default {
 
     // 檢查字串不包含特殊字元, 空白
     CheckString(str) {
-      if (!str.length) {
-        return false;
-      }
-      if (IsContaineSpecialCharaters(str)) {
-        return false;
-      }
-      return true;
+      return str && !IsContaineSpecialCharaters(str);
     },
 
     // 檢查數字不包含小數點, 空白
     CheckNumber(number) {
-      if (IsPureNumber(number)) {
-        return true;
-      }
-      return false;
+      return IsPureNumber(number);
     },
 
     // 檢查file
     CheckFile(file) {
-      return file !== null;
+      return !!file;
     },
   },
 };
@@ -688,6 +692,11 @@ export default {
 
 <style lang="scss">
 .productsList {
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   .inputGroup {
     .label {
       @apply min-w-[60px] text-left;

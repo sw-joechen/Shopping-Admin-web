@@ -16,7 +16,7 @@ export const IsPwdValid = (pwd) => {
 
 // 過濾特殊字元(包含空格)
 const specialCharactersRegex = new RegExp(
-  /[ `~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/
+  /[\s`~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/
 );
 
 export const IsContaineSpecialCharaters = (str) => {
