@@ -2,6 +2,7 @@
   <div
     class="menu overflow-auto fixed flex flex-col border-t border-r border-grey2 w-[210px] h-screen py-10"
   >
+    <div class="text-green2 font-bold">shopping-admin-web</div>
     <a
       v-for="(el, index) in routes"
       :key="index"
