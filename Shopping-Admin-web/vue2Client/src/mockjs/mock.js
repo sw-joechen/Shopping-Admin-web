@@ -263,9 +263,12 @@ const UpdateMember = (payload) => {
   let tempData = {};
   if (payload.body) {
     for (var pair of payload.body.entries()) {
+      console.log('pair[0]=> ', pair[0]);
+      console.log('pair[1]=> ', pair[1]);
       tempData[pair[0]] = pair[1];
     }
     tempData.id = Number(tempData.id);
+    tempData.enabled = tempData.enabled === 'true';
   }
   const result = {
     code: 200,
