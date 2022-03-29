@@ -2,7 +2,7 @@
 {
     public class Member
     {
-        public string id { get; set; }
+        public int id { get; set; }
         public string account { get; set; }
         public string address { get; set; }
         public string phone { get; set; }

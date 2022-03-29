@@ -159,7 +159,7 @@ namespace Shopping_Admin_web.Controller
                             {
                                 memberList.Add(new Member
                                 {
-                                    id = r["f_id"].ToString(),
+                                    id = Convert.ToInt16(r["f_id"]),
                                     account = r["f_account"].ToString(),
                                     address = r["f_address"].ToString(),
                                     phone = r["f_phone"].ToString(),
