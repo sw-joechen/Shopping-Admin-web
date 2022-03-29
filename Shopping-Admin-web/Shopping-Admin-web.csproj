@@ -111,6 +111,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecurePasswordHasher\SecurePasswordHasher.cs" />
     <Compile Include="Validators\AccountValidator.cs" />
+    <Compile Include="Validators\EmailValidator.cs" />
+    <Compile Include="Validators\PhoneNumberValidator.cs" />
     <Compile Include="Validators\PwdValidator.cs" />
     <Compile Include="Validators\SpecialCharacterValidator.cs" />
   </ItemGroup>

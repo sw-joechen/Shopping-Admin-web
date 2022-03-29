@@ -35,10 +35,10 @@ namespace Shopping_Admin_web.Controllers
                 return result.Stringify();
             }
 
-            AccountValidator accountValidator = new AccountValidator(payload.account);
-            PwdValidator pwdValidator = new PwdValidator(payload.pwd);
+            AccountValidator accountValidator = new AccountValidator();
+            PwdValidator pwdValidator = new PwdValidator();
 
-            if (accountValidator.IsAccountValid() && pwdValidator.IsPwdValid())
+            if (accountValidator.IsAccountValid(payload.account) && pwdValidator.IsPwdValid(payload.pwd))
             {
                 try {
                     using (SqlConnection conn = new SqlConnection(connectString))
