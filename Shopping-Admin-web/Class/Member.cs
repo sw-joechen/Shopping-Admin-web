@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Shopping_Admin_web.Class
+﻿namespace Shopping_Admin_web.Class
 {
-    public class Member: Agent
+    public class Member
     {
+        public string id { get; set; }
+        public string account { get; set; }
         public string address { get; set; }
         public string phone { get; set; }
-        public bool gender { get; set; }
-        //public string address { get; set; }
-        //public string address { get; set; }
-        //public string address { get; set; }
-        //public string address { get; set; }
+        public int gender { get; set; }
+        public string email { get; set; }
+        public bool enabled { get; set; }
+        public string createdDate { get; set; }
+        public string updatedDate { get; set; }
+        public double balance { get; set; }
     }
 }
