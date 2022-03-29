@@ -234,6 +234,47 @@ const AddProduct = () => {
   return JSON.stringify(result);
 };
 
+const GetMembersList = () => {
+  const tempData = [];
+
+  for (let i = 0; i < 50; i++) {
+    tempData.push({
+      id: i,
+      account: 'b123456',
+      address: 'bb',
+      balance: getRandom(0, 100),
+      createdDate: '2022-03-26T16:01:49.477',
+      email: 'abc@123.com',
+      enabled: getRandom(0, 1) ? false : true,
+      gender: getRandom(0, 1),
+      phone: '0978123456',
+      updatedDate: '2022-03-26T16:01:49.477',
+    });
+  }
+  const result = {
+    code: 200,
+    msg: 'success',
+    data: tempData,
+  };
+  return JSON.stringify(result);
+};
+
+const UpdateMember = (payload) => {
+  let tempData = {};
+  if (payload.body) {
+    for (var pair of payload.body.entries()) {
+      tempData[pair[0]] = pair[1];
+    }
+    tempData.id = Number(tempData.id);
+  }
+  const result = {
+    code: 200,
+    msg: 'success',
+    data: tempData,
+  };
+  return JSON.stringify(result);
+};
+
 if (process.env.NODE_ENV === 'development') {
   // agent
   Mock.mock('/api/agent/getAgentsList', getAgentsList);
@@ -252,4 +293,14 @@ if (process.env.NODE_ENV === 'development') {
   Mock.mock('/api/product/GetProductsList', GetProductsList);
 
   Mock.mock('/api/product/AddProduct', AddProduct);
+
+  // member
+  Mock.mock('/api/member/getMembersList', GetMembersList);
+
+  Mock.mock('/api/member/updateMember', UpdateMember);
 }
+
+//產生min到max之間的亂數
+const getRandom = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
