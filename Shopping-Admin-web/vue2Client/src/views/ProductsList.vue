@@ -36,68 +36,7 @@
     </div>
 
     <!-- table -->
-    <div class="tableContainer pt-5">
-      <table class="w-full">
-        <thead>
-          <tr
-            class="text-left border-t border-b-2 border-grey2 p-2 bg-blue-400 text-white text-xl;"
-          >
-            <th
-              class="py-3 px-1 min-w-[120px]"
-              :class="
-                col === 'name' || col === 'description'
-                  ? 'text-left'
-                  : 'text-center'
-              "
-              scope="col"
-              v-for="col in columns"
-              :key="col"
-            >
-              {{ $t(`common.tableHeader.${col}`) }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(item, index) in productList"
-            :key="index"
-            class="even:bg-gray-300 hover:bg-gray-400 even:border-b odd:bg-white border-gray-400 p-2"
-          >
-            <td
-              v-for="(column, indexColumn) in columns"
-              :key="indexColumn"
-              class="py-3 px-1"
-              :class="
-                column === 'name' || column === 'description'
-                  ? 'text-left'
-                  : 'text-center'
-              "
-            >
-              <div class="max-w-xs">
-                <div
-                  class="imgContainer flex justify-center"
-                  v-if="column === 'picture'"
-                >
-                  <img class="w-16" :src="item[column]" />
-                </div>
-                <div
-                  class="btnContainer min-w-[64px]"
-                  v-else-if="column === 'operation'"
-                >
-                  <BtnPrimary
-                    :label="$t('common.edit')"
-                    @submit="EditHandler(item)"
-                  />
-                </div>
-                <span v-else class="break-all">
-                  {{ ExtraFormatter(item, column) }}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <TableView :datas="productList" @edit="EditHandler" />
 
     <!-- 編輯商品dialog -->
     <FormDialog
@@ -360,7 +299,7 @@ import BtnPrimary from '../components/BtnPrimary.vue';
 import OptionSelector from '../components/OptionSelector.vue';
 import FormDialog from '../components/Dialogs/DialogView.vue';
 import SwtichView from '../components/SwtichView.vue';
-// import TableView from "../components/Table/TableView.vue";
+import TableView from '../components/Table/ProductListTable.vue';
 
 import { GetProductsList, AddProduct, UpdateProduct } from '../APIs/Product';
 import { DateTime } from 'luxon';
@@ -379,7 +318,7 @@ export default {
     OptionSelector,
     FormDialog,
     SwtichView,
-    // TableView,
+    TableView,
   },
   data: () => {
     return {
@@ -443,6 +382,7 @@ export default {
         type: '',
         enabled: null,
         file: null,
+        picture: '',
       },
     };
   },
