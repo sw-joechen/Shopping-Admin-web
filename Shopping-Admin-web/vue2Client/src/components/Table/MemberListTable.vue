@@ -37,18 +37,6 @@
             </div>
           </td>
 
-          <td class="enabled bodyTd">
-            <div class="max-w-xs text-center">
-              <span class="break-all">
-                {{
-                  item.enabled
-                    ? $t('common.tableHeader.enabled')
-                    : $t('common.tableHeader.disabled')
-                }}
-              </span>
-            </div>
-          </td>
-
           <td class="address bodyTd">
             <div class="max-w-xs text-center">
               <span class="break-all">
@@ -97,28 +85,11 @@
             </div>
           </td>
 
-          <td class="opertation bodyTd">
+          <td class="enabled bodyTd">
             <div class="max-w-xs flex justify-center">
-              <BtnPrimary
-                class="mr-2"
-                :label="
-                  item.enabled
-                    ? $t('common.tableHeader.disabled')
-                    : $t('common.tableHeader.enabled')
-                "
-                :theme="item.enabled ? 'red' : 'green'"
-                @submit="EditHandler(item)"
-              />
+              <SwitchView :toggle="item.enabled" @toggle="EditHandler(item)" />
             </div>
           </td>
-
-          <!-- <td class="createdDate bodyTd">
-            <div class="max-w-xs text-center">
-              <span class="break-all">
-                {{ DateFormatter(item.createdDate) }}
-              </span>
-            </div>
-          </td> -->
         </tr>
       </tbody>
     </table>
@@ -127,13 +98,13 @@
 
 <script>
 import { DateTime } from 'luxon';
-import BtnPrimary from '@/components/BtnPrimary.vue';
+import SwitchView from '@/components/SwtichView.vue';
 import { UpdateMember } from '@/APIs/Member';
 import ErrorCodeList from '@/ErrorCodeList';
 export default {
   name: 'memberListTable',
   components: {
-    BtnPrimary,
+    SwitchView,
   },
   props: {
     datas: {
@@ -146,14 +117,13 @@ export default {
       columns: [
         'id',
         'account',
-        'enabled',
         'address',
         'phone',
         'gender',
         'email',
         'balance',
         'updatedDate',
-        'operation',
+        'enabled',
       ],
     };
   },
