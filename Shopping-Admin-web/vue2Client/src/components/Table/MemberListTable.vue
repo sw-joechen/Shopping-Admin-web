@@ -176,7 +176,7 @@ export default {
       fd.append('enabled', !payload.enabled);
       const res = await UpdateMember(fd);
       if (res.code === 200) {
-        this.$emit('edit', res.data);
+        this.$emit('editComplete');
 
         this.$store.commit('eventBus/Push', {
           type: 'success',

@@ -25,7 +25,7 @@
 
     <hr class="mb-2" />
 
-    <TableView :datas="memberList" @edit="EditHandler" />
+    <TableView :datas="memberList" @editComplete="EditCompleteHandler" />
   </div>
 </template>
 
@@ -98,11 +98,8 @@ export default {
         });
       }
     },
-    EditHandler(payload) {
-      const target = this.memberList.find((member) => member.id === payload.id);
-      if (target) {
-        target.enabled = payload.enabled;
-      }
+    EditCompleteHandler() {
+      this.SearchHandler();
     },
   },
 };
