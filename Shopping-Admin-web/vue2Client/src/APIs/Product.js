@@ -51,3 +51,17 @@ export const UpdateProduct = (data) => {
       console.log('err: ', err);
     });
 };
+
+export const DelProduct = (data) => {
+  return request({
+    method: 'post',
+    url: '/api/product/delProduct',
+    data,
+  })
+    .then((res) => {
+      return JSON.parse(res.data);
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    });
+};

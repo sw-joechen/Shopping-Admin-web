@@ -6,6 +6,7 @@ export default {
     add: '新增',
     success: '操作成功',
     pwd: '密碼',
+    delete: '刪除',
     tableHeader: {
       id: 'ID',
       account: '帳號',

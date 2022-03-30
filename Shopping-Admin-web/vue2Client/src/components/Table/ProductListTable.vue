@@ -102,12 +102,19 @@
             </div>
           </td>
 
-          <td class="opertation bodyTd">
+          <td class="opertation bodyTd py-2 min-w-[150px]">
             <div class="max-w-xs flex justify-center">
               <BtnPrimary
                 class="mr-2"
                 :label="$t('common.edit')"
                 @submit="EditHandler(item)"
+              />
+
+              <BtnPrimary
+                class="mr-2"
+                :label="$t('common.delete')"
+                theme="red"
+                @submit="DeleteHandler(item.id)"
               />
             </div>
           </td>
@@ -120,7 +127,8 @@
 <script>
 import { DateTime } from 'luxon';
 import BtnPrimary from '@/components/BtnPrimary.vue';
-// import ErrorCodeList from '@/ErrorCodeList';
+import { DelProduct } from '@/APIs/Product';
+import ErrorCodeList from '@/ErrorCodeList';
 export default {
   name: 'productListTable',
   components: {
@@ -158,6 +166,23 @@ export default {
     },
     EditHandler(payload) {
       this.$emit('edit', payload);
+    },
+    async DeleteHandler(targetID) {
+      const fd = new FormData();
+      fd.append('id', targetID);
+      const res = await DelProduct(fd);
+      if (res.code === 200) {
+        this.$emit('delComplete');
+        this.$store.commit('eventBus/Push', {
+          type: 'success',
+          content: this.$t('common.success'),
+        });
+      } else {
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: ErrorCodeList[res.code],
+        });
+      }
     },
   },
 };

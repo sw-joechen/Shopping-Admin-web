@@ -36,7 +36,11 @@
     </div>
 
     <!-- table -->
-    <TableView :datas="productList" @edit="EditHandler" />
+    <TableView
+      :datas="productList"
+      @edit="EditHandler"
+      @delComplete="DelCompleteHandler"
+    />
 
     <!-- 編輯商品dialog -->
     <FormDialog
@@ -407,6 +411,9 @@ export default {
     this.SearchHandler();
   },
   methods: {
+    DelCompleteHandler() {
+      this.SearchHandler();
+    },
     keypressHandler(event) {
       return event.charCode >= 48 && event.charCode <= 57
         ? true
