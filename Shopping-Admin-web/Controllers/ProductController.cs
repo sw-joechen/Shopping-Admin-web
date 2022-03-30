@@ -350,25 +350,57 @@ namespace Shopping_Admin_web.Controllers
             return result.Stringify();
         }
 
-        // GET: api/Product/5
-        public string Get(int id)
+        /// <summary>
+        /// 刪除商品
+        /// </summary>
+        [HttpPost]
+        [Route("api/{controller}/delProduct")]
+        public string DelProduct()
         {
-            return "value";
-        }
+            Result result = new Result(100, "缺少參數");
+            var httpRequest = HttpContext.Current.Request;
 
-        // POST: api/Product
-        public void Post([FromBody]string value)
-        {
-        }
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                result.Set(110, "上傳格式錯誤");
+                return result.Stringify();
+            }
 
-        // PUT: api/Product/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+            if (httpRequest.Params["id"] == null)
+            {
+                result.Set(100, "缺少參數");
+                return result.Stringify();
+            }
 
-        // DELETE: api/Product/5
-        public void Delete(int id)
-        {
+            try
+            {
+                int id = Convert.ToInt32(httpRequest.Params["id"]);
+
+                Debug.WriteLine($"id=> {id}");
+
+                // 檢查完參數再寫進庫
+                using (SqlConnection conn = new SqlConnection(connectString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_delProduct", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader r = cmd.ExecuteReader();
+
+                        if (r.Read())
+                        {
+                            result.Set(Convert.ToInt32(r["result"]), "success");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(101, "網路錯誤");
+            }
+            return result.Stringify();
         }
     }
 }
