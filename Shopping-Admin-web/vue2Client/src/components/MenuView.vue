@@ -1,8 +1,8 @@
 <template>
   <div
-    class="menu overflow-auto fixed flex flex-col border-t border-r border-grey2 w-[210px] h-screen py-10"
+    class="menu overflow-auto fixed flex flex-col border-t border-r border-grey2 w-[210px] h-screen pb-10"
   >
-    <div class="text-green2 font-bold">購物網站管理後台</div>
+    <div class="text-green2 font-bold py-2 text-xl">購物網站管理後台</div>
     <a
       v-for="(el, index) in routes"
       :key="index"
