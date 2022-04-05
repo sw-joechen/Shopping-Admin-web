@@ -56,7 +56,7 @@
           <td class="gender bodyTd">
             <div class="max-w-xs text-center">
               <span class="break-all">
-                {{ item.gender }}
+                {{ GenderFormatter(item.gender) }}
               </span>
             </div>
           </td>
@@ -128,6 +128,13 @@ export default {
     };
   },
   methods: {
+    GenderFormatter(inputGender) {
+      if (inputGender === 0) {
+        return this.$t('memberList.female');
+      } else {
+        return this.$t('memberList.male');
+      }
+    },
     // 將日期格式化
     DateFormatter(inputDate) {
       const date = new Date(inputDate);

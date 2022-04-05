@@ -44,5 +44,7 @@ export default {
   },
   memberList: {
     editFormTitle: '編輯',
+    male: '男性',
+    female: '女性',
   },
 };
