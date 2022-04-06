@@ -90,6 +90,15 @@
               <SwitchView :toggle="item.enabled" @toggle="EditHandler(item)" />
             </div>
           </td>
+
+          <td class="deposit bodyTd">
+            <div class="max-w-xs flex">
+              <BtnSubmit
+                :label="$t('common.tableHeader.deposit')"
+                @submit="EditDepositHandler(item)"
+              />
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -101,10 +110,12 @@ import { DateTime } from 'luxon';
 import SwitchView from '@/components/SwtichView.vue';
 import { UpdateMember } from '@/APIs/Member';
 import ErrorCodeList from '@/ErrorCodeList';
+import BtnSubmit from '@/components/BtnPrimary.vue';
 export default {
   name: 'memberListTable',
   components: {
     SwitchView,
+    BtnSubmit,
   },
   props: {
     datas: {
@@ -124,10 +135,16 @@ export default {
         'balance',
         'updatedDate',
         'enabled',
+        'deposit',
       ],
     };
   },
   methods: {
+    keypressHandler(event) {
+      return event.charCode >= 48 && event.charCode <= 57
+        ? true
+        : event.preventDefault();
+    },
     GenderFormatter(inputGender) {
       if (inputGender === 0) {
         return this.$t('memberList.female');
@@ -144,12 +161,7 @@ export default {
 
     async EditHandler(payload) {
       const fd = new FormData();
-      fd.append('id', payload.id);
       fd.append('account', payload.account);
-      fd.append('address', payload.address);
-      fd.append('phone', payload.phone);
-      fd.append('gender', payload.gender);
-      fd.append('email', payload.email);
       fd.append('enabled', !payload.enabled);
       const res = await UpdateMember(fd);
       if (res.code === 200) {
@@ -165,6 +177,10 @@ export default {
           content: ErrorCodeList[res.code],
         });
       }
+    },
+
+    async EditDepositHandler(payload) {
+      this.$emit('editDeposit', payload);
     },
   },
 };

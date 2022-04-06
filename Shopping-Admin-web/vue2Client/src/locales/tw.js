@@ -26,7 +26,8 @@ export default {
       phone: '連絡電話',
       gender: '性別',
       email: '電子信箱',
-      balance: '點數',
+      balance: '餘額',
+      deposit: '儲值',
     },
   },
   agentList: {
@@ -46,5 +47,6 @@ export default {
     editFormTitle: '編輯',
     male: '男性',
     female: '女性',
+    depositCash: '欲儲金額',
   },
 };
