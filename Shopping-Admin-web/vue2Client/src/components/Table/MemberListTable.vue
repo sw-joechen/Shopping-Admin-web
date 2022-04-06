@@ -92,7 +92,7 @@
           </td>
 
           <td class="deposit bodyTd">
-            <div class="max-w-xs flex">
+            <div class="max-w-xs flex justify-center">
               <BtnSubmit
                 :label="$t('common.tableHeader.deposit')"
                 @submit="EditDepositHandler(item)"
