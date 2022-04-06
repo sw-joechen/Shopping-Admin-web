@@ -25,8 +25,7 @@ namespace Shopping_Admin_web.Controller
             Result result = new Result(100, "缺少參數");
             var httpRequest = HttpContext.Current.Request;
 
-            if (httpRequest.Params["account"] == null || httpRequest.Params["address"] == null || httpRequest.Params["phone"] == null ||
-                httpRequest.Params["gender"] == null || httpRequest.Params["email"] == null || httpRequest.Params["enabled"] == null)
+            if (httpRequest.Params["account"] == null || httpRequest.Params["enabled"] == null)
             {
                 result.Set(100, "缺少參數");
                 return result.Stringify();
@@ -35,24 +34,12 @@ namespace Shopping_Admin_web.Controller
             try
             {
                 string account = httpRequest.Params["account"];
-                string address = httpRequest.Params["address"];
-                string phone = httpRequest.Params["phone"];
-                int gender = Convert.ToInt32(httpRequest.Params["gender"]);
-                string email = httpRequest.Params["email"];
                 int enabled = Convert.ToInt32(Convert.ToBoolean(httpRequest.Params["enabled"]));
 
                 Debug.WriteLine($"account=> {account}");
-                Debug.WriteLine($"address=> {address}");
-                Debug.WriteLine($"phone=> {phone}");
-                Debug.WriteLine($"gender=> {gender}");
-                Debug.WriteLine($"email=> {email}");
                 Debug.WriteLine($"enabled=> {enabled}");
 
                 AccountValidator accValidator = new AccountValidator();
-                PwdValidator pwdValidator = new PwdValidator();
-                SpecialCharacterValidator specialCharacterValidator = new SpecialCharacterValidator();
-                EmailValidator emailValidator = new EmailValidator();
-                PhoneNumberValidator phoneNumberValidator = new PhoneNumberValidator();
 
                 // 檢查帳號
                 if (!accValidator.IsAccountValid(account))
@@ -61,17 +48,80 @@ namespace Shopping_Admin_web.Controller
                     return result.Stringify();
                 }
 
-                // 檢查email
-                if (!emailValidator.IsEmailValid(email))
+                // 寫進庫
+                using (SqlConnection conn = new SqlConnection(connectString))
                 {
-                    result.Set(116, "email格式不合法");
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_editMember", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", account);
+                        cmd.Parameters.AddWithValue("@enabled", enabled);
+                        SqlDataReader r = cmd.ExecuteReader();
+                        if (r.Read())
+                        {
+                            dict["id"] = r["f_id"];
+                            dict["account"] = r["f_account"];
+                            dict["address"] = r["f_address"];
+                            dict["phone"] = r["f_phone"];
+                            dict["gender"] = r["f_gender"];
+                            dict["email"] = r["f_email"];
+                            dict["enabled"] = r["f_enabled"];
+                            dict["balance"] = r["f_balance"];
+                            dict["createdDate"] = r["f_createdDate"];
+                            dict["updatedDate"] = r["f_updatedDate"];
+                            result.Set(200, "success", dict);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(101, "網路錯誤");
+            }
+            return result.Stringify();
+        }
+
+        /// <summary>
+        /// 會員儲值
+        /// </summary>
+        [HttpPost]
+        [Route("api/{controller}/deposit")]
+        public string Deposit()
+        {
+            var dict = new Dictionary<string, object>();
+            Result result = new Result(100, "缺少參數");
+            var httpRequest = HttpContext.Current.Request;
+
+            if (httpRequest.Params["account"] == null || httpRequest.Params["cash"] == null)
+            {
+                result.Set(100, "缺少參數");
+                return result.Stringify();
+            }
+
+            try
+            {
+                string account = httpRequest.Params["account"];
+                string cash = httpRequest.Params["cash"];
+
+                Debug.WriteLine($"account=> {account}");
+                Debug.WriteLine($"cash=> {cash}");
+
+                AccountValidator accValidator = new AccountValidator();
+                NumberValidator numberValidator = new NumberValidator();
+
+                // 檢查帳號
+                if (!accValidator.IsAccountValid(account))
+                {
+                    result.Set(103, "帳號密碼不符合規則");
                     return result.Stringify();
                 }
 
-                // 檢查phone
-                if (!phoneNumberValidator.IsPhoneNumberValid(phone))
+                // 檢查數字
+                if(!numberValidator.IsPureNumber(cash))
                 {
-                    result.Set(117, "電話號碼格式不合法");
+                    result.Set(109, "無效的參數");
                     return result.Stringify();
                 }
 
@@ -79,15 +129,11 @@ namespace Shopping_Admin_web.Controller
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_sw_editMember", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_editMemberCash", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", account);
-                        cmd.Parameters.AddWithValue("@address", address);
-                        cmd.Parameters.AddWithValue("@phone", phone);
-                        cmd.Parameters.AddWithValue("@gender", gender);
-                        cmd.Parameters.AddWithValue("@email", email);
-                        cmd.Parameters.AddWithValue("@enabled", enabled);
+                        cmd.Parameters.AddWithValue("@cash", cash);
                         SqlDataReader r = cmd.ExecuteReader();
                         if (r.Read())
                         {
