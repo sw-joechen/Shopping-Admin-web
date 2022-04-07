@@ -14,7 +14,7 @@ export default {
     NotificationWrapper,
   },
   created() {
-    document.title = '購物網站管理後台';
+    document.title = '阿進購物管理後台';
   },
 };
 </script>
