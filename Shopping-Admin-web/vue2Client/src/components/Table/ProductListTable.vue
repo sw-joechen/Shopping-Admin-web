@@ -168,20 +168,24 @@ export default {
       this.$emit('edit', payload);
     },
     async DeleteHandler(targetID) {
-      const fd = new FormData();
-      fd.append('id', targetID);
-      const res = await DelProduct(fd);
-      if (res.code === 200) {
-        this.$emit('delComplete');
-        this.$store.commit('eventBus/Push', {
-          type: 'success',
-          content: this.$t('common.success'),
-        });
-      } else {
-        this.$store.commit('eventBus/Push', {
-          type: 'error',
-          content: ErrorCodeList[res.code],
-        });
+      const result = confirm('確定要刪除商品嗎');
+
+      if (result) {
+        const fd = new FormData();
+        fd.append('id', targetID);
+        const res = await DelProduct(fd);
+        if (res.code === 200) {
+          this.$emit('delComplete');
+          this.$store.commit('eventBus/Push', {
+            type: 'success',
+            content: this.$t('common.success'),
+          });
+        } else {
+          this.$store.commit('eventBus/Push', {
+            type: 'error',
+            content: ErrorCodeList[res.code],
+          });
+        }
       }
     },
   },
