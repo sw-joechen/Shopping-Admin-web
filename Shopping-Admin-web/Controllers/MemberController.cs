@@ -119,7 +119,7 @@ namespace Shopping_Admin_web.Controller
                 }
 
                 // 檢查數字
-                if(!numberValidator.IsPureNumber(cash))
+                if(!numberValidator.IsPureNumber(cash) || Convert.ToInt32(cash)<=0)
                 {
                     result.Set(109, "無效的參數");
                     return result.Stringify();

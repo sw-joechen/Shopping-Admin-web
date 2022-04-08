@@ -152,7 +152,10 @@ export default {
       const isCashValid = this.CheckNumber(this.editData.cash);
       if (!isCashValid) this.isCashWarning = true;
 
-      if (isCashValid) {
+      const isCashPositive = this.editData.cash > 0;
+      if (!isCashPositive) this.isCashWarning = true;
+
+      if (isCashValid && isCashPositive) {
         const fd = new FormData();
         fd.append('account', this.editData.account);
         fd.append('cash', this.editData.cash);
