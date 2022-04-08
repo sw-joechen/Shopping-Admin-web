@@ -7,7 +7,7 @@ namespace Shopping_Admin_web.Class
 {
     public class Product
     {
-        public string id{ get; set; }
+        public int id{ get; set; }
         public bool enabled { get; set; }
         public string name { get; set; }
         public int price { get; set; }

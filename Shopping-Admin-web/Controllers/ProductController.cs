@@ -163,7 +163,7 @@ namespace Shopping_Admin_web.Controllers
 
                 int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
                 int id = paramID != null ? Convert.ToInt32(paramID) : -1;
-
+                
                 Debug.WriteLine($"id=> {id}");
                 Debug.WriteLine($"name=> {name}");
                 Debug.WriteLine($"type=> {type}");
@@ -205,7 +205,7 @@ namespace Shopping_Admin_web.Controllers
                             {
                                 productList.Add(new Product
                                 {
-                                    id = r["f_id"].ToString(),
+                                    id = Convert.ToInt32(r["f_id"]),
                                     name = r["f_name"].ToString(),
                                     description = r["f_description"].ToString(),
                                     price = Convert.ToInt32(r["f_price"]),
@@ -224,6 +224,7 @@ namespace Shopping_Admin_web.Controllers
                             result.Set(112, "找不到該商品");
                         }
                     }
+                    Debug.WriteLine($"productList=> {JsonConvert.SerializeObject(productList)}");
                 }
             }
             catch (Exception ex)
