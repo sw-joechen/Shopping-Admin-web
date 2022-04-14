@@ -116,6 +116,9 @@
     <Compile Include="Validators\PhoneNumberValidator.cs" />
     <Compile Include="Validators\PwdValidator.cs" />
     <Compile Include="Validators\SpecialCharacterValidator.cs" />
+    <Compile Include="Class\PurchaseHistoryPayload.cs" />
+    <Compile Include="Class\ShoppingItem.cs" />
+    <Compile Include="Class\PurchaseHistory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -160,6 +163,11 @@
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
+    <MonoDevelop>
+      <Properties>
+        <XspParameters Port="8080" Address="127.0.0.1" SslMode="None" SslProtocol="Default" KeyType="None" CertFile="" KeyFile="" PasswordOptions="None" Password="" Verbose="True" />
+      </Properties>
+    </MonoDevelop>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
