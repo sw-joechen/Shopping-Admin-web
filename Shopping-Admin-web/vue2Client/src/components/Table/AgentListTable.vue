@@ -1,5 +1,5 @@
 <template>
-  <div class="agentsTable pt-5">
+  <div class="agentListTable pt-5">
     <table class="w-full">
       <thead>
         <tr
@@ -97,7 +97,7 @@ import errorList from '@/ErrorCodeList';
 import BtnPrimary from '../BtnPrimary.vue';
 
 export default {
-  name: 'tableView',
+  name: 'agentListTable',
   components: {
     BtnPrimary,
   },

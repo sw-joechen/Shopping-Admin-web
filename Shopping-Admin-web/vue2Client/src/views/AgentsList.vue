@@ -126,7 +126,7 @@ import {
   UpdateAgent,
   GetAgentsListByStatus,
 } from '@/APIs/Agent';
-import TableView from '@/components/Table/TableView.vue';
+import TableView from '@/components/Table/AgentListTable.vue';
 import OptionSelector from '@/components/OptionSelector.vue';
 import SwtichView from '@/components/SwtichView.vue';
 import { IsAccountValid, IsPwdValid } from '../Utils/validators';
