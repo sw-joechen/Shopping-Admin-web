@@ -76,8 +76,9 @@
           v-model="editData.cash"
           class="input"
           type="number"
-          @keypress="keypressHandler"
+          @keyup="keypressHandler"
           @focus="isCashWarning = false"
+          @paste="NumberInputPasteHandler"
         />
         <p
           v-show="isCashWarning"
@@ -150,7 +151,10 @@ export default {
   methods: {
     async SubmitEditDepositFormHandler() {
       const isCashValid = this.CheckNumber(this.editData.cash);
-      if (!isCashValid) this.isCashWarning = true;
+      if (!isCashValid) {
+        this.isCashWarning = true;
+        return;
+      }
 
       const isCashPositive = this.editData.cash > 0;
       if (!isCashPositive) this.isCashWarning = true;
@@ -186,9 +190,19 @@ export default {
       this.editData.balance = null;
     },
     keypressHandler(event) {
+      if (event.target.value.search(/^0/) != -1) {
+        alert('數字禁止0開頭');
+      }
       return event.charCode >= 48 && event.charCode <= 57
         ? true
         : event.preventDefault();
+    },
+    NumberInputPasteHandler(e) {
+      if (e.clipboardData.getData('Text').match(/[^\d]/)) {
+        e.target.blur();
+        this.isCashWarning = true;
+        e.preventDefault();
+      }
     },
     async EditDepositHandler(accountInfo) {
       this.ToggleEditDepositDialogHandler(!this.isShowEditDepositDialog);
