@@ -304,7 +304,7 @@ namespace Shopping_Admin_web.Controller
                         account = row["account"].ToString(),
                         phone = row["phone"].ToString(),
                         address = row["address"].ToString(),
-                        createdDate = row["createdDate"].ToString(),
+                        createdDate = ((DateTime)row["createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
                         shoppingList = new List<ShoppingItem>(tempShoppingList)
                     });
                 }

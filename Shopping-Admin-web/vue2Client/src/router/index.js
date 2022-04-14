@@ -30,26 +30,22 @@ const routes = [
       {
         path: 'agentsList',
         name: 'agentsList',
-        // route level code-splitting
-        // this generates a separate chunk (About.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: () => import('../views/AgentsList.vue'),
       },
       {
         path: 'membersList',
         name: 'membersList',
-        // route level code-splitting
-        // this generates a separate chunk (About.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: () => import('../views/MembersList.vue'),
       },
       {
         path: 'productsList',
         name: 'productsList',
-        // route level code-splitting
-        // this generates a separate chunk (About.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
         component: () => import('../views/ProductsList.vue'),
+      },
+      {
+        path: 'purchaseHistory',
+        name: 'purchaseHistory',
+        component: () => import('../views/PurchaseHistory.vue'),
       },
     ],
   },

@@ -26,6 +26,7 @@ export default {
         { name: '後台帳號管理', to: { name: 'agentsList' } },
         { name: '用戶帳號管理', to: { name: 'membersList' } },
         { name: '商品管理', to: { name: 'productsList' } },
+        { name: '購買紀錄', to: { name: 'purchaseHistory' } },
       ],
     };
   },

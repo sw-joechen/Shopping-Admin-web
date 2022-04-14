@@ -28,6 +28,9 @@ export default {
       email: '電子信箱',
       balance: '餘額',
       deposit: '儲值',
+      orderNumber: '訂單編號',
+      shoppingList: '購買商品清單',
+      orderPrice: '訂單總價',
     },
   },
   agentList: {
@@ -48,5 +51,9 @@ export default {
     male: '男性',
     female: '女性',
     depositCash: '欲儲金額',
+  },
+  purchaseHistory: {
+    orderNumber: '訂單編號',
+    shoppingList: '購買商品清單',
   },
 };

@@ -170,7 +170,7 @@ const GetProductsList = () => {
     msg: 'success',
     data: [
       {
-        id: '1',
+        id: 1,
         name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
         amount: 1,
         createdDate: '2022-03-17T15:43:55.653',
@@ -178,28 +178,28 @@ const GetProductsList = () => {
           'xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
         enabled: true,
         picture: 'https://picsum.photos/200',
-        price: 1,
+        price: 15,
         type: 't1',
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
-        id: '2',
+        id: 14,
         name: 'test',
         amount: 1,
         createdDate: '2022-03-17T15:43:55.653',
         description: 'desc',
         enabled: true,
         picture: 'https://picsum.photos/200',
-        price: 1,
+        price: 5,
         type: 't1',
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
+        id: 15,
         amount: 243,
         createdDate: '2022-03-17T15:43:55.653',
         description: 'desc2',
         enabled: false,
-        id: '23',
         name: 'test2',
         picture: 'https://picsum.photos/200',
         price: 1,
@@ -207,15 +207,15 @@ const GetProductsList = () => {
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
-        id: '76',
-        name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
+        id: 17,
+        name: 'aaa aabb b bbaaa abbbbba aabbbbbaaaa bbbaa aa b bb',
         amount: 1,
         createdDate: '2022-03-17T15:43:55.653',
         description:
           'xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
         enabled: true,
         picture: 'https://picsum.photos/200',
-        price: 1,
+        price: 100,
         type: 't1',
         updatedDate: '2022-03-17T15:43:55.653',
       },
@@ -230,6 +230,29 @@ const AddProduct = () => {
     code: 200,
     msg: 'success',
     data: {},
+  };
+  return JSON.stringify(result);
+};
+
+const GetMemberPurchaseHistory = (payload) => {
+  const params = JSON.parse(payload.body);
+  const result = {
+    code: 200,
+    msg: 'success',
+    data: [
+      {
+        orderNumber: '22041307454400001011',
+        account: params.account,
+        phone: '0987654321',
+        address: 'address 台中市西屯區顆顆路嘻嘻街87巷1樓',
+        createdDate: '2022-04-13T07:45:44.666',
+        shoppingList: [
+          { id: 14, count: 20 },
+          { id: 15, count: 100 },
+          { id: 17, count: 1000 },
+        ],
+      },
+    ],
   };
   return JSON.stringify(result);
 };
@@ -301,6 +324,8 @@ if (process.env.NODE_ENV === 'development') {
   Mock.mock('/api/member/getMembersList', GetMembersList);
 
   Mock.mock('/api/member/updateMember', UpdateMember);
+
+  Mock.mock('/api/member/getMemberPurchaseHistory', GetMemberPurchaseHistory);
 }
 
 //產生min到max之間的亂數
