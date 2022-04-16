@@ -247,9 +247,9 @@ const GetMemberPurchaseHistory = (payload) => {
         address: 'address 台中市西屯區顆顆路嘻嘻街87巷1樓',
         createdDate: '2022-04-13T07:45:44.666',
         shoppingList: [
-          { id: 14, count: 20 },
-          { id: 15, count: 100 },
-          { id: 17, count: 1000 },
+          { id: 14, name: 'demo1', price: 101, count: 20 },
+          { id: 15, name: 'demo2', price: 102, count: 100 },
+          { id: 17, name: 'demo3', price: 103, count: 1000 },
         ],
       },
     ],

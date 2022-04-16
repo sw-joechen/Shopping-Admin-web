@@ -287,13 +287,15 @@ namespace Shopping_Admin_web.Controller
                 foreach (DataRow row in tb_purchaseHistory.Rows)  
                 {
                     DataRow[] rows = tb_subPurchaseHistory.Select($"orderNumber = {row["orderNumber"]}");
-                    List<ShoppingItem> tempShoppingList = new List<ShoppingItem> { };
+                    List<HistoryPurchasedItem> tempShoppingList = new List<HistoryPurchasedItem> { };
 
                     foreach(DataRow r in rows)
                     {
-                        tempShoppingList.Add(new ShoppingItem
+                        tempShoppingList.Add(new HistoryPurchasedItem
                         {
                             id = Convert.ToInt32(r["productID"]),
+                            name = r["productName"].ToString(),
+                            price = Convert.ToInt32(r["productPrice"]),
                             count= Convert.ToInt32(r["count"])
                         });
                     }
@@ -305,7 +307,7 @@ namespace Shopping_Admin_web.Controller
                         phone = row["phone"].ToString(),
                         address = row["address"].ToString(),
                         createdDate = ((DateTime)row["createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
-                        shoppingList = new List<ShoppingItem>(tempShoppingList)
+                        shoppingList = new List<HistoryPurchasedItem>(tempShoppingList)
                     });
                 }
                 Debug.WriteLine($"tb_purchaseHistory=> {JsonConvert.SerializeObject(tb_purchaseHistory)}");

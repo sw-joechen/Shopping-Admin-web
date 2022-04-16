@@ -119,6 +119,7 @@
     <Compile Include="Class\PurchaseHistoryPayload.cs" />
     <Compile Include="Class\ShoppingItem.cs" />
     <Compile Include="Class\PurchaseHistory.cs" />
+    <Compile Include="Class\HistoryPurchasedItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
