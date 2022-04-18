@@ -163,7 +163,7 @@ namespace Shopping_Admin_web.Controllers
 
                 int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
                 int id = paramID != null ? Convert.ToInt32(paramID) : -1;
-                
+
                 Debug.WriteLine($"id=> {id}");
                 Debug.WriteLine($"name=> {name}");
                 Debug.WriteLine($"type=> {type}");

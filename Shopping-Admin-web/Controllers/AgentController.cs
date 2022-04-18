@@ -24,7 +24,7 @@ namespace Shopping_Admin_web.Controllers
         public string RegisterAgent([FromBody] Agent payload)
         {
             Result result = new Result(100, "params required");
-            if (payload == null)
+            if (payload == null || payload.account == null || payload.pwd == null)
             {
                 return result.Stringify();
             }
@@ -40,7 +40,8 @@ namespace Shopping_Admin_web.Controllers
 
             if (accountValidator.IsAccountValid(payload.account) && pwdValidator.IsPwdValid(payload.pwd))
             {
-                try {
+                try
+                {
                     using (SqlConnection conn = new SqlConnection(connectString))
                     {
                         // Hash password
@@ -65,9 +66,10 @@ namespace Shopping_Admin_web.Controllers
                             conn.Close();
                         }
 
-                        if (sqlResponse == 200) {
-                            result.Set(200, "success", new { payload.account});
-                        } 
+                        if (sqlResponse == 200)
+                        {
+                            result.Set(200, "success", new { payload.account });
+                        }
                         else
                         {
                             result.Set(101, "網路錯誤");
@@ -78,7 +80,7 @@ namespace Shopping_Admin_web.Controllers
                 {
                     Debug.WriteLine($"ex: {ex}");
                     result.Set(101, "網路錯誤");
-                }                
+                }
             }
             else
             {
@@ -103,7 +105,8 @@ namespace Shopping_Admin_web.Controllers
             }
 
             // 進庫撈使用者
-            try {
+            try
+            {
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
@@ -133,7 +136,8 @@ namespace Shopping_Admin_web.Controllers
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Debug.WriteLine($"ex: {ex}");
                 result.Set(101, "網路錯誤");
             }
@@ -146,14 +150,16 @@ namespace Shopping_Admin_web.Controllers
             }
 
             // check >= 3
-            if (Convert.ToInt16(dict["count"]) >= 3) {
+            if (Convert.ToInt16(dict["count"]) >= 3)
+            {
                 result.Set(107, "error count meets the limit", new { count = dict["count"] });
             }
             else
             {
                 //check pwd
                 bool verify = SecurePasswordHasher.Verify(payload.pwd, dict["pwd"].ToString());
-                if (verify) {
+                if (verify)
+                {
                     result.Set(200, "success", dict);
                 }
                 else
@@ -195,7 +201,6 @@ namespace Shopping_Admin_web.Controllers
             }
             Debug.WriteLine($"checkpointB=> {JsonConvert.SerializeObject(dict)}");
 
-            
             return result.Stringify();
         }
 
@@ -305,7 +310,7 @@ namespace Shopping_Admin_web.Controllers
                 return result.Stringify();
             }
 
-            if (payload.account.Length == 0 )
+            if (payload.account.Length == 0)
             {
                 result.Set(106, "帳號不可為空字串");
                 return result.Stringify();
@@ -364,8 +369,9 @@ namespace Shopping_Admin_web.Controllers
 
                         if (r.Read())
                         {
-                            result.Set(200, "success", 
-                                new {
+                            result.Set(200, "success",
+                                new
+                                {
                                     account = r["f_account"],
                                     role = r["f_role"],
                                     enabled = r["f_enabled"],
@@ -380,7 +386,7 @@ namespace Shopping_Admin_web.Controllers
             {
                 Debug.WriteLine($"ex: {ex}");
                 result.Set(101, "網路錯誤");
-            }          
+            }
             return result.Stringify();
         }
 

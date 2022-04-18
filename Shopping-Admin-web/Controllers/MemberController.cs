@@ -120,7 +120,7 @@ namespace Shopping_Admin_web.Controller
                 }
 
                 // 檢查數字
-                if(!numberValidator.IsPureNumber(cash) || Convert.ToInt32(cash)<=0)
+                if (!numberValidator.IsPureNumber(cash) || Convert.ToInt32(cash) <= 0)
                 {
                     result.Set(109, "無效的參數");
                     return result.Stringify();
@@ -218,7 +218,7 @@ namespace Shopping_Admin_web.Controller
                                     balance = Convert.ToDouble(r["f_balance"])
                                 });
                             }
-                            
+
                         }
                         result.Set(200, "success", memberList);
                     }
@@ -243,13 +243,15 @@ namespace Shopping_Admin_web.Controller
             Result result = new Result(100, "缺少參數");
             List<PurchaseHistory> purchaseHistories = new List<PurchaseHistory> { };
 
-            if (payload == null || payload.startDate == null || payload.dueDate == null ) {
+            if (payload == null || payload.startDate == null || payload.dueDate == null)
+            {
                 return result.Stringify();
             }
 
             // 檢查帳號
             string account = payload.account;
-            if (payload.account != null) {
+            if (payload.account != null)
+            {
                 AccountValidator accountValidator = new AccountValidator();
                 if (!accountValidator.IsAccountValid(account))
                 {
@@ -293,19 +295,19 @@ namespace Shopping_Admin_web.Controller
                 DataTable tb_purchaseHistory = ds.Tables[0];
                 DataTable tb_subPurchaseHistory = ds.Tables[1];
 
-                foreach (DataRow row in tb_purchaseHistory.Rows)  
+                foreach (DataRow row in tb_purchaseHistory.Rows)
                 {
                     DataRow[] rows = tb_subPurchaseHistory.Select($"orderNumber = {row["orderNumber"]}");
                     List<HistoryPurchasedItem> tempShoppingList = new List<HistoryPurchasedItem> { };
 
-                    foreach(DataRow r in rows)
+                    foreach (DataRow r in rows)
                     {
                         tempShoppingList.Add(new HistoryPurchasedItem
                         {
                             id = Convert.ToInt32(r["productID"]),
                             name = r["productName"].ToString(),
                             price = Convert.ToInt32(r["productPrice"]),
-                            count= Convert.ToInt32(r["count"])
+                            count = Convert.ToInt32(r["count"])
                         });
                     }
 
@@ -324,7 +326,7 @@ namespace Shopping_Admin_web.Controller
                 Debug.WriteLine($"purchaseHistories=> {JsonConvert.SerializeObject(purchaseHistories)}");
                 Debug.WriteLine($"purchaseHistories count=> {purchaseHistories.Count}");
 
-                result.Set(200,"success", purchaseHistories);
+                result.Set(200, "success", purchaseHistories);
             }
             catch (Exception ex)
             {
@@ -332,16 +334,6 @@ namespace Shopping_Admin_web.Controller
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
-        }
-
-        private static DateTime StartOfDay(DateTime theDate)
-        {
-            return theDate.Date;
-        }
-
-        private static DateTime EndOfDay(DateTime theDate)
-        {
-            return theDate.Date.AddDays(1).AddTicks(-1);
         }
     }
 }
