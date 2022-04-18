@@ -15,6 +15,9 @@
         />
       </div>
 
+      <!-- 日期選擇 -->
+      <DatePicker v-model="dateTime" range class="datePicker mr-2" />
+
       <BtnSubmit
         :label="$t('common.search')"
         class="pr-2"
@@ -31,15 +34,19 @@
 <script>
 import BtnSubmit from '@/components/BtnPrimary.vue';
 import TableView from '@/components/Table/PurchaseHistoryTable.vue';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 
 import { GetMemberPurchaseHistory } from '@/APIs/Member';
-// import { GetProductsList } from '@/APIs/Product';
 import ErrorCodeList from '@/ErrorCodeList';
+import { DateTime } from 'luxon';
+
 export default {
   name: 'purchaseHistory',
   components: {
     BtnSubmit,
     TableView,
+    DatePicker,
   },
   data() {
     return {
@@ -48,6 +55,7 @@ export default {
         startDate: '',
         dueDate: '',
       },
+      dateTime: [this.getSevenDaysAgo(), this.getEndOfToday()],
       /**
        * {
        *    orderNumber:string,
@@ -66,10 +74,42 @@ export default {
       purchaseHistories: [],
     };
   },
+  computed: {
+    formatStartDateTime() {
+      if (!this.dateTime[0]) return null;
+
+      const date = new Date(this.dateTime[0]);
+      return DateTime.fromJSDate(date).toUTC().toISO();
+    },
+    formatEndDateTime() {
+      if (!this.dateTime[1]) return null;
+
+      const date = new Date(this.dateTime[1]);
+      return DateTime.fromJSDate(date).endOf('day').toUTC().toISO();
+    },
+  },
+  created() {
+    this.SearchHandler();
+  },
   methods: {
+    getEndOfToday() {
+      return new Date(new Date().setHours(23, 59, 59, 999));
+    },
+    getSevenDaysAgo() {
+      return new Date(
+        new Date(new Date().setDate(new Date().getDate() - 7)).setHours(
+          0,
+          0,
+          0,
+          0
+        )
+      );
+    },
     async SearchHandler() {
       const res = await GetMemberPurchaseHistory({
-        account: this.queryData.account,
+        account: this.queryData.account ? this.queryData.account : null,
+        startDate: this.formatStartDateTime,
+        dueDate: this.formatEndDateTime,
       });
       if (res.code === 200) {
         this.purchaseHistories = res.data;
@@ -86,6 +126,11 @@ export default {
 
 <style lang="scss">
 .purchaseHistory {
+  .datePicker {
+    & input {
+      @apply rounded-lg h-[42px];
+    }
+  }
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
