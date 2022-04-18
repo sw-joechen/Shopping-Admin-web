@@ -243,24 +243,30 @@ namespace Shopping_Admin_web.Controller
             Result result = new Result(100, "缺少參數");
             List<PurchaseHistory> purchaseHistories = new List<PurchaseHistory> { };
 
-            if (payload == null || payload.account == null ) {
+            if (payload == null || payload.startDate == null || payload.dueDate == null ) {
                 return result.Stringify();
             }
 
             // 檢查帳號
             string account = payload.account;
-            AccountValidator accountValidator = new AccountValidator();            
-            if (!accountValidator.IsAccountValid(account))
-            {
-                result.Set(103, "account not valid");
-                return result.Stringify();
+            if (payload.account != null) {
+                AccountValidator accountValidator = new AccountValidator();
+                if (!accountValidator.IsAccountValid(account))
+                {
+                    result.Set(103, "account not valid");
+                    return result.Stringify();
+                }
             }
 
-            // 時間預設為過去七天
-            DateTime dt = DateTime.UtcNow;
-            string startDate = payload.startDate ?? StartOfDay(dt.AddDays(-7)).ToString("yyyy-MM-ddTHH:mm:sssZ");
-            string dueDate = payload.dueDate ?? EndOfDay(dt).ToString("yyyy-MM-ddTHH:mm:sssZ");
+            var startDate = DateTime.Parse(payload.startDate).ToUniversalTime();
+            var dueDate = DateTime.Parse(payload.dueDate).ToUniversalTime();
+            TimeSpan span = dueDate.Subtract(startDate);
 
+            if (span.CompareTo(TimeSpan.Zero) < 0)
+            {
+                result.Set(121, "時間範圍錯誤");
+                return result.Stringify();
+            }
             Debug.WriteLine($"account=> {account}");
             Debug.WriteLine($"startDate=> {startDate}");
             Debug.WriteLine($"dueDate=> {dueDate}");
@@ -274,7 +280,10 @@ namespace Shopping_Admin_web.Controller
                     using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberPurchaseHistory", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@account", account);
+                        if (account == null)
+                            cmd.Parameters.AddWithValue("@account", DBNull.Value);
+                        else
+                            cmd.Parameters.AddWithValue("@account", account);
                         cmd.Parameters.AddWithValue("@startDate", startDate);
                         cmd.Parameters.AddWithValue("@dueDate", dueDate);
                         SqlDataAdapter adapter = new SqlDataAdapter(cmd);
@@ -313,6 +322,8 @@ namespace Shopping_Admin_web.Controller
                 Debug.WriteLine($"tb_purchaseHistory=> {JsonConvert.SerializeObject(tb_purchaseHistory)}");
                 Debug.WriteLine($"tb_subPurchaseHistory=> {JsonConvert.SerializeObject(tb_subPurchaseHistory)}");
                 Debug.WriteLine($"purchaseHistories=> {JsonConvert.SerializeObject(purchaseHistories)}");
+                Debug.WriteLine($"purchaseHistories count=> {purchaseHistories.Count}");
+
                 result.Set(200,"success", purchaseHistories);
             }
             catch (Exception ex)
