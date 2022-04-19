@@ -9,58 +9,50 @@ using System.Diagnostics;
 using System.Web;
 using System.Web.Http;
 
-namespace Shopping_Admin_web.Controller
-{
-    public class MemberController : ApiController
-    {
+namespace Shopping_Admin_web.Controller {
+    public class MemberController : ApiController {
         string connectString = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["ConnDB"].ConnectionString;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 更新會員帳號
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/updateMember")]
-        public string UpdateMember()
-        {
+        public string UpdateMember() {
             var dict = new Dictionary<string, object>();
             Result result = new Result(100, "缺少參數");
             var httpRequest = HttpContext.Current.Request;
 
-            if (httpRequest.Params["account"] == null || httpRequest.Params["enabled"] == null)
-            {
+            if (httpRequest.Params["account"] == null || httpRequest.Params["enabled"] == null) {
                 result.Set(100, "缺少參數");
+                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
-            try
-            {
+            try {
                 string account = httpRequest.Params["account"];
                 int enabled = Convert.ToInt32(Convert.ToBoolean(httpRequest.Params["enabled"]));
-
-                Debug.WriteLine($"account=> {account}");
-                Debug.WriteLine($"enabled=> {enabled}");
+                Logger.Info($"API: updateMember, account: {account}, enabled: {enabled}");
 
                 AccountValidator accValidator = new AccountValidator();
 
                 // 檢查帳號
-                if (!accValidator.IsAccountValid(account))
-                {
+                if (!accValidator.IsAccountValid(account)) {
                     result.Set(103, "帳號密碼不符合規則");
+                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 寫進庫
-                using (SqlConnection conn = new SqlConnection(connectString))
-                {
+                using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_saw_editMember", conn))
-                    {
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_editMember", conn)) {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", account);
                         cmd.Parameters.AddWithValue("@enabled", enabled);
                         SqlDataReader r = cmd.ExecuteReader();
-                        if (r.Read())
-                        {
+                        if (r.Read()) {
                             dict["id"] = r["f_id"];
                             dict["account"] = r["f_account"];
                             dict["address"] = r["f_address"];
@@ -73,14 +65,17 @@ namespace Shopping_Admin_web.Controller
                             dict["updatedDate"] = r["f_updatedDate"];
                             result.Set(200, "success", dict);
                         }
+                        else {
+                            result.Set(105, "帳號錯誤");
+                        }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ex: {ex}");
+            catch (Exception ex) {
+                Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
+            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -89,55 +84,48 @@ namespace Shopping_Admin_web.Controller
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/deposit")]
-        public string Deposit()
-        {
+        public string Deposit() {
             var dict = new Dictionary<string, object>();
             Result result = new Result(100, "缺少參數");
             var httpRequest = HttpContext.Current.Request;
 
-            if (httpRequest.Params["account"] == null || httpRequest.Params["cash"] == null)
-            {
+            if (httpRequest.Params["account"] == null || httpRequest.Params["cash"] == null) {
                 result.Set(100, "缺少參數");
+                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
-            try
-            {
+            try {
                 string account = httpRequest.Params["account"];
                 string cash = httpRequest.Params["cash"];
-
-                Debug.WriteLine($"account=> {account}");
-                Debug.WriteLine($"cash=> {cash}");
+                Logger.Info($"API: deposit, account: {account}, cash: {cash}");
 
                 AccountValidator accValidator = new AccountValidator();
                 NumberValidator numberValidator = new NumberValidator();
 
                 // 檢查帳號
-                if (!accValidator.IsAccountValid(account))
-                {
+                if (!accValidator.IsAccountValid(account)) {
                     result.Set(103, "帳號密碼不符合規則");
+                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 檢查數字
-                if (!numberValidator.IsPureNumber(cash) || Convert.ToInt32(cash) <= 0)
-                {
+                if (!numberValidator.IsPureNumber(cash) || Convert.ToInt32(cash) <= 0) {
                     result.Set(109, "無效的參數");
+                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 寫進庫
-                using (SqlConnection conn = new SqlConnection(connectString))
-                {
+                using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_saw_editMemberCash", conn))
-                    {
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_editMemberCash", conn)) {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@account", account);
                         cmd.Parameters.AddWithValue("@cash", cash);
                         SqlDataReader r = cmd.ExecuteReader();
-                        if (r.Read())
-                        {
+                        if (r.Read()) {
                             dict["id"] = r["f_id"];
                             dict["account"] = r["f_account"];
                             dict["address"] = r["f_address"];
@@ -150,14 +138,17 @@ namespace Shopping_Admin_web.Controller
                             dict["updatedDate"] = r["f_updatedDate"];
                             result.Set(200, "success", dict);
                         }
+                        else {
+                            result.Set(105, "帳號錯誤");
+                        }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ex: {ex}");
+            catch (Exception ex) {
+                Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
+            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -166,27 +157,20 @@ namespace Shopping_Admin_web.Controller
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/getMembersList")]
-        public string GetMembersList()
-        {
+        public string GetMembersList() {
             var httpRequest = HttpContext.Current.Request;
             Result result = new Result(100, "缺少參數");
             List<Member> memberList = new List<Member> { };
 
-            try
-            {
+            try {
                 string account = httpRequest.Params["account"] ?? null;
                 string paramEnabled = httpRequest.Params["enabled"];
+                Logger.Info($"API: getMembersList, account: {account}, enabled: {paramEnabled}");
 
-                int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
-
-                Debug.WriteLine($"account=> {account}");
-                Debug.WriteLine($"enabled=> {enabled}");
-
-                using (SqlConnection conn = new SqlConnection(connectString))
-                {
+                int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;                
+                using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberList", conn))
-                    {
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberList", conn)) {
                         cmd.CommandType = CommandType.StoredProcedure;
                         if (account == null)
                             cmd.Parameters.AddWithValue("@account", DBNull.Value);
@@ -200,12 +184,9 @@ namespace Shopping_Admin_web.Controller
 
                         SqlDataReader r = cmd.ExecuteReader();
 
-                        if (r.HasRows)
-                        {
-                            while (r.Read())
-                            {
-                                memberList.Add(new Member
-                                {
+                        if (r.HasRows) {
+                            while (r.Read()) {
+                                memberList.Add(new Member {
                                     id = Convert.ToInt16(r["f_id"]),
                                     account = r["f_account"].ToString(),
                                     address = r["f_address"].ToString(),
@@ -218,17 +199,16 @@ namespace Shopping_Admin_web.Controller
                                     balance = Convert.ToDouble(r["f_balance"])
                                 });
                             }
-
                         }
-                        result.Set(200, "success", memberList);
                     }
                 }
+                result.Set(200, "success", memberList);
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ex: {ex}");
+            catch (Exception ex) {
+                Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
+            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -237,25 +217,23 @@ namespace Shopping_Admin_web.Controller
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/getMemberPurchaseHistory")]
-        public string GetMemberPurchaseHistory(PurchaseHistoryPayload payload)
-        {
-            Debug.WriteLine($"payload=> {JsonConvert.SerializeObject(payload)}");
+        public string GetMemberPurchaseHistory(PurchaseHistoryPayload payload) {
             Result result = new Result(100, "缺少參數");
             List<PurchaseHistory> purchaseHistories = new List<PurchaseHistory> { };
+            Logger.Info($"API: getMemberPurchaseHistory, payload: {JsonConvert.SerializeObject(payload)}");
 
-            if (payload == null || payload.startDate == null || payload.dueDate == null)
-            {
+            if (payload == null || payload.startDate == null || payload.dueDate == null) {
+                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
             // 檢查帳號
             string account = payload.account;
-            if (payload.account != null)
-            {
+            if (payload.account != null) {
                 AccountValidator accountValidator = new AccountValidator();
-                if (!accountValidator.IsAccountValid(account))
-                {
+                if (!accountValidator.IsAccountValid(account)) {
                     result.Set(103, "account not valid");
+                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
             }
@@ -264,23 +242,17 @@ namespace Shopping_Admin_web.Controller
             var dueDate = DateTime.Parse(payload.dueDate).ToUniversalTime();
             TimeSpan span = dueDate.Subtract(startDate);
 
-            if (span.CompareTo(TimeSpan.Zero) < 0)
-            {
+            if (span.CompareTo(TimeSpan.Zero) < 0) {
                 result.Set(121, "時間範圍錯誤");
+                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
-            Debug.WriteLine($"account=> {account}");
-            Debug.WriteLine($"startDate=> {startDate}");
-            Debug.WriteLine($"dueDate=> {dueDate}");
 
-            try
-            {
+            try {
                 DataSet ds = new DataSet();
-                using (SqlConnection conn = new SqlConnection(connectString))
-                {
+                using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberPurchaseHistory", conn))
-                    {
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberPurchaseHistory", conn)) {
                         cmd.CommandType = CommandType.StoredProcedure;
                         if (account == null)
                             cmd.Parameters.AddWithValue("@account", DBNull.Value);
@@ -294,16 +266,15 @@ namespace Shopping_Admin_web.Controller
                 }
                 DataTable tb_purchaseHistory = ds.Tables[0];
                 DataTable tb_subPurchaseHistory = ds.Tables[1];
+                Logger.Info($"tb_purchaseHistory: {JsonConvert.SerializeObject(tb_purchaseHistory)}");
+                Logger.Info($"tb_subPurchaseHistory: {JsonConvert.SerializeObject(tb_subPurchaseHistory)}");
 
-                foreach (DataRow row in tb_purchaseHistory.Rows)
-                {
+                foreach (DataRow row in tb_purchaseHistory.Rows) {
                     DataRow[] rows = tb_subPurchaseHistory.Select($"orderNumber = {row["orderNumber"]}");
                     List<HistoryPurchasedItem> tempShoppingList = new List<HistoryPurchasedItem> { };
 
-                    foreach (DataRow r in rows)
-                    {
-                        tempShoppingList.Add(new HistoryPurchasedItem
-                        {
+                    foreach (DataRow r in rows) {
+                        tempShoppingList.Add(new HistoryPurchasedItem {
                             id = Convert.ToInt32(r["productID"]),
                             name = r["productName"].ToString(),
                             price = Convert.ToInt32(r["productPrice"]),
@@ -311,8 +282,7 @@ namespace Shopping_Admin_web.Controller
                         });
                     }
 
-                    purchaseHistories.Add(new PurchaseHistory
-                    {
+                    purchaseHistories.Add(new PurchaseHistory {
                         orderNumber = row["orderNumber"].ToString(),
                         account = row["account"].ToString(),
                         phone = row["phone"].ToString(),
@@ -321,16 +291,11 @@ namespace Shopping_Admin_web.Controller
                         shoppingList = new List<HistoryPurchasedItem>(tempShoppingList)
                     });
                 }
-                Debug.WriteLine($"tb_purchaseHistory=> {JsonConvert.SerializeObject(tb_purchaseHistory)}");
-                Debug.WriteLine($"tb_subPurchaseHistory=> {JsonConvert.SerializeObject(tb_subPurchaseHistory)}");
-                Debug.WriteLine($"purchaseHistories=> {JsonConvert.SerializeObject(purchaseHistories)}");
-                Debug.WriteLine($"purchaseHistories count=> {purchaseHistories.Count}");
-
+                Logger.Info($"count:{purchaseHistories.Count}, purchaseHistories: {JsonConvert.SerializeObject(purchaseHistories)}");
                 result.Set(200, "success", purchaseHistories);
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ex: {ex}");
+            catch (Exception ex) {
+                Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
