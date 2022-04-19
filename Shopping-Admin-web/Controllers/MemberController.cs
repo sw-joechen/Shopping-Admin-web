@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using Shopping_Admin_web.Class;
-using Shopping_Admin_web.Validators;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Web;
 using System.Web.Http;
+using Newtonsoft.Json;
+using Shopping_Admin_web.Class;
+using Shopping_Admin_web.Validators;
 
 namespace Shopping_Admin_web.Controller {
     public class MemberController : ApiController {
