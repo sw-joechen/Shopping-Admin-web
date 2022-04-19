@@ -167,7 +167,7 @@ namespace Shopping_Admin_web.Controller {
                 string paramEnabled = httpRequest.Params["enabled"];
                 Logger.Info($"API: getMembersList, account: {account}, enabled: {paramEnabled}");
 
-                int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;                
+                int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
                 using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberList", conn)) {
