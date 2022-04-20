@@ -175,7 +175,7 @@ namespace Shopping_Admin_web.Controller {
                             cmd.Parameters.AddWithValue("@enabled", enabled);
 
                         SqlDataReader r = cmd.ExecuteReader();
-
+                        
                         if (r.HasRows) {
                             while (r.Read()) {
                                 memberList.Add(new Member {
@@ -186,8 +186,8 @@ namespace Shopping_Admin_web.Controller {
                                     gender = Convert.ToInt16(r["f_gender"]),
                                     email = r["f_email"].ToString(),
                                     enabled = Convert.ToBoolean(Convert.ToInt16(r["f_enabled"])),
-                                    createdDate = r["f_createdDate"].ToString(),
-                                    updatedDate = r["f_updatedDate"].ToString(),
+                                    createdDate = Convert.ToDateTime(r["f_createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
+                                    updatedDate = Convert.ToDateTime(r["f_updatedDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
                                     balance = Convert.ToDouble(r["f_balance"])
                                 });
                             }
