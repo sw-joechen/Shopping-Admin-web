@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Shopping_Admin_web.Class
-{
-    public class GetAgent
-    {
+﻿namespace Shopping_Admin_web.Class {
+    public class GetAgent {
+        /// <summary>
+        /// 帳號
+        /// </summary>
         public string account { get; set; }
     }
 }
