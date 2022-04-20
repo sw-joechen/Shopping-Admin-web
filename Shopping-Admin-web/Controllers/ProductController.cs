@@ -24,7 +24,6 @@ namespace Shopping_Admin_web.Controllers {
 
             if (!Request.Content.IsMimeMultipartContent()) {
                 result.Set(110, "上傳格式錯誤");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -33,7 +32,6 @@ namespace Shopping_Admin_web.Controllers {
             // 沒上傳圖檔
             if (httpRequest.Files.Count < 1) {
                 result.Set(111, "未上傳檔案");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -43,7 +41,6 @@ namespace Shopping_Admin_web.Controllers {
                 httpRequest.Params["type"] == null
             ) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -60,14 +57,12 @@ namespace Shopping_Admin_web.Controllers {
                 // 檢查價格不可為負數
                 if (Convert.ToInt32(price) < 0) {
                     result.Set(114, "價格與數量不可為負");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 檢查數量不可為負數
                 if (Convert.ToInt32(amount) < 0) {
                     result.Set(114, "價格與數量不可為負");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
@@ -75,14 +70,12 @@ namespace Shopping_Admin_web.Controllers {
                 SpecialCharacterValidator specialCharacterValidator = new SpecialCharacterValidator();
                 if (specialCharacterValidator.IsStrContainSpecialCharacter(name)) {
                     result.Set(113, "商品名稱不合法");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 檢查描述
                 if (specialCharacterValidator.IsStrContainSpecialCharacter(description)) {
                     result.Set(115, "商品描述不合法");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
@@ -125,7 +118,6 @@ namespace Shopping_Admin_web.Controllers {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -194,11 +186,9 @@ namespace Shopping_Admin_web.Controllers {
                                 });
                             }
                             result.Set(200, "success", productList);
-                            Logger.Info($"result: {result.Stringify()}");
                         }
                         else {
                             result.Set(112, "找不到該商品");
-                            Logger.Info($"result: {result.Stringify()}");
                         }
                     }
                 }
@@ -221,13 +211,11 @@ namespace Shopping_Admin_web.Controllers {
 
             if (!Request.Content.IsMimeMultipartContent()) {
                 result.Set(110, "上傳格式錯誤");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
             if (httpRequest.Params["id"] == null || httpRequest.Params["type"] == null || httpRequest.Params["price"] == null || httpRequest.Params["amount"] == null || httpRequest.Params["name"] == null || httpRequest.Params["description"] == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -246,14 +234,12 @@ namespace Shopping_Admin_web.Controllers {
                 // 檢查價格不可為負數
                 if (Convert.ToInt32(price) < 0) {
                     result.Set(114, "價格與數量不可為負");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 檢查數量不可為負數
                 if (Convert.ToInt32(amount) < 0) {
                     result.Set(114, "價格與數量不可為負");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
@@ -261,14 +247,12 @@ namespace Shopping_Admin_web.Controllers {
                 SpecialCharacterValidator specialCharacterValidator = new SpecialCharacterValidator();
                 if (name != null && specialCharacterValidator.IsStrContainSpecialCharacter(name)) {
                     result.Set(113, "商品名稱不合法");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 檢查描述
                 if (description != null && specialCharacterValidator.IsStrContainSpecialCharacter(description)) {
                     result.Set(115, "商品描述不合法");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
@@ -322,13 +306,11 @@ namespace Shopping_Admin_web.Controllers {
 
             if (!Request.Content.IsMimeMultipartContent()) {
                 result.Set(110, "上傳格式錯誤");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
             if (httpRequest.Params["id"] == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 

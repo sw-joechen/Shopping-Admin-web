@@ -25,7 +25,6 @@ namespace Shopping_Admin_web.Controller {
 
             if (httpRequest.Params["account"] == null || httpRequest.Params["enabled"] == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -39,7 +38,6 @@ namespace Shopping_Admin_web.Controller {
                 // 檢查帳號
                 if (!accValidator.IsAccountValid(account)) {
                     result.Set(103, "帳號密碼不符合規則");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
@@ -74,7 +72,6 @@ namespace Shopping_Admin_web.Controller {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -90,7 +87,6 @@ namespace Shopping_Admin_web.Controller {
 
             if (httpRequest.Params["account"] == null || httpRequest.Params["cash"] == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -105,14 +101,12 @@ namespace Shopping_Admin_web.Controller {
                 // 檢查帳號
                 if (!accValidator.IsAccountValid(account)) {
                     result.Set(103, "帳號密碼不符合規則");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
                 // 檢查數字
                 if (!numberValidator.IsPureNumber(cash) || Convert.ToInt32(cash) <= 0) {
                     result.Set(109, "無效的參數");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
 
@@ -147,7 +141,6 @@ namespace Shopping_Admin_web.Controller {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -207,7 +200,6 @@ namespace Shopping_Admin_web.Controller {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -222,7 +214,6 @@ namespace Shopping_Admin_web.Controller {
             Logger.Info($"API: getMemberPurchaseHistory, payload: {JsonConvert.SerializeObject(payload)}");
 
             if (payload == null || payload.startDate == null || payload.dueDate == null) {
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -232,7 +223,6 @@ namespace Shopping_Admin_web.Controller {
                 AccountValidator accountValidator = new AccountValidator();
                 if (!accountValidator.IsAccountValid(account)) {
                     result.Set(103, "account not valid");
-                    Logger.Info($"result: {result.Stringify()}");
                     return result.Stringify();
                 }
             }
@@ -243,7 +233,6 @@ namespace Shopping_Admin_web.Controller {
 
             if (span.CompareTo(TimeSpan.Zero) < 0) {
                 result.Set(121, "時間範圍錯誤");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 

@@ -23,13 +23,11 @@ namespace Shopping_Admin_web.Controllers {
             Result result = new Result(100, "fail");
             if (payload == null || payload.account == null || payload.pwd == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
             if (payload.account.Length == 0 && payload.pwd.Length == 0) {
                 result.Set(102, "帳號名稱或密碼不可為空白");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -75,7 +73,6 @@ namespace Shopping_Admin_web.Controllers {
             else {
                 result.Set(103, "account, pwd not valid");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -89,7 +86,6 @@ namespace Shopping_Admin_web.Controllers {
             var dict = new Dictionary<string, object>();
             if (payload == null || payload.account == null || payload.pwd == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -116,7 +112,6 @@ namespace Shopping_Admin_web.Controllers {
                         }
                         else {
                             result.Set(105, "帳號錯誤");
-                            Logger.Info($"result: {result.Stringify()}");
                             return result.Stringify();
                         }
                         // 關閉連線
@@ -132,7 +127,6 @@ namespace Shopping_Admin_web.Controllers {
             // check status
             if (Convert.ToInt16(dict["enabled"]) == 0) {
                 result.Set(108, "該帳號已被禁用");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -176,7 +170,6 @@ namespace Shopping_Admin_web.Controllers {
                     }
                 }
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -191,13 +184,11 @@ namespace Shopping_Admin_web.Controllers {
 
             if (payload == null || payload.account == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
             if (payload.account.Length == 0) {
                 result.Set(106, "帳號不可為空字串");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -224,7 +215,6 @@ namespace Shopping_Admin_web.Controllers {
                         }
                         else {
                             result.Set(105, "帳號錯誤");
-                            Logger.Info($"result: {result.Stringify()}");
                             return result.Stringify();
                         }
                         // 關閉連線
@@ -260,7 +250,6 @@ namespace Shopping_Admin_web.Controllers {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -275,13 +264,11 @@ namespace Shopping_Admin_web.Controllers {
 
             if (payload == null || payload.account == null) {
                 result.Set(100, "缺少參數");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
             if (payload.account.Length == 0) {
                 result.Set(106, "帳號不可為空字串");
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
 
@@ -341,7 +328,6 @@ namespace Shopping_Admin_web.Controllers {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -382,7 +368,6 @@ namespace Shopping_Admin_web.Controllers {
                 Logger.Error(ex);
                 result.Set(100, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -397,7 +382,6 @@ namespace Shopping_Admin_web.Controllers {
             Result result = new Result(100, "缺少參數");
 
             if (account == null || account.Length == 0) {
-                Logger.Info($"result: {result.Stringify()}");
                 return result.Stringify();
             }
             Logger.Info($"API: getAgentByAccount, account: {account}");
@@ -432,7 +416,6 @@ namespace Shopping_Admin_web.Controllers {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
 
@@ -482,7 +465,6 @@ namespace Shopping_Admin_web.Controllers {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
-            Logger.Info($"result: {result.Stringify()}");
             return result.Stringify();
         }
     }
