@@ -13,3 +13,7 @@ bin/
 obj/
 packages
 Uploads/
+logs.txt
+UserPrefs.xml
+*-Debug.json
+*.DS_Store
