@@ -94,7 +94,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Components\DemoComponent.js" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Web.config" />

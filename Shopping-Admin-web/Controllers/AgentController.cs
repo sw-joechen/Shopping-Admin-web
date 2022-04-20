@@ -12,7 +12,7 @@ using Shopping_Admin_web.Validators;
 namespace Shopping_Admin_web.Controllers {
     public class AgentController : ApiController {
         string connectString = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["ConnDB"].ConnectionString;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 註冊管理帳號
@@ -31,7 +31,7 @@ namespace Shopping_Admin_web.Controllers {
                 return result.Stringify();
             }
 
-            Logger.Info($"API: registerAgent, account: {payload.account}, pwd: {payload.pwd}");
+            LOGGER.Info($"API: registerAgent, account: {payload.account}, pwd: {payload.pwd}");
 
             AccountValidator accountValidator = new AccountValidator();
             PwdValidator pwdValidator = new PwdValidator();
@@ -66,7 +66,7 @@ namespace Shopping_Admin_web.Controllers {
                     }
                 }
                 catch (Exception ex) {
-                    Logger.Error(ex);
+                    LOGGER.Error(ex);
                     result.Set(101, "網路錯誤");
                 }
             }
@@ -89,7 +89,7 @@ namespace Shopping_Admin_web.Controllers {
                 return result.Stringify();
             }
 
-            Logger.Info($"API: loginAgent, account: {payload.account}, pwd: {payload.pwd}");
+            LOGGER.Info($"API: loginAgent, account: {payload.account}, pwd: {payload.pwd}");
 
             // 進庫撈使用者
             try {
@@ -108,7 +108,7 @@ namespace Shopping_Admin_web.Controllers {
                             dict["updatedDate"] = r["f_updatedDate"];
                             dict["role"] = r["f_role"];
                             dict["count"] = r["f_count"];
-                            Logger.Info($"dict: {JsonConvert.SerializeObject(dict)}");
+                            LOGGER.Info($"dict: {JsonConvert.SerializeObject(dict)}");
                         }
                         else {
                             result.Set(105, "帳號錯誤");
@@ -120,7 +120,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
 
@@ -165,7 +165,7 @@ namespace Shopping_Admin_web.Controllers {
                         }
                     }
                     catch (Exception ex) {
-                        Logger.Error(ex);
+                        LOGGER.Error(ex);
                         result.Set(101, "網路錯誤");
                     }
                 }
@@ -192,7 +192,7 @@ namespace Shopping_Admin_web.Controllers {
                 return result.Stringify();
             }
 
-            Logger.Info($"API: unlockAgent, {JsonConvert.SerializeObject(payload)}");
+            LOGGER.Info($"API: unlockAgent, {JsonConvert.SerializeObject(payload)}");
 
             // 檢查完參數再進庫撈使用者
             // TODO: 這邊改成摳一隻sp, 把撈帳號的事情拉進sp做
@@ -223,7 +223,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
 
@@ -247,7 +247,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -272,7 +272,7 @@ namespace Shopping_Admin_web.Controllers {
                 return result.Stringify();
             }
 
-            Logger.Info($"API: updateAgent, {JsonConvert.SerializeObject(payload)}");
+            LOGGER.Info($"API: updateAgent, {JsonConvert.SerializeObject(payload)}");
 
             try {
                 // 進庫撈使用者
@@ -300,7 +300,7 @@ namespace Shopping_Admin_web.Controllers {
                     }
                 }
 
-                Logger.Info($"dict: {JsonConvert.SerializeObject(dict)}");
+                LOGGER.Info($"dict: {JsonConvert.SerializeObject(dict)}");
                 string role = payload.role == null ? dict["role"].ToString() : payload.role;
 
                 using (SqlConnection conn = new SqlConnection(connectString)) {
@@ -325,7 +325,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -339,7 +339,7 @@ namespace Shopping_Admin_web.Controllers {
         public string GetAgentsList() {
             Result result = new Result(100, "缺少參數");
             List<AgentsList> agentList = new List<AgentsList> { };
-            Logger.Info($"API: getAgentsList");
+            LOGGER.Info($"API: getAgentsList");
             try {
                 using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
@@ -365,7 +365,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(100, "網路錯誤");
             }
             return result.Stringify();
@@ -384,7 +384,7 @@ namespace Shopping_Admin_web.Controllers {
             if (account == null || account.Length == 0) {
                 return result.Stringify();
             }
-            Logger.Info($"API: getAgentByAccount, account: {account}");
+            LOGGER.Info($"API: getAgentByAccount, account: {account}");
             List<SearchAgent> searchAgentList = new List<SearchAgent> { };
             try {
                 using (SqlConnection conn = new SqlConnection(connectString)) {
@@ -413,7 +413,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -429,7 +429,7 @@ namespace Shopping_Admin_web.Controllers {
             Result result = new Result(100, "缺少參數");
             List<SearchAgent> searchAgentList = new List<SearchAgent> { };
             string paramEnabled = httpRequest.Params["enabled"];
-            Logger.Info($"API: getAgentsListByStatus, enabled: {paramEnabled}");
+            LOGGER.Info($"API: getAgentsListByStatus, enabled: {paramEnabled}");
 
             try {
                 int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
@@ -462,7 +462,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();

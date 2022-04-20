@@ -12,7 +12,7 @@ using Shopping_Admin_web.Validators;
 namespace Shopping_Admin_web.Controllers {
     public class ProductController : ApiController {
         string connectString = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["ConnDB"].ConnectionString;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 新增商品
@@ -35,7 +35,7 @@ namespace Shopping_Admin_web.Controllers {
                 return result.Stringify();
             }
 
-            Logger.Info($"demo, name: {httpRequest.Params["name"]}, price: {httpRequest.Params["price"]}");
+            LOGGER.Info($"demo, name: {httpRequest.Params["name"]}, price: {httpRequest.Params["price"]}");
             if (httpRequest.Params["name"] == null || httpRequest.Params["price"] == null ||
                 httpRequest.Params["amount"] == null || httpRequest.Params["description"] == null ||
                 httpRequest.Params["type"] == null
@@ -52,7 +52,7 @@ namespace Shopping_Admin_web.Controllers {
                 string type = httpRequest.Params["type"];
                 string picture;
 
-                Logger.Info($"API: addProduct, name: {name}, price: {price}, amount: {amount}, description: {description}, type: {type}");
+                LOGGER.Info($"API: addProduct, name: {name}, price: {price}, amount: {amount}, description: {description}, type: {type}");
 
                 // 檢查價格不可為負數
                 if (Convert.ToInt32(price) < 0) {
@@ -115,7 +115,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -140,7 +140,7 @@ namespace Shopping_Admin_web.Controllers {
                 int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
                 int id = paramID != null ? Convert.ToInt32(paramID) : -1;
 
-                Logger.Info($"API: getProductsList, id: {id}, name: {name}, type: {type}, enabled: {enabled}");
+                LOGGER.Info($"API: getProductsList, id: {id}, name: {name}, type: {type}, enabled: {enabled}");
 
                 using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
@@ -194,7 +194,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -229,7 +229,7 @@ namespace Shopping_Admin_web.Controllers {
                 string type = httpRequest.Params["type"];
                 string picture = $"/{Path.GetFileName(httpRequest.Params["picture"])}";
 
-                Logger.Info($"API: updateProduct, id: {id}, enabled: {enabled}, name: {name}, price: {price}, amount: {amount},description: {description}, type: {type}, picture: {picture}");
+                LOGGER.Info($"API: updateProduct, id: {id}, enabled: {enabled}, name: {name}, price: {price}, amount: {amount},description: {description}, type: {type}, picture: {picture}");
 
                 // 檢查價格不可為負數
                 if (Convert.ToInt32(price) < 0) {
@@ -258,7 +258,7 @@ namespace Shopping_Admin_web.Controllers {
 
                 if (httpRequest.Files.Count >= 1) {
                     var postedFile = httpRequest.Files[0];
-                    Logger.Info($"postedFile: {postedFile.FileName}");
+                    LOGGER.Info($"postedFile: {postedFile.FileName}");
 
                     // 串上時戳_原始檔名
                     var filePath = HttpContext.Current.Server.MapPath($"~/Uploads/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}");
@@ -289,7 +289,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -317,7 +317,7 @@ namespace Shopping_Admin_web.Controllers {
             try {
                 int id = Convert.ToInt32(httpRequest.Params["id"]);
 
-                Logger.Info($"API: delProduct, id: {id}");
+                LOGGER.Info($"API: delProduct, id: {id}");
 
                 // 檢查完參數再寫進庫
                 using (SqlConnection conn = new SqlConnection(connectString)) {
@@ -334,7 +334,7 @@ namespace Shopping_Admin_web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();

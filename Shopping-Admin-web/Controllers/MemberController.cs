@@ -11,7 +11,7 @@ using Shopping_Admin_web.Validators;
 namespace Shopping_Admin_web.Controller {
     public class MemberController : ApiController {
         string connectString = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["ConnDB"].ConnectionString;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 更新會員帳號
@@ -31,7 +31,7 @@ namespace Shopping_Admin_web.Controller {
             try {
                 string account = httpRequest.Params["account"];
                 int enabled = Convert.ToInt32(Convert.ToBoolean(httpRequest.Params["enabled"]));
-                Logger.Info($"API: updateMember, account: {account}, enabled: {enabled}");
+                LOGGER.Info($"API: updateMember, account: {account}, enabled: {enabled}");
 
                 AccountValidator accValidator = new AccountValidator();
 
@@ -69,7 +69,7 @@ namespace Shopping_Admin_web.Controller {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -93,7 +93,7 @@ namespace Shopping_Admin_web.Controller {
             try {
                 string account = httpRequest.Params["account"];
                 string cash = httpRequest.Params["cash"];
-                Logger.Info($"API: deposit, account: {account}, cash: {cash}");
+                LOGGER.Info($"API: deposit, account: {account}, cash: {cash}");
 
                 AccountValidator accValidator = new AccountValidator();
                 NumberValidator numberValidator = new NumberValidator();
@@ -138,7 +138,7 @@ namespace Shopping_Admin_web.Controller {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -157,7 +157,7 @@ namespace Shopping_Admin_web.Controller {
             try {
                 string account = httpRequest.Params["account"] ?? null;
                 string paramEnabled = httpRequest.Params["enabled"];
-                Logger.Info($"API: getMembersList, account: {account}, enabled: {paramEnabled}");
+                LOGGER.Info($"API: getMembersList, account: {account}, enabled: {paramEnabled}");
 
                 int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
                 using (SqlConnection conn = new SqlConnection(connectString)) {
@@ -197,7 +197,7 @@ namespace Shopping_Admin_web.Controller {
                 result.Set(200, "success", memberList);
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -211,7 +211,7 @@ namespace Shopping_Admin_web.Controller {
         public string GetMemberPurchaseHistory(PurchaseHistoryPayload payload) {
             Result result = new Result(100, "缺少參數");
             List<PurchaseHistory> purchaseHistories = new List<PurchaseHistory> { };
-            Logger.Info($"API: getMemberPurchaseHistory, payload: {JsonConvert.SerializeObject(payload)}");
+            LOGGER.Info($"API: getMemberPurchaseHistory, payload: {JsonConvert.SerializeObject(payload)}");
 
             if (payload == null || payload.startDate == null || payload.dueDate == null) {
                 return result.Stringify();
@@ -254,8 +254,8 @@ namespace Shopping_Admin_web.Controller {
                 }
                 DataTable tb_purchaseHistory = ds.Tables[0];
                 DataTable tb_subPurchaseHistory = ds.Tables[1];
-                Logger.Info($"tb_purchaseHistory: {JsonConvert.SerializeObject(tb_purchaseHistory)}");
-                Logger.Info($"tb_subPurchaseHistory: {JsonConvert.SerializeObject(tb_subPurchaseHistory)}");
+                LOGGER.Info($"tb_purchaseHistory: {JsonConvert.SerializeObject(tb_purchaseHistory)}");
+                LOGGER.Info($"tb_subPurchaseHistory: {JsonConvert.SerializeObject(tb_subPurchaseHistory)}");
 
                 foreach (DataRow row in tb_purchaseHistory.Rows) {
                     DataRow[] rows = tb_subPurchaseHistory.Select($"orderNumber = {row["orderNumber"]}");
@@ -279,11 +279,11 @@ namespace Shopping_Admin_web.Controller {
                         shoppingList = new List<HistoryPurchasedItem>(tempShoppingList)
                     });
                 }
-                Logger.Info($"count:{purchaseHistories.Count}, purchaseHistories: {JsonConvert.SerializeObject(purchaseHistories)}");
+                LOGGER.Info($"count:{purchaseHistories.Count}, purchaseHistories: {JsonConvert.SerializeObject(purchaseHistories)}");
                 result.Set(200, "success", purchaseHistories);
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
