@@ -1,23 +1,31 @@
 ﻿<Properties StartupConfiguration="{CF7591F4-0353-490E-834B-22BB601A18F4}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Shopping-Admin-web/Controllers/ProductController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Shopping-Admin-web/Class/PurchaseHistoryPayload.cs">
     <Files>
-      <File FileName="Shopping-Admin-web/Controllers/MemberController.cs" Line="269" Column="14" />
-      <File FileName="Shopping-Admin-web/Controllers/ProductController.cs" Line="36" Column="28" />
-      <File FileName="Shopping-Admin-web/Class/PurchaseHistoryPayload.cs" Line="13" Column="2" NotebookId="1" />
-      <File FileName="Shopping-Admin-web/Class/PurchaseHistory.cs" Line="12" Column="25" NotebookId="1" />
-      <File FileName="Shopping-Admin-web/Class/ShoppingItem.cs" Line="4" Column="30" NotebookId="1" />
+      <File FileName="Shopping-Admin-web/Validators/AccountValidator.cs" Line="2" Column="1" />
+      <File FileName="Shopping-Admin-web/Validators/EmailValidator.cs" Line="7" Column="10" />
+      <File FileName="Shopping-Admin-web/Validators/NumberValidator.cs" Line="6" Column="23" />
+      <File FileName="Shopping-Admin-web/Validators/PhoneNumberValidator.cs" Line="4" Column="29" />
+      <File FileName="Shopping-Admin-web/Validators/PwdValidator.cs" Line="10" Column="2" />
+      <File FileName="Shopping-Admin-web/Validators/SpecialCharacterValidator.cs" Line="8" Column="10" />
+      <File FileName="Shopping-Admin-web/Global.asax.cs" Line="14" Column="24" />
+      <File FileName="Shopping-Admin-web/Class/PurchaseHistory.cs" Line="4" Column="35" />
+      <File FileName="Shopping-Admin-web/Class/PurchaseHistoryPayload.cs" Line="2" Column="42" />
+      <File FileName="Shopping-Admin-web/Controllers/AgentController.cs" Line="339" Column="40" NotebookId="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Shopping-Admin-web" expanded="True">
+            <Node name="Solution Items" expanded="True" />
             <Node name="Shopping-Admin-web" expanded="True">
-              <Node name="Class" expanded="True" />
-              <Node name="Controllers" expanded="True">
-                <Node name="ProductController.cs" selected="True" />
+              <Node name="Class" expanded="True">
+                <Node name="PurchaseHistoryPayload.cs" selected="True" />
               </Node>
+              <Node name="Controllers" expanded="True" />
+              <Node name="Properties" expanded="True" />
               <Node name="SecurePasswordHasher" expanded="True" />
               <Node name="Validators" expanded="True" />
+              <Node name="Global.asax" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -28,9 +36,7 @@
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/snackboy/Documents/SW/repos/Shopping-Admin-web/Shopping-Admin-web/Controllers/ProductController.cs" relfile="Shopping-Admin-web/Controllers/ProductController.cs" line="9" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>
