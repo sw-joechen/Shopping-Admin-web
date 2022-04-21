@@ -353,8 +353,8 @@ namespace Shopping_Admin_web.Controllers {
                                     id = r["f_id"].ToString(),
                                     account = r["f_account"].ToString(),
                                     enabled = Convert.ToInt16(r["f_enabled"]),
-                                    createdDate = r["f_createdDate"].ToString(),
-                                    updatedDate = r["f_updatedDate"].ToString(),
+                                    createdDate = Convert.ToDateTime(r["f_createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
+                                    updatedDate = Convert.ToDateTime(r["f_updatedDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
                                     role = r["f_role"].ToString(),
                                     count = r["f_count"].ToString()
                                 });
@@ -400,8 +400,8 @@ namespace Shopping_Admin_web.Controllers {
                                     id = r["f_id"].ToString(),
                                     account = r["f_account"].ToString(),
                                     enabled = Convert.ToInt16(r["f_enabled"]),
-                                    createdDate = r["f_createdDate"].ToString(),
-                                    updatedDate = r["f_updatedDate"].ToString(),
+                                    createdDate = Convert.ToDateTime(r["f_createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
+                                    updatedDate = Convert.ToDateTime(r["f_updatedDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
                                     pwd = r["f_pwd"].ToString(),
                                     role = r["f_role"].ToString(),
                                     count = r["f_count"].ToString()
@@ -449,8 +449,8 @@ namespace Shopping_Admin_web.Controllers {
                                     id = r["f_id"].ToString(),
                                     account = r["f_account"].ToString(),
                                     enabled = Convert.ToInt16(r["f_enabled"]),
-                                    createdDate = r["f_createdDate"].ToString(),
-                                    updatedDate = r["f_updatedDate"].ToString(),
+                                    createdDate = Convert.ToDateTime(r["f_createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
+                                    updatedDate = Convert.ToDateTime(r["f_updatedDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
                                     pwd = r["f_pwd"].ToString(),
                                     role = r["f_role"].ToString(),
                                     count = r["f_count"].ToString()

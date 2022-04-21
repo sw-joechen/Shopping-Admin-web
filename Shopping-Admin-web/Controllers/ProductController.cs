@@ -181,8 +181,8 @@ namespace Shopping_Admin_web.Controllers {
                                     amount = Convert.ToInt32(r["f_amount"]),
                                     type = r["f_type"].ToString(),
                                     enabled = Convert.ToBoolean(Convert.ToInt16(r["f_enabled"])),
-                                    createdDate = r["f_createdDate"].ToString(),
-                                    updatedDate = r["f_updatedDate"].ToString(),
+                                    createdDate = Convert.ToDateTime(r["f_createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
+                                    updatedDate = Convert.ToDateTime(r["f_updatedDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
                                 });
                             }
                             result.Set(200, "success", productList);
